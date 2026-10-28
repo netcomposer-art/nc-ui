@@ -15,7 +15,7 @@
 
 import renames from "../tokens/renames.json" with { type: "json" };
 
-/** @typedef {"color" | "family" | "length" | "duration" | "opacity" | "other"} TokenKind */
+/** @typedef {"color" | "family" | "length" | "duration" | "other"} TokenKind */
 /** @typedef {"semantic" | "runtime" | "rhythm"} TokenTier */
 
 /**
@@ -264,7 +264,6 @@ export function readLive(el, name) {
   probe.style.pointerEvents = "none";
   const ref = `var(${token.prop})`;
   if (token.kind === "family") probe.style.fontFamily = ref;
-  else if (token.kind === "opacity") probe.style.opacity = ref;
   else if (token.kind === "length" || token.kind === "other" || token.kind === "duration") {
     probe.style.paddingLeft = ref;
   } else probe.style.color = ref;
@@ -277,9 +276,7 @@ export function readLive(el, name) {
       ? style.fontFamily
       : token.kind === "color"
         ? style.color
-        : token.kind === "opacity"
-          ? style.opacity
-          : style.paddingLeft;
+        : style.paddingLeft;
   probe.remove();
   return value;
 }

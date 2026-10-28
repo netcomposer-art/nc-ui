@@ -1,4 +1,4 @@
-export type TokenKind = "color" | "family" | "length" | "duration" | "opacity" | "other";
+export type TokenKind = "color" | "family" | "length" | "duration" | "other";
 export type TokenTier = "semantic" | "runtime" | "rhythm";
 
 export interface AliasEntry {

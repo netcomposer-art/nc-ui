@@ -16,7 +16,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      # No dependencies: no install step.
+      # devDependencies only (linkedom for component tests, esbuild for dist), pinned in package-lock.json.
+      - run: npm ci
+      - name: lint:ui (no green, no opacity dimming, no literal 44px)
+        run: npm run lint
       - run: npm test
       - name: Generated files are committed
         run: git diff --exit-code
