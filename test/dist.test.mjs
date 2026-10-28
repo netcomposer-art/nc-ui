@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { build } from "esbuild";
+import { fileURLToPath } from "node:url";
 import { outputs, tailwindTheme } from "../scripts/build-dist.mjs";
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
@@ -38,4 +40,30 @@ test("S2: the Tailwind preset and theme only reference tokens", () => {
   const decls = read("dist/tailwind-theme.css").match(/^  --[\w-]+: .+;$/gm);
   assert.ok(decls.length > 100);
   for (const d of decls) assert.match(d, /^  --[\w-]+: var\(--nc-ui-[a-z0-9-]+\);$/);
+});
+
+const bundle = async (code) =>
+  (await build({ stdin: { contents: code, resolveDir: fileURLToPath(new URL("..", import.meta.url)), loader: "js" }, bundle: true, minify: true, format: "esm", write: false, logLevel: "silent" })).outputFiles[0].text;
+
+test("tree-shaking: an app that imports one component does not get the slider factory or the kit sheet", async () => {
+  const sw = await bundle('import { createSwitch } from "./src/index.js"; createSwitch();');
+  assert.doesNotMatch(sw, /needs 0 < min < max/, "slider factory left out");
+  assert.doesNotMatch(sw, /nc-ui-switch-track::after/, "kit sheet left out");
+  assert.ok(sw.length < 2000, `createSwitch alone is ${sw.length} B`);
+  const sl = await bundle('import { sliderFactory } from "./src/primitives/slider.js"; sliderFactory;');
+  assert.doesNotMatch(sl, /role="?switch/);
+});
+
+test("the JS-injected CSS entry adds the kit sheet with no CSS file; the static CSS needs no JS", async () => {
+  const inject = read("dist/nc-ui-inject.min.js");
+  assert.match(inject, /nc-ui-switch-track/);
+  assert.doesNotMatch(inject, /needs 0 < min < max/);
+  const { installDom } = await import("./helpers/dom.mjs");
+  const { document } = installDom();
+  const { installTheme, installedCss } = await import("../dist/nc-ui-inject.min.js");
+  installTheme(document);
+  assert.match(document.head.querySelector("style[data-nc-kit]").textContent, /\.nc-ui-switch \{/);
+  assert.match(installedCss(), /\.nc-module \{/);
+  // nc-ui.css carries tokens + kit + confirm: classes work with no kit JS at all.
+  assert.match(read("dist/nc-ui.css"), /\.nc-field\[data-nc-slider\] \{/);
 });

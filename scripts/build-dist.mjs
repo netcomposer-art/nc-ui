@@ -3,6 +3,8 @@
 //   dist/nc-ui.css        tokens.css + the kit sheet (kitCss) + confirm.css, readable
 //   dist/nc-ui.min.css    the same, minified
 //   dist/nc-ui.min.js     src/index.js bundled (ESM, minified); confirm() links ./confirm.css next to it
+//   dist/nc-ui-inject.min.js  the JS-injected CSS entry alone: installTheme() puts the kit sheet in a <style> at
+//                         runtime (as Rhythm does), so the kit costs JS bytes, not CSS bytes. Link tokens.css with it.
 //   dist/confirm.css      copy of src/primitives/confirm.css (self-contained)
 //   dist/tailwind-preset.js   Tailwind v3 preset: theme keys → var(--nc-ui-*) only (S2: tokens are the source)
 //   dist/tailwind-theme.css   Tailwind v4 @theme inline block, the same mapping
@@ -82,8 +84,20 @@ export async function outputs() {
     write: false,
     banner: { js: "/* @netcomposer/nc-ui (MIT) by Peter Semmelhack, https://psem.me/. Built by scripts/build-dist.mjs. */" },
   });
+  const inject = await build({
+    entryPoints: [join(root, "src/primitives/install.js")],
+    bundle: true,
+    format: "esm",
+    platform: "browser",
+    target: "es2020",
+    minify: true,
+    legalComments: "none",
+    write: false,
+    banner: { js: "/* @netcomposer/nc-ui inject entry (MIT) by Peter Semmelhack, https://psem.me/. installTheme() adds the kit sheet. */" },
+  });
   const theme = tailwindTheme();
   return {
+    "dist/nc-ui-inject.min.js": inject.outputFiles[0].text,
     "dist/nc-ui.css": css,
     "dist/nc-ui.min.css": minCss,
     "dist/nc-ui.min.js": js.outputFiles[0].text,
@@ -95,7 +109,7 @@ export async function outputs() {
 
 export function sizes(files) {
   const size = (text) => ({ min: Buffer.byteLength(text), gzip: gzipSync(text, { level: 9 }).length });
-  return { css: size(files["dist/nc-ui.min.css"]), js: size(files["dist/nc-ui.min.js"]) };
+  return { css: size(files["dist/nc-ui.min.css"]), js: size(files["dist/nc-ui.min.js"]), inject: size(files["dist/nc-ui-inject.min.js"]) };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
@@ -114,5 +128,5 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     }
   } else for (const [p, text] of Object.entries(files)) writeFileSync(join(root, p), text);
   const s = sizes(files);
-  console.log(`dist: nc-ui.min.css ${s.css.min} B (${s.css.gzip} B gzip), nc-ui.min.js ${s.js.min} B (${s.js.gzip} B gzip)`);
+  console.log(`dist: nc-ui.min.css ${s.css.min} B (${s.css.gzip} B gzip), nc-ui.min.js ${s.js.min} B (${s.js.gzip} B gzip), nc-ui-inject.min.js ${s.inject.min} B (${s.inject.gzip} B gzip)`);
 }
