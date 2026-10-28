@@ -7,7 +7,7 @@ export const base = {
   "color": {
     "paper": "#F5F5F5",
     "ink": "#242424",
-    "ink-label": "#1f2421",
+    "ink-label": "#242424",
     "white": "#FFFFFF",
     "ivory": "#FBFBFB",
     "surf": "#EAEAEA",
@@ -46,10 +46,9 @@ export const base = {
     "amber": "#9A6B34",
     "amber-stale": "hsl(38 50% 38%)",
     "slate": "#56688C",
-    "olive": "#6E7A3C",
+    "plum": "#774A84",
     "filter-blue": "#3E6FB0",
     "filter-accent": "#315873",
-    "filter-green": "#315873",
     "filter-red": "#B8443A",
     "tw-gray-50": "oklch(98.5% 0.002 247.839)",
     "tw-gray-100": "oklch(96.7% 0.003 264.542)",
@@ -291,7 +290,7 @@ export const semantic = {
   "slot-dot-playing": "5px",
   "sparkle-size": "14px",
   "sparkle-icon-size": "12px",
-  "label-on-fill-dark": "#1f2421",
+  "label-on-fill-dark": "#242424",
   "label-on-fill-light": "#FFFFFF",
   "skeleton-highlight": "#F0F0F0",
   "transition-feedback": ".15s",
@@ -369,7 +368,7 @@ export const component = {
     "energy": "#9A6B34",
     "tension": "#A04A3F",
     "ambiguity": "#56688C",
-    "movement": "#6E7A3C",
+    "movement": "#774A84",
     "highlight": "rgba(0,49,83,0.07)"
   },
   "situation": {
@@ -493,7 +492,7 @@ export const componentRefs = {
     "energy": "color.amber",
     "tension": "color.red-tension",
     "ambiguity": "color.slate",
-    "movement": "color.olive",
+    "movement": "color.plum",
     "highlight": "color.accent-wash"
   },
   "situation": {

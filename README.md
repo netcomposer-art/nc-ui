@@ -41,7 +41,7 @@ The surprise fill:
 ```js
 import { surpriseColor, slotColors, surpriseFillStyle } from '@netcomposer/nc-ui/color';
 const fill = surpriseColor(previousFill);    // HSL s 85–100 %, l 50–60 %, ≥ 60° from the last hue
-const { ink, on, onInk } = slotColors(fill); // label is #1f2421 or white, ≥ 4.5:1
+const { ink, on, onInk } = slotColors(fill); // label is #242424 (ink) or white, ≥ 4.5:1
 Object.assign(slots.style, surpriseFillStyle(fill)); // sets --nc-ui-surprise-*
 ```
 

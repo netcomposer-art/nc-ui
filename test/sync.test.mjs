@@ -124,9 +124,9 @@ test('accent-pad (filled pads/steps): same hue as the accent, lighter; >= 2:1 ag
 });
 
 // Peter: no green. Every neutral is a true grey (R = G = B); the exceptions are listed with their reason.
-test('neutrals are true greys (saturation 0); filter-accent derives from the accent and filter-green aliases it', async () => {
-  const keep = new Set(['ink-label']); // ASTRID surprise.ts INK_DARK, pinned by test/fixtures/astrid-surprise.json
-  const neutrals = ['paper', 'ink', 'ivory', 'surf', 'drawer', 'skeleton-hi', 'map-off',
+test('neutrals are true greys (saturation 0); filter-accent derives from the accent; no filter-green alias', async () => {
+  const keep = new Set();
+  const neutrals = ['paper', 'ink', 'ink-label', 'ivory', 'surf', 'drawer', 'skeleton-hi', 'map-off',
     ...[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `shade-${n}`), ...[0, 1, 2, 3, 4].flatMap((n) => [`sub-${n}`, `div-${n}`]),
     ...[1, 2, 3, 4].map((n) => `mf-${n}`)];
   for (const n of neutrals) {
@@ -137,7 +137,7 @@ test('neutrals are true greys (saturation 0); filter-accent derives from the acc
   for (const n of ['background', 'foreground', 'border', 'card', 'muted-foreground', 'chart-3'])
     assert.match(T.base.legacy[n], /^0 0% [\d.]+%$/, `legacy.${n}`);
   assert.match(vars['--nc-ui-color-filter-accent'], /^color-mix\(in srgb, var\(--nc-ui-color-accent\) \d+%/);
-  assert.equal(vars['--nc-ui-color-filter-green'], 'var(--nc-ui-color-filter-accent)');
+  assert.equal(vars['--nc-ui-color-filter-green'], undefined);
   assert.equal(T.semantic['filter-highpass'], T.base.color['filter-accent']);
 });
 

@@ -6,7 +6,7 @@ export declare const base: {
   readonly "color": {
     readonly "paper": "#F5F5F5";
     readonly "ink": "#242424";
-    readonly "ink-label": "#1f2421";
+    readonly "ink-label": "#242424";
     readonly "white": "#FFFFFF";
     readonly "ivory": "#FBFBFB";
     readonly "surf": "#EAEAEA";
@@ -45,10 +45,9 @@ export declare const base: {
     readonly "amber": "#9A6B34";
     readonly "amber-stale": "hsl(38 50% 38%)";
     readonly "slate": "#56688C";
-    readonly "olive": "#6E7A3C";
+    readonly "plum": "#774A84";
     readonly "filter-blue": "#3E6FB0";
     readonly "filter-accent": "#315873";
-    readonly "filter-green": "#315873";
     readonly "filter-red": "#B8443A";
     readonly "tw-gray-50": "oklch(98.5% 0.002 247.839)";
     readonly "tw-gray-100": "oklch(96.7% 0.003 264.542)";
@@ -289,7 +288,7 @@ export declare const semantic: {
   readonly "slot-dot-playing": "5px";
   readonly "sparkle-size": "14px";
   readonly "sparkle-icon-size": "12px";
-  readonly "label-on-fill-dark": "#1f2421";
+  readonly "label-on-fill-dark": "#242424";
   readonly "label-on-fill-light": "#FFFFFF";
   readonly "skeleton-highlight": "#F0F0F0";
   readonly "transition-feedback": ".15s";
@@ -366,7 +365,7 @@ export declare const component: {
     readonly "energy": "#9A6B34";
     readonly "tension": "#A04A3F";
     readonly "ambiguity": "#56688C";
-    readonly "movement": "#6E7A3C";
+    readonly "movement": "#774A84";
     readonly "highlight": "rgba(0,49,83,0.07)";
   };
   readonly "situation": {
@@ -488,7 +487,7 @@ export declare const componentRefs: {
     readonly "energy": "color.amber";
     readonly "tension": "color.red-tension";
     readonly "ambiguity": "color.slate";
-    readonly "movement": "color.olive";
+    readonly "movement": "color.plum";
     readonly "highlight": "color.accent-wash";
   };
   readonly "situation": {

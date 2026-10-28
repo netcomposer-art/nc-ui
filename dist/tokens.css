@@ -6,7 +6,7 @@
   /* color */
   --nc-ui-color-paper: #F5F5F5;
   --nc-ui-color-ink: #242424;
-  --nc-ui-color-ink-label: #1f2421;
+  --nc-ui-color-ink-label: var(--nc-ui-color-ink);
   --nc-ui-color-white: #FFFFFF;
   --nc-ui-color-ivory: #FBFBFB;
   --nc-ui-color-surf: #EAEAEA;
@@ -45,10 +45,9 @@
   --nc-ui-color-amber: #9A6B34;
   --nc-ui-color-amber-stale: hsl(38 50% 38%);
   --nc-ui-color-slate: #56688C;
-  --nc-ui-color-olive: #6E7A3C;
+  --nc-ui-color-plum: #774A84;
   --nc-ui-color-filter-blue: #3E6FB0;
   --nc-ui-color-filter-accent: color-mix(in srgb, var(--nc-ui-color-accent) 80%, var(--nc-ui-color-paper));
-  --nc-ui-color-filter-green: var(--nc-ui-color-filter-accent);
   --nc-ui-color-filter-red: #B8443A;
   --nc-ui-color-tw-gray-50: oklch(98.5% 0.002 247.839);
   --nc-ui-color-tw-gray-100: oklch(96.7% 0.003 264.542);
@@ -351,7 +350,7 @@
   --nc-meaning-energy: var(--nc-ui-color-amber);
   --nc-meaning-tension: var(--nc-ui-color-red-tension);
   --nc-meaning-ambiguity: var(--nc-ui-color-slate);
-  --nc-meaning-movement: var(--nc-ui-color-olive);
+  --nc-meaning-movement: var(--nc-ui-color-plum);
   --nc-meaning-highlight: var(--nc-ui-color-accent-wash);
   /* situation */
   --nc-situation-drawer-bg: var(--nc-ui-color-drawer);

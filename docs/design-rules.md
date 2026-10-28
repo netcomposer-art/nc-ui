@@ -71,7 +71,7 @@ A tap on the sparkle fills the slots with a random bright colour:
 - saturation 85–100%
 - lightness 50–60%
 
-The label on it is `#1f2421` (`label-on-fill-dark`) or white (`label-on-fill-light`), whichever has the higher WCAG contrast, and the lightness is nudged until the label clears 4.5:1. These numbers live in `tokens.json` under `constants`. The maths is the pure functions in `src/color.js` (`surpriseColor`, `labelColorFor`, `slotColors`, `surpriseFillStyle`). ASTRID re-exports them, so there is one implementation.
+The label on it is `#242424` (`label-on-fill-dark`, the ink grey) or white (`label-on-fill-light`), whichever has the higher WCAG contrast, and the lightness is nudged until the label clears 4.5:1. These numbers live in `tokens.json` under `constants`. The maths is the pure functions in `src/color.js` (`surpriseColor`, `labelColorFor`, `slotColors`, `surpriseFillStyle`). ASTRID re-exports them, so there is one implementation.
 
 ### Where a literal is still allowed
 
