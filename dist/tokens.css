@@ -325,6 +325,12 @@
   --nc-ui-button-pad-y: var(--nc-ui-space-12);
   --nc-ui-fx-name-weight: var(--nc-ui-font-weight-bold);
   --nc-ui-label-leading: var(--nc-ui-leading-readout);
+  --nc-ui-motion-press: var(--nc-ui-duration-press);
+  --nc-ui-switch-track-width: var(--nc-ui-space-28);
+  --nc-ui-switch-track-height: var(--nc-ui-space-16);
+  --nc-ui-switch-knob: var(--nc-ui-space-10);
+  --nc-ui-switch-knob-inset: var(--nc-ui-space-2);
+  --nc-ui-switch-gap: var(--nc-ui-space-8);
 
   /* Tier 3: component roles, one namespace per domain (a module uses only its own domain) */
   /* synth */

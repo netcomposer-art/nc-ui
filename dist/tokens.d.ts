@@ -339,6 +339,12 @@ export declare const semantic: {
   readonly "button-pad-y": "12px";
   readonly "fx-name-weight": "700";
   readonly "label-leading": "1.35";
+  readonly "motion-press": ".1s";
+  readonly "switch-track-width": "28px";
+  readonly "switch-track-height": "16px";
+  readonly "switch-knob": "10px";
+  readonly "switch-knob-inset": "2px";
+  readonly "switch-gap": "8px";
 };
 export declare const component: {
   readonly "synth": {
@@ -673,6 +679,12 @@ export declare const vars: {
   readonly "button-pad-y": "var(--nc-ui-button-pad-y)";
   readonly "fx-name-weight": "var(--nc-ui-fx-name-weight)";
   readonly "label-leading": "var(--nc-ui-label-leading)";
+  readonly "motion-press": "var(--nc-ui-motion-press)";
+  readonly "switch-track-width": "var(--nc-ui-switch-track-width)";
+  readonly "switch-track-height": "var(--nc-ui-switch-track-height)";
+  readonly "switch-knob": "var(--nc-ui-switch-knob)";
+  readonly "switch-knob-inset": "var(--nc-ui-switch-knob-inset)";
+  readonly "switch-gap": "var(--nc-ui-switch-gap)";
   readonly "surprise-fill": "var(--nc-ui-surprise-fill)";
   readonly "surprise-ink": "var(--nc-ui-surprise-ink)";
   readonly "surprise-on": "var(--nc-ui-surprise-on)";
@@ -804,6 +816,12 @@ export declare const refs: {
   readonly "button-pad-y": "space.12";
   readonly "fx-name-weight": "font-weight.bold";
   readonly "label-leading": "leading.readout";
+  readonly "motion-press": "duration.press";
+  readonly "switch-track-width": "space.28";
+  readonly "switch-track-height": "space.16";
+  readonly "switch-knob": "space.10";
+  readonly "switch-knob-inset": "space.2";
+  readonly "switch-gap": "space.8";
 };
 export declare const constants: {
   readonly "label-min-contrast": 4.5;

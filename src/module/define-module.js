@@ -1,6 +1,7 @@
 import { v } from "../alias.js";
 import { paintAll, patchControl, renderControl } from "../primitives/controls.js";
 import { installTheme } from "../primitives/install.js";
+import { createSwitch } from "../primitives/switch.js";
 
 export const HIDDEN_STORAGE_KEY = "netcomposer.hidden.v1";
 export const RHYTHM_HIDDEN_KEY = "netcomposer.rhythm.hidden.v1";
@@ -50,7 +51,7 @@ function flatten(def) {
   const out = [];
   for (const control of lists) {
     out.push(control);
-    if (control.type === "fx") out.push(...control.controls);
+    if (control.type === "fx") out.push(...control.controls, ...(control.more ?? []));
   }
   return out;
 }
@@ -76,7 +77,7 @@ function signature(def) {
       if (control.type === "select")
         return `select:${control.id}:${control.options.map((option) => option.value).join(",")}`;
       if (control.type === "fx")
-        return `fx:${control.id}:${control.depth}:${control.controls.map((child) => child.id).join(",")}`;
+        return `fx:${control.id}:${control.depth}:${control.on === undefined ? "" : "sw"}:${control.controls.map((child) => child.id).join(",")}/${(control.more ?? []).map((child) => child.id).join(",")}`;
       return `${control.type}:${control.id}`;
     })
     .join("|")}`;
@@ -194,7 +195,14 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
   const index = document.createElement("span");
   index.className = "nc-index";
   index.dataset.ncIndex = "";
-  end.append(hide, index);
+  // The module's own on/off (fx-blocks' header switch): a real role="switch" named by the title. Off dims the
+  // body by colour. Only shown when the module passes `on`.
+  const power = createSwitch({
+    labelledBy: title.id,
+    onChange: (on) => (defs.get(el) ?? def).onToggle?.(on),
+  });
+  power.el.dataset.ncModuleSwitch = "";
+  end.append(power.el, hide, index);
   const status = document.createElement("span");
   status.className = "nc-snap-msg";
   status.dataset.ncStatus = "";
@@ -249,6 +257,10 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
       if (next.status !== undefined) status.setAttribute("aria-live", "polite");
       else status.removeAttribute("aria-live");
       lines.textContent = next.summary ?? next.title;
+      power.el.hidden = next.on === undefined;
+      power.set(next.on === true);
+      if (next.on === false) body.dataset.ncDim = "true";
+      else delete body.dataset.ncDim;
       slim.setAttribute("aria-label", `Show ${next.title}`);
       renderBody(body, next);
       applyHidden(body.hidden);

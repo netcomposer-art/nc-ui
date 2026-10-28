@@ -15,6 +15,7 @@ export {
 export { installedCss, installTheme } from "./primitives/install.js";
 export { MODULATED_SELECTOR } from "./modulated.js";
 export { confirm, confirmCss } from "./primitives/confirm.js";
+export { createSwitch } from "./primitives/switch.js";
 export { DEFAULT_GESTURE, PadGesture, bindPadGesture } from "./primitives/gesture.js";
 export { openStepEditor, percent } from "./primitives/step-editor.js";
 export {

@@ -340,7 +340,13 @@ export const semantic = {
   "button-tracking": ".2em",
   "button-pad-y": "12px",
   "fx-name-weight": "700",
-  "label-leading": "1.35"
+  "label-leading": "1.35",
+  "motion-press": ".1s",
+  "switch-track-width": "28px",
+  "switch-track-height": "16px",
+  "switch-knob": "10px",
+  "switch-knob-inset": "2px",
+  "switch-gap": "8px"
 };
 /** Tier 3: component roles by domain, resolved (component.synth['keybed-height']). Use only your own domain. */
 export const component = {
@@ -693,6 +699,12 @@ export const vars = {
   "button-pad-y": "var(--nc-ui-button-pad-y)",
   "fx-name-weight": "var(--nc-ui-fx-name-weight)",
   "label-leading": "var(--nc-ui-label-leading)",
+  "motion-press": "var(--nc-ui-motion-press)",
+  "switch-track-width": "var(--nc-ui-switch-track-width)",
+  "switch-track-height": "var(--nc-ui-switch-track-height)",
+  "switch-knob": "var(--nc-ui-switch-knob)",
+  "switch-knob-inset": "var(--nc-ui-switch-knob-inset)",
+  "switch-gap": "var(--nc-ui-switch-gap)",
   "surprise-fill": "var(--nc-ui-surprise-fill)",
   "surprise-ink": "var(--nc-ui-surprise-ink)",
   "surprise-on": "var(--nc-ui-surprise-on)",
@@ -824,7 +836,13 @@ export const refs = {
   "button-tracking": "tracking.7",
   "button-pad-y": "space.12",
   "fx-name-weight": "font-weight.bold",
-  "label-leading": "leading.readout"
+  "label-leading": "leading.readout",
+  "motion-press": "duration.press",
+  "switch-track-width": "space.28",
+  "switch-track-height": "space.16",
+  "switch-knob": "space.10",
+  "switch-knob-inset": "space.2",
+  "switch-gap": "space.8"
 };
 /** Numbers used by code (contrast, Surprise colour). */
 export const constants = {

@@ -29,6 +29,7 @@ export {
   percent,
 } from "./primitives/step-editor.js";
 export { type ConfirmOptions, confirm, confirmCss } from "./primitives/confirm.js";
+export { type SwitchHandle, type SwitchOptions, createSwitch } from "./primitives/switch.js";
 export {
   TOAST_DURATION,
   type ToastCloseReason,
@@ -231,6 +232,12 @@ export interface FxControl {
   title: string;
   depth: 1 | 2 | 3 | 4;
   controls: Control[];
+  /** Give the card a header switch (role="switch", named by the title). Off dims the card by colour. */
+  on?: boolean;
+  onToggle?: (on: boolean) => void;
+  /** Rarely used rows, behind a "More" disclosure (fx-blocks' modulation rows). */
+  more?: Control[];
+  moreLabel?: string;
 }
 export type Control =
   | SliderControl
@@ -269,6 +276,9 @@ export interface ModuleDef {
   lead?: boolean;
   controls?: Control[];
   sections?: ModuleSection[];
+  /** Show a header switch (role="switch", named by the title). Off dims the body by colour. */
+  on?: boolean;
+  onToggle?: (on: boolean) => void;
 }
 export interface ModuleHandle {
   el: HTMLElement;

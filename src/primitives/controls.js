@@ -2,6 +2,7 @@ import { readCssPx } from "../alias.js";
 import { surpriseColor, surpriseFillStyle, velocityFillStyle } from "../color.js";
 import { paintCanvas } from "./canvas.js";
 import { bindPadGesture } from "./gesture.js";
+import { createSwitch } from "./switch.js";
 
 function probe() {
   const el = document.createElement("i");
@@ -188,7 +189,8 @@ export function patchControl(node, control) {
     const canvas = node.querySelector("canvas");
     if (canvas instanceof HTMLCanvasElement) paintCanvas(canvas, control);
   } else if (control.type === "fx") {
-    for (const child of control.controls) {
+    patchFx(node, control);
+    for (const child of [...control.controls, ...(control.more ?? [])]) {
       const childNode = node.querySelector(`[data-nc-id="${cssEscape(child.id)}"]`);
       if (childNode instanceof Element) patchControl(childNode, child);
     }
@@ -1321,11 +1323,47 @@ function renderFx(control, lookup) {
   card.dataset.ncDepth = String(control.depth);
   const name = document.createElement("h3");
   name.className = "nc-ui-fx-name";
+  name.id = `${control.id}-name`;
   name.textContent = control.title;
-  card.append(name);
+  if (control.on === undefined) card.append(name);
+  else {
+    // fx-blocks' header: the name, then a real switch named by it. Off dims the card by colour.
+    const head = document.createElement("div");
+    head.className = "nc-ui-fx-hd";
+    const toggle = createSwitch({
+      checked: control.on,
+      labelledBy: name.id,
+      onChange: (on) => {
+        const live = lookup(toggle.el);
+        if (live?.type === "fx") live.onToggle?.(on);
+      },
+    });
+    toggle.el.dataset.ncFxSwitch = "";
+    head.append(name, toggle.el);
+    card.append(head);
+  }
   for (const child of control.controls) card.append(renderControl(child, lookup));
+  if (control.more?.length) {
+    const more = document.createElement("details");
+    more.className = "nc-ui-more";
+    const summary = document.createElement("summary");
+    summary.textContent = control.moreLabel ?? "More";
+    more.append(summary);
+    for (const child of control.more) more.append(renderControl(child, lookup));
+    card.append(more);
+  }
   card.append(probe());
+  patchFx(card, control);
   return card;
+}
+
+function patchFx(node, control) {
+  const name = node.querySelector(".nc-ui-fx-name");
+  if (name) name.textContent = control.title;
+  const toggle = node.querySelector("[data-nc-fx-switch]");
+  if (toggle) toggle.setAttribute("aria-checked", control.on ? "true" : "false");
+  if (control.on === false) node.dataset.ncDim = "true";
+  else delete node.dataset.ncDim;
 }
 
 function cssEscape(value) {

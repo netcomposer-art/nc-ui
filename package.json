@@ -26,16 +26,27 @@
     "astrid"
   ],
   "type": "module",
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "exports": {
-    ".": { "types": "./src/index.d.ts", "import": "./src/index.js" },
-    "./tokens": { "types": "./dist/tokens.d.ts", "import": "./dist/tokens.js" },
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.js"
+    },
     "./tokens.ts": "./src/tokens.ts",
     "./tokens.css": "./dist/tokens.css",
     "./tokens.json": "./dist/tokens.resolved.json",
-    "./color": { "types": "./src/color.d.ts", "import": "./src/color.js" }
+    "./color": {
+      "types": "./src/color.d.ts",
+      "import": "./src/color.js"
+    }
   },
   "files": [
     "dist",
@@ -57,5 +68,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12",
+    "linkedom": "0.18.14"
   }
 }

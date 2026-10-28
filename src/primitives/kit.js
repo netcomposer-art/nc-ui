@@ -853,6 +853,87 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* FX card header: the effect's name and its switch on one row of at least a target's height. When the switch is
+   off the card dims by colour ([data-nc-dim]). "More" holds the rarely used rows (fx-blocks' <details>). */
+.nc-ui-fx-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${v("module-gap")};
+  min-height: ${v("target-min")};
+  margin-bottom: ${v("module-gap")};
+  min-width: 0;
+}
+.nc-ui-fx-hd > .nc-ui-fx-name { margin: 0; }
+.nc-ui-fx-visual { display: block; width: 100%; height: ${v("display-height")}; }
+.nc-ui-more > summary {
+  display: flex;
+  align-items: center;
+  min-height: ${v("target-min")};
+  cursor: pointer;
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  color: ${v("text-sub")};
+}
+.nc-ui-more > summary:hover { color: ${v("text")}; }
+.nc-ui-more > summary:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+/* The switch (plan 5.3 V2, R8): role="switch", the word then the track; hover takes the word to text; the knob
+   travels on motion-press; both words share one cell so the width never changes. */
+.nc-ui-switch {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: ${v("switch-gap")};
+  min-width: ${v("target-min")};
+  min-height: ${v("target-min")};
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  color: ${v("text-sub")};
+  transition: color ${v("motion-press")} ease-out;
+}
+.nc-ui-switch[aria-checked="true"] { color: ${v("accent")}; }
+.nc-ui-switch:hover { color: ${v("text")}; }
+.nc-ui-switch:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+.nc-ui-switch-text { display: inline-grid; }
+.nc-ui-switch-text > span { grid-area: 1 / 1; }
+.nc-ui-switch[aria-checked="true"] [data-nc-off], .nc-ui-switch[aria-checked="false"] [data-nc-on] { visibility: hidden; }
+.nc-ui-switch-track {
+  position: relative;
+  flex: none;
+  width: ${v("switch-track-width")};
+  height: ${v("switch-track-height")};
+  border: ${v("hairline")} solid ${v("divider")};
+  border-radius: calc(${v("switch-track-height")} / 2);
+  background: transparent;
+  transition: background-color ${v("motion-press")} ease-out, border-color ${v("motion-press")} ease-out;
+}
+.nc-ui-switch:hover .nc-ui-switch-track { border-color: ${v("text-sub")}; }
+.nc-ui-switch-track::after {
+  content: "";
+  position: absolute;
+  top: ${v("switch-knob-inset")};
+  left: ${v("switch-knob-inset")};
+  width: ${v("switch-knob")};
+  height: ${v("switch-knob")};
+  border-radius: 50%;
+  background: ${v("text-sub")};
+  transition: transform ${v("motion-press")} ease-out, background-color ${v("motion-press")} ease-out;
+}
+.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track { background: ${v("accent")}; border-color: ${v("accent")}; }
+.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track::after {
+  background: ${v("on-accent")};
+  transform: translateX(calc(${v("switch-track-width")} - ${v("switch-knob")} - 2 * ${v("switch-knob-inset")} - 2 * ${v("hairline")}));
+}
 /* A panel (Rhythm's Parameters, under the grid): a page-coloured area, full bleed to the module's sides and
    bottom, a hairline above, a title and what it edits, and its controls in columns from 1024 px. */
 .nc-section[data-nc-panel="true"] {
@@ -1306,7 +1387,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
-  .nc-ui-toast, .nc-ui-toast[data-state="closing"],
+  .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-ui-switch-track, .nc-ui-switch-track::after,
   .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"] {
     transition: none;
     animation: none;
