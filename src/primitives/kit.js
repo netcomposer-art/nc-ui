@@ -235,7 +235,18 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   transition: none;
   accent-color: ${v("accent")};
 }
-.nc-range:disabled { opacity: ${v("disabled-opacity")}; cursor: not-allowed; }
+/* Dimming is by colour, never opacity (plan 5.1): a disabled or bypassed control's label, value, track and thumb go
+   to text-sub at full strength, so every pair keeps its contrast (Lucy's panel fix: 38 of 38 pairs pass). */
+.nc-range:disabled { cursor: not-allowed; accent-color: ${v("text-sub")}; }
+.nc-range:disabled::-webkit-slider-thumb { background: ${v("text-sub")}; }
+.nc-range:disabled::-moz-range-thumb { background: ${v("text-sub")}; }
+.nc-range:disabled::-moz-range-progress { background: ${v("text-sub")}; }
+[data-nc-dim="true"] .nc-label, [data-nc-dim="true"] .nc-readout, [data-nc-dim="true"] .nc-fx-name,
+[data-nc-dim="true"] .nc-select { color: ${v("text-sub")}; }
+[data-nc-dim="true"] .nc-range { accent-color: ${v("text-sub")}; }
+[data-nc-dim="true"] .nc-range::-webkit-slider-thumb { background: ${v("text-sub")}; }
+[data-nc-dim="true"] .nc-range::-moz-range-thumb { background: ${v("text-sub")}; }
+[data-nc-dim="true"] .nc-range::-moz-range-progress { background: ${v("text-sub")}; }
 .nc-range::-webkit-slider-runnable-track {
   height: ${v("hairline")};
   background: ${v("slider-track")};
@@ -300,7 +311,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   outline: ${v("focus-width-strong")} solid ${v("focus-ring")};
   outline-offset: ${v("control-gap")};
 }
-.nc-btn:disabled { opacity: ${v("disabled-opacity")}; }
+.nc-btn:disabled { color: ${v("text-sub")}; border-color: ${v("divider")}; cursor: not-allowed; }
 .nc-toggle {
   border: 0;
   border-bottom: ${v("hairline")} solid transparent;
@@ -589,8 +600,10 @@ ${MODULATED_SELECTOR} { transition: none; }
    crisp instead of melting into the tint. */
 .nc-row[data-selected="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
 .nc-row[data-selected="true"] .nc-ms:not([aria-pressed="true"]) { background: ${v("rhythm.step-cell-off")}; }
-/* Muted, or silenced by another lane's solo: the lane's steps dim, not just its button. */
-.nc-row[data-silent="true"] .nc-steps { opacity: ${v("rhythm.probability-dim")}; }
+/* Muted, or silenced by another lane's solo: the lane's steps dim by colour, not just its button. On steps fill with
+   text-sub (the velocity shade is set aside while silent), off steps keep only a divider outline. */
+.nc-row[data-silent="true"] .nc-step { border-color: ${v("divider")}; }
+.nc-row[data-silent="true"] .nc-step[aria-pressed="true"] { background: ${v("text-sub")}; border-color: ${v("text-sub")}; }
 .nc-name[data-nc-lane="1"] { color: ${v("rhythm.lane-1")}; }
 .nc-name[data-nc-lane="2"] { color: ${v("rhythm.lane-2")}; }
 .nc-name[data-nc-lane="3"] { color: ${v("rhythm.lane-3")}; }
@@ -675,7 +688,7 @@ ${MODULATED_SELECTOR} { transition: none; }
    stops at the padding box, so the dashes are the step's own colour with the row showing between them. */
 .nc-step[data-dim="true"] { border-style: dashed; background-clip: padding-box; }
 /* Per-lane length: steps past the end are ghosted on the selected row; the end handle sits after the last step. */
-.nc-step[data-out="true"] { opacity: ${v("rhythm.probability-dim")}; background: transparent; pointer-events: none; }
+.nc-step[data-out="true"] { border-color: ${v("divider")}; background: transparent; pointer-events: none; }
 /* Every lane lays its handle out the same way, selected or not, and the handle takes no width in the row: its negative
    margins cancel its own width and the step gap it adds, so it sits centred in the gap after the last step and the
    cells never move when the selection changes. Unselected lanes keep it hidden (visibility, so it cannot be focused). */
@@ -720,7 +733,7 @@ button.nc-pads-label {
   cursor: pointer;
 }
 button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
-.nc-pad[data-out="true"] { opacity: ${v("rhythm.probability-dim")}; border-style: dashed; background: transparent; color: ${v("text-sub")}; }
+.nc-pad[data-out="true"] { border-color: ${v("divider")}; border-style: dashed; background: transparent; color: ${v("text-sub")}; }
 .nc-pad[data-end="true"] { box-shadow: inset calc(-1 * ${v("focus-width")} * 2) 0 0 ${v("text")}; }
 .nc-pad[data-end="true"][aria-pressed="true"][data-accent="true"] {
   box-shadow: inset calc(-1 * ${v("focus-width")} * 2) 0 0 ${v("text")}, inset 0 calc(-1 * ${v("rhythm.accent-mark-size")}) 0 0 ${v("rhythm.accent-mark")};
@@ -809,7 +822,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   outline-offset: ${v("playhead-offset")};
 }
 .nc-pad[data-dim="true"] { border-style: dashed; background-clip: padding-box; }
-.nc-pads[data-silent="true"] { opacity: ${v("rhythm.probability-dim")}; }
+.nc-pads[data-silent="true"] .nc-pad { border-color: ${v("divider")}; color: ${v("text-sub")}; }
+.nc-pads[data-silent="true"] .nc-pad[aria-pressed="true"] { background: ${v("text-sub")}; border-color: ${v("text-sub")}; color: ${v("surface-page")}; }
 .nc-pad:focus-visible {
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: ${v("hairline")};
@@ -1052,11 +1066,10 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 /* The step being edited: a dark ring (as Bass marks its selected pad), full strength, fill unchanged. */
 .nc-pad[data-editing="true"], .nc-step-wrap[data-editing="true"] .nc-step {
-  opacity: 1;
   outline: ${v("focus-width")} solid ${v("text")};
   outline-offset: ${v("hairline")};
 }
-.nc-step-editor-scrim[data-placement="sheet"] { z-index: 4; background: ${v("text")}; opacity: ${v("rhythm.probability-dim")}; }
+.nc-step-editor-scrim[data-placement="sheet"] { z-index: 4; background: ${v("dialog-scrim")}; }
 .nc-step-editor[data-placement="sheet"] { z-index: 5; }
 .nc-step-editor-head { display: flex; align-items: center; justify-content: space-between; gap: ${v("module-gap")}; }
 .nc-step-editor-row {

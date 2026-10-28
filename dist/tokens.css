@@ -282,7 +282,6 @@
   --nc-ui-motion-fade: .2s ease;
   --nc-ui-motion-fade-out: .25s ease-out;
   --nc-ui-motion-slide: .22s ease-out;
-  --nc-ui-disabled-opacity: var(--nc-ui-opacity-35);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);
   --nc-ui-focus-width-strong: var(--nc-ui-border-thick);
   --nc-ui-target-min: var(--nc-ui-space-44);
@@ -296,7 +295,6 @@
   --nc-ui-curve-stroke: var(--nc-ui-stroke-bold);
   --nc-ui-trace-stroke: var(--nc-ui-stroke-fine);
   --nc-ui-grid-stroke: var(--nc-ui-stroke-hairline);
-  --nc-ui-control-disabled-opacity: var(--nc-ui-opacity-55);
   --nc-ui-toast-bg: var(--nc-ui-color-ink);
   --nc-ui-toast-text: var(--nc-ui-color-paper);
   --nc-ui-toast-action: var(--nc-ui-color-white);
@@ -365,7 +363,6 @@
   --nc-rhythm-playhead: var(--nc-ui-playhead);
   --nc-rhythm-track-mute: var(--nc-ui-text-sub);
   --nc-rhythm-track-solo: var(--nc-ui-accent);
-  --nc-rhythm-probability-dim: var(--nc-ui-disabled-opacity);
   --nc-rhythm-velocity-bar: var(--nc-ui-accent);
   --nc-rhythm-velocity-min: var(--nc-ui-color-accent-velocity-min);
   --nc-rhythm-velocity-max: var(--nc-ui-color-accent);

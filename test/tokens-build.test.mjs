@@ -54,7 +54,7 @@ test('component tokens: --nc-<domain>-<name>, refs to base or semantic, rhythm f
   assert.equal(c.component.get('synth.key-black').value, c.base.get('color.ink').value);
   const rhythm = [...c.component.values()].filter((t) => t.domain === 'rhythm');
   assert.ok(rhythm.length > 0, 'rhythm domain is filled');
-  for (const name of ['step-cell-off', 'step-cell-on', 'step-cell-accent', 'playhead', 'track-mute', 'track-solo', 'probability-dim']) {
+  for (const name of ['step-cell-off', 'step-cell-on', 'step-cell-accent', 'playhead', 'track-mute', 'track-solo']) {
     assert.ok(c.component.has(`rhythm.${name}`), name);
   }
   assert.ok(c.domains.rhythm.scope.length > 0, 'rhythm $scope lists source paths');

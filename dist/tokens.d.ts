@@ -296,7 +296,6 @@ export declare const semantic: {
   readonly "motion-fade": ".2s ease";
   readonly "motion-fade-out": ".25s ease-out";
   readonly "motion-slide": ".22s ease-out";
-  readonly "disabled-opacity": ".35";
   readonly "focus-width": "1px";
   readonly "focus-width-strong": "2px";
   readonly "target-min": "44px";
@@ -310,7 +309,6 @@ export declare const semantic: {
   readonly "curve-stroke": "1.5";
   readonly "trace-stroke": "1.25";
   readonly "grid-stroke": "1";
-  readonly "control-disabled-opacity": ".55";
   readonly "toast-bg": "#242424";
   readonly "toast-text": "#F5F5F5";
   readonly "toast-action": "#FFFFFF";
@@ -382,7 +380,6 @@ export declare const component: {
     readonly "playhead": "#003153";
     readonly "track-mute": "#595959";
     readonly "track-solo": "#003153";
-    readonly "probability-dim": ".35";
     readonly "velocity-bar": "#003153";
     readonly "velocity-min": "#477399";
     readonly "velocity-max": "#003153";
@@ -444,7 +441,6 @@ export declare const componentVars: {
     readonly "playhead": "var(--nc-rhythm-playhead)";
     readonly "track-mute": "var(--nc-rhythm-track-mute)";
     readonly "track-solo": "var(--nc-rhythm-track-solo)";
-    readonly "probability-dim": "var(--nc-rhythm-probability-dim)";
     readonly "velocity-bar": "var(--nc-rhythm-velocity-bar)";
     readonly "velocity-min": "var(--nc-rhythm-velocity-min)";
     readonly "velocity-max": "var(--nc-rhythm-velocity-max)";
@@ -506,7 +502,6 @@ export declare const componentRefs: {
     readonly "playhead": "semantic.playhead";
     readonly "track-mute": "semantic.text-sub";
     readonly "track-solo": "semantic.accent";
-    readonly "probability-dim": "semantic.disabled-opacity";
     readonly "velocity-bar": "semantic.accent";
     readonly "velocity-min": "color.accent-velocity-min";
     readonly "velocity-max": "color.accent";
@@ -635,7 +630,6 @@ export declare const vars: {
   readonly "motion-fade": "var(--nc-ui-motion-fade)";
   readonly "motion-fade-out": "var(--nc-ui-motion-fade-out)";
   readonly "motion-slide": "var(--nc-ui-motion-slide)";
-  readonly "disabled-opacity": "var(--nc-ui-disabled-opacity)";
   readonly "focus-width": "var(--nc-ui-focus-width)";
   readonly "focus-width-strong": "var(--nc-ui-focus-width-strong)";
   readonly "target-min": "var(--nc-ui-target-min)";
@@ -649,7 +643,6 @@ export declare const vars: {
   readonly "curve-stroke": "var(--nc-ui-curve-stroke)";
   readonly "trace-stroke": "var(--nc-ui-trace-stroke)";
   readonly "grid-stroke": "var(--nc-ui-grid-stroke)";
-  readonly "control-disabled-opacity": "var(--nc-ui-control-disabled-opacity)";
   readonly "toast-bg": "var(--nc-ui-toast-bg)";
   readonly "toast-text": "var(--nc-ui-toast-text)";
   readonly "toast-action": "var(--nc-ui-toast-action)";
@@ -768,7 +761,6 @@ export declare const refs: {
   readonly "motion-fade": null;
   readonly "motion-fade-out": null;
   readonly "motion-slide": null;
-  readonly "disabled-opacity": "opacity.35";
   readonly "focus-width": "border.hairline";
   readonly "focus-width-strong": "border.thick";
   readonly "target-min": "space.44";
@@ -782,7 +774,6 @@ export declare const refs: {
   readonly "curve-stroke": "stroke.bold";
   readonly "trace-stroke": "stroke.fine";
   readonly "grid-stroke": "stroke.hairline";
-  readonly "control-disabled-opacity": "opacity.55";
   readonly "toast-bg": "color.ink";
   readonly "toast-text": "color.paper";
   readonly "toast-action": "color.white";

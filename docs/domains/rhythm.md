@@ -28,7 +28,6 @@ A Rhythm file may read generic semantic tokens (and the runtime surprise tokens)
 | `playhead` | `semantic.playhead` | the step that is playing: a `semantic.playhead-width` ring in `semantic.playhead`, `semantic.playhead-offset` clear of the step (the shared playhead, Bass's method) |
 | `track-mute` | `semantic.text-sub` | mute pressed |
 | `track-solo` | `semantic.accent` | solo pressed |
-| `probability-dim` | `semantic.disabled-opacity` | a step whose probability is below certain |
 | `velocity-bar` | `semantic.accent` | velocity bar inside a step |
 | `velocity-min` | `color.accent-velocity-min` | fill of an on step at velocity 5%, the light end of the ramp (#477399) |
 | `velocity-max` | `color.accent` | fill of an on step at velocity 100%, the dark end of the ramp (#003153) |
@@ -57,7 +56,7 @@ An on step's (or pad's) fill is its velocity: one continuous ramp in the accent'
 
 - an accent is a mark, not a fill: `accent-mark` (paper) as an inset bar `accent-mark-size` high along the inside of the bottom edge;
 - a step whose chance is below 100% has a dashed outline at the same `hairline` width (`border-style: dashed`, `background-clip: padding-box`), with no opacity;
-- a muted or soloed-out lane still dims with `probability-dim`, and steps past a lane's length stay ghosted.
+- a muted or soloed-out lane dims by colour (on steps fill with `text-sub`, off steps keep a `divider` outline), and steps past a lane's length are ghosted with a `divider` outline. No opacity.
 
 The colour snaps (`transition: none`), and it is written only when a cell's velocity changes.
 
