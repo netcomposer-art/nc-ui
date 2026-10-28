@@ -8,6 +8,51 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## [Unreleased]
 
+## [0.2.0] - unreleased (not published): nc-ui is the shared module kit
+
+Breaking: no aliases or compatibility names (Peter: no backward compatibility). Apps move on their own migration (Synth, Rhythm, Bass), after review.
+
+### Added
+- The module kit, imported from ASTRID-Rhythm `3001e7c` `vendor/nc-ui` (see `docs/history/rhythm-3001e7c-patches.md`): `kitCss`, `defineModule`, `renderControl`, confirm, toast, step editor.
+- `createSwitch`: the shared on/off switch (`role="switch"`, hover, fixed width). Used by the module header (`on`/`onToggle`) and the FX card.
+- `createSlider` / `sliderFactory`: fx-blocks' `SliderFactory` contract, returning the kit's slider row.
+- FX card: header row with a switch (`on`/`onToggle`), `more` disclosure, colour dimming when off.
+- Tokens: `motion-press` (.1s), `switch-track-width` 28, `switch-track-height` 16, `switch-knob` 10, `switch-knob-inset` 2, `switch-gap` 8, `target-min-coarse` 44.
+- `[data-nc-dim="true"]`: colour dimming for a row, card or module body.
+- `dist/nc-ui.css`, `nc-ui.min.css`, `nc-ui.min.js`, `nc-ui-inject.min.js` (JS-injected CSS entry), `confirm.css`, `tailwind-preset.js`, `tailwind-theme.css`, all committed. Subpath exports `./inject`, `./switch`, `./slider`, `./nc-ui.css`, `./tailwind-preset`, `./tailwind-theme.css`.
+- `scripts/lint-ui.mjs` (in CI), plus component, lint and dist tests.
+- S2 decided: tokens are the source of truth; Tailwind only references them (README).
+
+### Renamed (Rhythm-domain roles the shared kit used; same values)
+| 0.1.0 / Rhythm | 0.2.0 |
+|---|---|
+| `--nc-rhythm-module-gap` | `--nc-ui-module-gap` |
+| `--nc-rhythm-control-gap` | `--nc-ui-control-gap` |
+| `--nc-rhythm-header-gap` | `--nc-ui-header-gap` |
+| `--nc-rhythm-head-margin` | `--nc-ui-head-margin` |
+| `--nc-rhythm-name-width` | `--nc-ui-name-width` |
+| `--nc-rhythm-slider-block` | `--nc-ui-slider-pitch` |
+| `--nc-rhythm-knob-size` | `--nc-ui-knob-size` |
+| `--nc-rhythm-display-height` | `--nc-ui-display-height` |
+| `--nc-rhythm-button-tracking` | `--nc-ui-button-tracking` |
+| `--nc-rhythm-button-pad-y` | `--nc-ui-button-pad-y` |
+| `--nc-rhythm-hack-weight` | `--nc-ui-fx-name-weight` |
+| `--nc-rhythm-label-leading` | `--nc-ui-label-leading` |
+| `.nc-fx` / `.nc-fx-name` (kit FX card) | `.nc-ui-fx` / `.nc-ui-fx-name` |
+| `--nc-ui-color-olive` (#6E7A3C) | `--nc-ui-color-plum` (#774A84); `--nc-meaning-movement` follows |
+
+### Removed
+| Token | Use instead |
+|---|---|
+| `--nc-ui-disabled-opacity`, `--nc-ui-control-disabled-opacity`, `--nc-rhythm-probability-dim` | colour dimming: `text-sub` / `divider`, `[data-nc-dim]` |
+| `--nc-ui-dialog-button-min` (32 px), `--nc-rhythm-menu-item-min` (32 px) | `--nc-ui-target-min` (44 px, every pointer) |
+| `--nc-ui-color-filter-green` (deprecated alias) | `--nc-ui-color-filter-accent` |
+
+### Changed (what looks different)
+- 44 px targets on every pointer, desktop too: confirm buttons, slot menu items, module header, hide/slim, select, toggle, button, the slider band, M/S and `.nc-hit` pads. Rhythm's desktop M/S rows may get taller; check this in the Rhythm migration.
+- Dimming by colour: disabled sliders and buttons, muted or soloed-out lanes (on steps fill `text-sub`), ghost steps and pads, the step editor's sheet scrim (`dialog-scrim`).
+- `color.ink-label` / `label-on-fill-dark` is ink `#242424` (was the green-tinted `#1f2421`). Surprise fills keep ASTRID's hue and saturation; 871 of 1000 fixture rolls are identical, and the rest differ only in the lightness nudge.
+
 ### Added
 - `rhythm` domain (owner: Petra): step cells, playhead, track mute and solo, probability, lane colours, bar accent, drum-filter curves, and rhythm kit geometry. Source paths are in `component.rhythm.$scope`. See `docs/domains/rhythm.md`.
 

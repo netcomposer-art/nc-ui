@@ -9,9 +9,10 @@ nc-ui is the NetComposer design language: one set of **design tokens** (colours,
 - **Three tiers.** *Base* tokens are raw values (palette, type scale, spacing scale, radii, durations). *Semantic* tokens name generic roles every app has (`module-bg-stack-2`, `readout-size`, `accent`, `label-on-fill-dark`). *Component* tokens name roles that belong to one domain, such as `--nc-synth-keybed-height` or `--nc-meaning-tension`. A module reads semantic tokens plus its own domain's component tokens, and never base tokens.
 - **One source, three outputs.** `tokens.json` is compiled into `tokens.css` (CSS custom properties), a typed `tokens.ts` / `tokens.js` (for canvas, SVG and anything that can't read CSS), and `tokens.resolved.json`.
 - **Runtime tokens.** The surprise fill: a random bright slot colour and the label colour that stays readable on it, computed by pure functions (`surpriseColor`, `labelColorFor`).
-- **No dependencies.** The build and the tests run on plain Node ≥ 20.
+- **The module kit.** Since 0.2.0 nc-ui is also the one shared UI kit for every module in every NetComposer instrument: the module card and header, a real on/off switch, the label style, the slider factory, the FX card, confirm and toast. It came from Rhythm (ASTRID-Rhythm `3001e7c`), and fx-blocks' header and switch were added to it.
+- **No runtime dependencies.** The token build runs on plain Node ≥ 20. The dist build and the component tests use two pinned devDependencies (esbuild, linkedom).
 
-Status: **0.1.0, not published.** Tokens extracted from ASTRID (psemmelhack/NetComposer-Synth) with a pixel-identical result. See [docs/token-inventory.md](docs/token-inventory.md) and the draft [docs/design-rules.md](docs/design-rules.md).
+Status: **0.2.0, not published.** Apps vendor `dist/` at a pinned commit. Tokens were extracted from ASTRID (psemmelhack/NetComposer-Synth) with a pixel-identical result. See [docs/token-inventory.md](docs/token-inventory.md) and the draft [docs/design-rules.md](docs/design-rules.md).
 
 ## Use
 
@@ -23,8 +24,6 @@ CSS (once, at the root of the app):
 .my-module { background: var(--nc-ui-module-bg-adjacent-1); padding: var(--nc-ui-module-pad); }
 .my-label  { font-size: var(--nc-ui-label-size); letter-spacing: var(--nc-ui-label-tracking); color: var(--nc-ui-text-sub); }
 ```
-
-Tailwind v4: put token values in arbitrary classes (`text-[length:var(--nc-ui-font-size-xs)]`, `tracking-[var(--nc-ui-label-tracking)]`), and point the theme at the tokens in `@theme inline` (see ASTRID's `src/index.css` for the bridge).
 
 JS / TS (canvas, SVG attributes, charts, maps):
 
@@ -45,11 +44,49 @@ const { ink, on, onInk } = slotColors(fill); // label is #242424 (ink) or white,
 Object.assign(slots.style, surpriseFillStyle(fill)); // sets --nc-ui-surprise-*
 ```
 
+## Tokens are the source of truth (S2)
+
+**Decision (nc-ui 0.2.0):** `tokens/tokens.json` is the only place a value lives. Tailwind and every other styling layer may **reference** tokens, and nothing else:
+
+- Tailwind v3: `presets: [require("@netcomposer/nc-ui/tailwind-preset")]` gives `bg-nc-accent`, `text-nc-text-sub`, `p-nc-module-pad`, `gap-nc-module-gap`, `min-h-nc-target-min` and so on. Every value is `var(--nc-ui-*)`.
+- Tailwind v4: `@import "@netcomposer/nc-ui/tailwind-theme.css";` after tailwindcss. It's an `@theme inline` block with the same mapping.
+- Don't put a literal in a Tailwind class or config (`py-10`, `text-[11px]`, `#hex`) where a token exists. Use the token's utility, or `p-[var(--nc-ui-module-pad)]`.
+
+Measured on live Synth: when the kit's token padding and Tailwind's `py-10` both set a module's padding, the token wins, because Tailwind's utilities sit in `@layer utilities` and the kit sheet is unlayered. This works today, but it's a collision, so migrations remove the Tailwind spacing rather than rely on it.
+
+## The kit
+
+There are three ways in. Each works without the others.
+
+| Entry | What you get | Costs |
+|---|---|---|
+| `@netcomposer/nc-ui/nc-ui.css` (`dist/nc-ui.css`, or `nc-ui.min.css`) | Static CSS: tokens + kit sheet + confirm. Every kit class works with **no JS**. Write the markup yourself (`section.nc.nc-module`, `.nc-field[data-nc-slider]`, `button.nc-ui-switch[role=switch]` …). | CSS: 9,410 B min+gz |
+| `@netcomposer/nc-ui/inject` (`dist/nc-ui-inject.min.js`) | **JS-injected CSS**, the way Rhythm does it: link `tokens.css` (3,711 B gz), then call `installTheme()`. It adds the kit sheet as one `<style data-nc-kit>`, once per document. Use this when the app's CSS budget is tight (Synth): the kit costs JS bytes, not CSS bytes. `defineModule` calls it for you. | JS: 12,053 B min+gz |
+| `@netcomposer/nc-ui` (`src/index.js`, or the `dist/nc-ui.min.js` bundle) | The JS components. ESM, `sideEffects: ["*.css"]`, so a bundler keeps only what you import: `createSwitch` alone is 438 B gz and `createSlider` alone is 668 B gz. Neither pulls in the kit sheet. You can also import from the subpaths `@netcomposer/nc-ui/switch` and `/slider`. | only what you import |
+
+Components:
+
+- `defineModule(def)`: the module card (`section.nc.nc-module`, shaded by `module-bg-adjacent-n` / `module-bg-stack-n`) with its header (`.nc-module-hd`, at least `target-min` high) and the −/+ hide. Pass `on` / `onToggle` to get a header switch; when it's off, the body dims by colour.
+- `createSwitch({ checked, onChange, labelledBy })`: the one on/off switch (fx-blocks' design). It's a `<button role="switch" aria-checked>` named by its title, showing the ON/OFF word and then a 28×16 track (`switch-*` tokens). Hover takes the text to `text`. The width never changes on toggle. It's at least `target-min` both ways, and transitions use `motion-press`.
+- `createSlider(spec)` / `sliderFactory`: fx-blocks' `SliderFactory` contract (`{ id, label, min, max, value, log?, format, onInput } → { el, set }`). It returns the kit's slider row (`.nc-field[data-nc-slider]`) with a `target-min` hit band on every pointer. Pass `sliderFactory` to fx-blocks' blocks.
+- The `fx` control renders the kit's FX card as `.nc-ui-fx` / `.nc-ui-fx-name`; it was `.nc-fx` before, which clashed with nc-fx's own panel. With `on` it gets fx-blocks' header row (name + switch), and with `more` a "More" disclosure.
+- `.nc-label` / `.nc-readout`: the label style (`label-size`, `label-weight`, `label-tracking`, uppercase, `text-sub`) and the readout style.
+- `confirm()`, `createToast()`, `openStepEditor()`, as before.
+
+Rules (`npm run lint`, run in CI):
+
+- **No green anywhere.** The accent is `--nc-ui-accent` → `#003153`.
+- **Dim by colour, never opacity.** A disabled, bypassed or silent part goes to `text-sub` / `divider` at full strength. Put `data-nc-dim="true"` on a row or card to dim it.
+- **44 px targets on every pointer.** Write `var(--nc-ui-target-min)`, never `44px`.
+- **Shared parts use semantic tokens only**, never another instrument's `--nc-<domain>-*`.
+
 ## Develop
 
 ```sh
-npm run build   # tokens.json → dist/tokens.{css,js,d.ts,resolved.json} + src/tokens.ts
-npm test        # outputs current, CSS/TS in sync, contrast + surprise rules, ASTRID parity
+npm ci          # devDependencies (esbuild, linkedom), pinned
+npm run build   # tokens.json → dist/tokens.* + src/tokens.ts, then dist/nc-ui.* (kit), Tailwind preset/theme
+npm run lint    # lint:ui: no green, no opacity dimming, no literal 44px, no foreign domain tokens
+npm test        # outputs current, lint, tokens, contrast, components (linkedom), dist and tree-shaking
 npm run inventory -- --astrid ../NetComposer-Synth --base <commit>   # regenerate docs/token-inventory.md
 ```
 
@@ -61,19 +98,21 @@ Generated files are committed so consumers don't need a build step. `npm test` f
 tokens/tokens.json        the single source (base, semantic, component domains, runtime, constants)
 tokens/renames.json       old → new names for roles moved into component domains (0.1.0 pre-release)
 scripts/build-tokens.mjs  compiler (plain node)
+scripts/build-dist.mjs    kit build: nc-ui.css, nc-ui.min.{css,js}, nc-ui-inject.min.js, Tailwind preset/theme
+scripts/lint-ui.mjs       lint:ui (CI)
 scripts/inventory.mjs     ASTRID usage → token map
-dist/                     generated: tokens.css, tokens.js, tokens.d.ts, tokens.resolved.json
+dist/                     generated and committed: tokens.*, nc-ui.css, nc-ui.min.*, nc-ui-inject.min.js, confirm.css, tailwind-*
 src/tokens.ts             generated typed tokens for TS consumers
 src/color.js              contrast + surprise-fill maths (pure)
-src/module/               seam: defineModule API (Petra)
-src/primitives/           seam: control primitives (Petra)
+src/module/               defineModule (module card + header)
+src/primitives/           kit sheet (kit.js), controls, switch, slider factory, confirm, toast, step editor
 test/                     node:test suites + ASTRID parity fixture
 docs/                     design rules, token inventory, renames, domains/ (rhythm stub)
 ```
 
 ## Where the tooling plugs in
 
-nc-ui 0.1.0 is the token layer only. Petra builds the parts that use it; these are the seams:
+Historical (0.1.0, the token layer only). The module API and primitives have since landed in the kit; the lint is `scripts/lint-ui.mjs`:
 
 | piece | goes in | reads | contract |
 |---|---|---|---|

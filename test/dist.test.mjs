@@ -50,7 +50,8 @@ test("tree-shaking: an app that imports one component does not get the slider fa
   assert.doesNotMatch(sw, /needs 0 < min < max/, "slider factory left out");
   assert.doesNotMatch(sw, /nc-ui-switch-track::after/, "kit sheet left out");
   assert.ok(sw.length < 2000, `createSwitch alone is ${sw.length} B`);
-  const sl = await bundle('import { sliderFactory } from "./src/primitives/slider.js"; sliderFactory;');
+  const sl = await bundle('export { sliderFactory } from "./src/primitives/slider.js";');
+  assert.match(sl, /needs 0 < min < max/);
   assert.doesNotMatch(sl, /role="?switch/);
 });
 
