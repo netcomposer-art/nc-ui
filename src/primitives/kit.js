@@ -931,7 +931,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-ui-switch[aria-checked="true"] .nc-ui-switch-track { background: ${v("accent")}; border-color: ${v("accent")}; }
 .nc-ui-switch[aria-checked="true"] .nc-ui-switch-track::after {
-  background: ${v("on-accent")};
+  background: ${v("surface-page")};
   transform: translateX(calc(${v("switch-track-width")} - ${v("switch-knob")} - 2 * ${v("switch-knob-inset")} - 2 * ${v("hairline")}));
 }
 /* A panel (Rhythm's Parameters, under the grid): a page-coloured area, full bleed to the module's sides and

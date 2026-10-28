@@ -117,3 +117,11 @@ test("defineModule: header switch only when `on` is given; off dims the body by 
   assert.equal(mod.el.querySelector(".nc-module-body").dataset.ncDim, undefined);
 });
 
+
+test("switch colours follow plan 5.1: off sub/divider, on accent with a page-coloured knob", () => {
+  assert.match(rule(".nc-ui-switch"), /color: var\(--nc-ui-text-sub\)/);
+  assert.match(rule(".nc-ui-switch-track"), /border: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\)/);
+  assert.match(rule(".nc-ui-switch-track::after"), /background: var\(--nc-ui-text-sub\)/);
+  assert.match(rule('.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track::after'), /background: var\(--nc-ui-surface-page\)/);
+  assert.match(rule(".nc-ui-switch:focus-visible"), /outline: var\(--nc-ui-focus-width\) solid var\(--nc-ui-focus-ring\)/);
+});
