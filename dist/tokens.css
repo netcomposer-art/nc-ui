@@ -315,6 +315,18 @@
   --nc-ui-dialog-button-min: var(--nc-ui-space-32);
   --nc-ui-dialog-radius: var(--nc-ui-radius-xs);
   --nc-ui-dialog-leading: var(--nc-ui-leading-readout);
+  --nc-ui-module-gap: var(--nc-ui-space-8);
+  --nc-ui-control-gap: var(--nc-ui-space-4);
+  --nc-ui-header-gap: var(--nc-ui-space-12);
+  --nc-ui-head-margin: var(--nc-ui-space-32);
+  --nc-ui-name-width: var(--nc-ui-space-48);
+  --nc-ui-slider-pitch: var(--nc-ui-space-20);
+  --nc-ui-knob-size: var(--nc-ui-space-20);
+  --nc-ui-display-height: 96px;
+  --nc-ui-button-tracking: var(--nc-ui-tracking-7);
+  --nc-ui-button-pad-y: var(--nc-ui-space-12);
+  --nc-ui-fx-name-weight: var(--nc-ui-font-weight-bold);
+  --nc-ui-label-leading: var(--nc-ui-leading-readout);
 
   /* Tier 3: component roles, one namespace per domain (a module uses only its own domain) */
   /* synth */
@@ -364,18 +376,6 @@
   --nc-rhythm-lane-2: var(--nc-ui-color-accent);
   --nc-rhythm-lane-3: var(--nc-ui-color-amber);
   --nc-rhythm-lane-4: var(--nc-ui-color-sub-0);
-  --nc-rhythm-module-gap: var(--nc-ui-space-8);
-  --nc-rhythm-control-gap: var(--nc-ui-space-4);
-  --nc-rhythm-header-gap: var(--nc-ui-space-12);
-  --nc-rhythm-head-margin: var(--nc-ui-space-32);
-  --nc-rhythm-slider-block: var(--nc-ui-space-20);
-  --nc-rhythm-name-width: var(--nc-ui-space-48);
-  --nc-rhythm-knob-size: var(--nc-ui-space-20);
-  --nc-rhythm-display-height: 96px;
-  --nc-rhythm-button-tracking: var(--nc-ui-tracking-7);
-  --nc-rhythm-button-pad-y: var(--nc-ui-space-12);
-  --nc-rhythm-hack-weight: var(--nc-ui-font-weight-bold);
-  --nc-rhythm-label-leading: var(--nc-ui-leading-readout);
   --nc-rhythm-sparkle-gap: var(--nc-ui-space-6);
   --nc-rhythm-morph-max: var(--nc-ui-space-40);
   --nc-rhythm-morph-min: var(--nc-ui-space-24);

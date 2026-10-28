@@ -32,7 +32,7 @@ html, body {
   font-family: ${v("font-ui")};
   font-size: ${v("body-size")};
   font-weight: ${v("title-weight")};
-  line-height: ${v("rhythm.label-leading")};
+  line-height: ${v("label-leading")};
 }
 button, input, select { font: inherit; color: inherit; }
 .nc [hidden] { display: none !important; }
@@ -57,10 +57,10 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   flex-wrap: nowrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: ${v("rhythm.header-gap")};
+  gap: ${v("header-gap")};
   min-width: 0;
 }
-.nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("rhythm.head-margin")}; }
+.nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin")}; }
 .nc-title {
   margin: 0;
   min-width: 0;
@@ -72,36 +72,36 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   text-overflow: ellipsis;
 }
 .nc-module[data-nc-slim] .nc-title { font-size: ${v("title-size-slim")}; }
-.nc-module-end { display: flex; align-items: baseline; gap: ${v("rhythm.header-gap")}; flex: none; }
+.nc-module-end { display: flex; align-items: baseline; gap: ${v("header-gap")}; flex: none; }
 .nc-index {
   font-family: ${v("font-readout")};
   font-size: ${v("readout-size-small")};
   color: ${v("text-sub")};
 }
 .nc-hide, .nc-slim {
-  padding: 0 ${v("rhythm.control-gap")};
+  padding: 0 ${v("control-gap")};
   border: 0;
   background: transparent;
   color: ${v("text-sub")};
   font-family: ${v("font-readout")};
   font-size: ${v("body-size")};
-  line-height: ${v("rhythm.label-leading")};
+  line-height: ${v("label-leading")};
   cursor: pointer;
   transition: none;
 }
 .nc-slim {
   display: flex;
   align-items: center;
-  gap: ${v("rhythm.module-gap")};
+  gap: ${v("module-gap")};
   flex: 1;
   min-width: 0;
-  margin-top: ${v("rhythm.module-gap")};
+  margin-top: ${v("module-gap")};
   text-align: left;
 }
 .nc-hide:hover, .nc-slim:hover { color: ${v("text")}; }
 .nc-hide:focus-visible, .nc-slim:focus-visible {
   outline: ${v("focus-width")} solid ${v("focus-ring")};
-  outline-offset: ${v("rhythm.control-gap")};
+  outline-offset: ${v("control-gap")};
 }
 .nc-slim-lines {
   font-family: ${v("font-readout")};
@@ -117,12 +117,12 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   min-width: 0;
   transition: none;
 }
-.nc-section { display: flex; flex-direction: column; gap: ${v("rhythm.module-gap")}; min-width: 0; }
+.nc-section { display: flex; flex-direction: column; gap: ${v("module-gap")}; min-width: 0; }
 .nc-row, .nc-field, .nc-controls, .nc-slot-row {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: ${v("rhythm.module-gap")};
+  gap: ${v("module-gap")};
   min-width: 0;
 }
 .nc-label {
@@ -147,29 +147,29 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
 /* One label column (the lane-name width), so the sliders in a module start together, as in ASTRID. A label is never
    cut below that column (TEMPO, SWING and DECAY stay whole), but longer text gives way on one line with an ellipsis
    instead of widening the page; the full text stays in the DOM, so the accessible name is never cut. */
-.nc-field .nc-label { flex: 0 1 auto; min-width: min(${v("rhythm.name-width")}, 100%); }
+.nc-field .nc-label { flex: 0 1 auto; min-width: min(${v("name-width")}, 100%); }
 /* A value never gives way to its label: it keeps its width (flex: none), so a long label is cut first and 0.3 stays
    0.3. Only a value that is itself longer than the row beside a name-width label is cut, with an ellipsis. The control
    beside it (range, knob, canvas, select) keeps its size. */
 .nc-field .nc-readout {
   flex: none;
   min-width: 0;
-  max-width: calc(100% - ${v("rhythm.name-width")} - ${v("rhythm.module-gap")});
+  max-width: calc(100% - ${v("name-width")} - ${v("module-gap")});
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .nc-field .nc-range, .nc-field .nc-canvas { flex: 1 1 0; min-width: 0; }
 /* A display beside a label keeps the width it has next to a column-wide label: a long label is cut, not the display. */
-.nc-field > .nc-label + .nc-canvas { min-width: calc(100% - ${v("rhythm.name-width")} - ${v("rhythm.module-gap")}); }
+.nc-field > .nc-label + .nc-canvas { min-width: calc(100% - ${v("name-width")} - ${v("module-gap")}); }
 /* ASTRID slider rows: label and value on one baseline, the slider full width under them. */
 .nc-field[data-nc-slider] {
   display: grid;
-  grid-template-columns: minmax(min(${v("rhythm.name-width")}, 100%), 1fr) auto;
+  grid-template-columns: minmax(min(${v("name-width")}, 100%), 1fr) auto;
   grid-template-areas: "label value" "range range";
   align-items: baseline;
-  column-gap: ${v("rhythm.module-gap")};
-  row-gap: ${v("rhythm.control-gap")};
-  padding-bottom: ${v("rhythm.module-gap")};
+  column-gap: ${v("module-gap")};
+  row-gap: ${v("control-gap")};
+  padding-bottom: ${v("module-gap")};
 }
 .nc-field[data-nc-slider] .nc-label { grid-area: label; min-width: 0; }
 /* In the slider grid the value column is auto (sized to the value), so the flex-row cap does not apply. */
@@ -177,14 +177,14 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
 .nc-field[data-nc-slider] .nc-range { grid-area: range; width: 100%; margin: 0; }
 /* Tap tempo: a small outlined button on the label line, between the label and the value. */
 .nc-field[data-nc-slider]:has(> .nc-tap) {
-  grid-template-columns: minmax(min(${v("rhythm.name-width")}, 100%), 1fr) auto auto;
+  grid-template-columns: minmax(min(${v("name-width")}, 100%), 1fr) auto auto;
   grid-template-areas: "label tap value" "range range range";
 }
 .nc-tap {
   grid-area: tap;
   position: relative;
   align-self: center;
-  padding: 0 ${v("rhythm.control-gap")};
+  padding: 0 ${v("control-gap")};
   border: ${v("hairline")} solid ${v("divider")};
   border-radius: ${v("slot-radius")};
   background: transparent;
@@ -193,7 +193,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   font-size: ${v("label-size")};
   font-weight: ${v("label-weight")};
   letter-spacing: ${v("label-tracking")};
-  line-height: ${v("rhythm.label-leading")};
+  line-height: ${v("label-leading")};
   text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
@@ -207,7 +207,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   content: "";
   position: absolute;
   left: 50%;
-  bottom: calc(-1 * ${v("rhythm.control-gap")});
+  bottom: calc(-1 * ${v("control-gap")});
   width: max(100%, ${v("target-min")});
   height: max(100%, ${v("target-min")});
   transform: translateX(-50%);
@@ -226,7 +226,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: ${v("rhythm.slider-block")};
+  height: ${v("slider-pitch")};
   background: transparent;
   cursor: pointer;
   transition: none;
@@ -267,7 +267,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   transition: none;
 }
 ${MODULATED_SELECTOR} { transition: none; }
-.nc-range:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("rhythm.control-gap")}; }
+.nc-range:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
 .nc-btn {
   width: 100%;
   min-width: 0;
@@ -277,9 +277,9 @@ ${MODULATED_SELECTOR} { transition: none; }
   border: ${v("hairline")} solid ${v("text")};
   background: transparent;
   color: ${v("text")};
-  padding: ${v("rhythm.button-pad-y")} 0;
+  padding: ${v("button-pad-y")} 0;
   font-size: ${v("readout-size")};
-  letter-spacing: ${v("rhythm.button-tracking")};
+  letter-spacing: ${v("button-tracking")};
   text-transform: uppercase;
   cursor: pointer;
   transition-property: color, background-color, border-color, transform;
@@ -294,7 +294,7 @@ ${MODULATED_SELECTOR} { transition: none; }
 }
 .nc-btn:focus-visible {
   outline: ${v("focus-width-strong")} solid ${v("focus-ring")};
-  outline-offset: ${v("rhythm.control-gap")};
+  outline-offset: ${v("control-gap")};
 }
 .nc-btn:disabled { opacity: ${v("disabled-opacity")}; }
 .nc-toggle {
@@ -306,7 +306,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   font-weight: ${v("label-weight")};
   letter-spacing: ${v("label-tracking")};
   text-transform: uppercase;
-  padding: ${v("rhythm.control-gap")} 0;
+  padding: ${v("control-gap")} 0;
   cursor: pointer;
   min-width: 0;
   max-width: 100%;
@@ -325,20 +325,20 @@ ${MODULATED_SELECTOR} { transition: none; }
 }
 .nc-toggle:focus-visible {
   outline: ${v("focus-width")} solid ${v("focus-ring")};
-  outline-offset: ${v("rhythm.control-gap")};
+  outline-offset: ${v("control-gap")};
 }
 .nc-seg {
   display: inline-flex;
   border: ${v("hairline")} solid ${v("divider")};
   border-radius: ${v("slot-radius")};
   overflow: hidden;
-  margin-bottom: ${v("rhythm.module-gap")};
+  margin-bottom: ${v("module-gap")};
 }
 .nc-seg > button {
   flex: 1 1 0;
   min-height: ${v("target-min")};
   min-width: ${v("target-min")};
-  padding: 0 ${v("rhythm.header-gap")};
+  padding: 0 ${v("header-gap")};
   border: 0;
   border-inline-end: ${v("hairline")} solid ${v("divider")};
   background: transparent;
@@ -368,13 +368,13 @@ ${MODULATED_SELECTOR} { transition: none; }
   border-radius: 0;
   color: ${v("text")};
   font-size: ${v("body-size")};
-  padding: ${v("rhythm.control-gap")} 0;
+  padding: ${v("control-gap")} 0;
   cursor: pointer;
   transition: none;
 }
 .nc-select:focus-visible { outline: none; border-bottom-color: ${v("accent")}; }
 /* Slots on one line, Morph under them as a slider row (label and value, then the slider). */
-.nc-slot-row { flex-direction: column; align-items: stretch; gap: ${v("rhythm.module-gap")}; }
+.nc-slot-row { flex-direction: column; align-items: stretch; gap: ${v("module-gap")}; }
 .nc-slot-line { display: flex; flex-wrap: nowrap; align-items: center; gap: ${v("slot-gap")}; min-width: 0; }
 .nc-morph-field { padding-bottom: 0; }
 .nc-snap-row {
@@ -407,7 +407,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   color: ${v("text-sub")};
   font-family: ${v("font-readout")};
   font-size: ${v("slot-font-size")};
-  line-height: ${v("rhythm.label-leading")};
+  line-height: ${v("label-leading")};
   padding: 0;
   cursor: pointer;
   transition: none;
@@ -443,10 +443,10 @@ ${MODULATED_SELECTOR} { transition: none; }
 .nc-snap[data-edited="true"]::after {
   content: "";
   position: absolute;
-  top: ${v("rhythm.control-gap")};
-  right: ${v("rhythm.control-gap")};
-  width: ${v("rhythm.control-gap")};
-  height: ${v("rhythm.control-gap")};
+  top: ${v("control-gap")};
+  right: ${v("control-gap")};
+  width: ${v("control-gap")};
+  height: ${v("control-gap")};
   border-radius: 50%;
   background: currentColor;
 }
@@ -520,7 +520,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${v("rhythm.header-gap")};
+  gap: ${v("header-gap")};
 }
 .nc-module[data-nc-slim] .nc-module-hd { display: contents; }
 .nc-module[data-nc-slim] .nc-title { order: 0; }
@@ -535,8 +535,8 @@ ${MODULATED_SELECTOR} { transition: none; }
   flex: 1 1 auto;
 }
 .nc-name {
-  flex: 0 1 ${v("rhythm.name-width")};
-  width: ${v("rhythm.name-width")};
+  flex: 0 1 ${v("name-width")};
+  width: ${v("name-width")};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -577,7 +577,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   text-decoration: underline;
   text-decoration-color: ${v("accent")};
   text-decoration-thickness: ${v("hairline")};
-  text-underline-offset: ${v("rhythm.control-gap")};
+  text-underline-offset: ${v("control-gap")};
 }
 /* On the tint, off steps and unlit M/S are paper squares (step-cell-off), as in the mockup, so their outlines stay
    crisp instead of melting into the tint. */
@@ -591,8 +591,8 @@ ${MODULATED_SELECTOR} { transition: none; }
 .nc-name[data-nc-lane="4"] { color: ${v("rhythm.lane-4")}; }
 .nc-ms-wrap {
   position: relative;
-  flex: 0 0 ${v("rhythm.slider-block")};
-  height: ${v("rhythm.slider-block")};
+  flex: 0 0 ${v("slider-pitch")};
+  height: ${v("slider-pitch")};
 }
 .nc-ms {
   position: absolute;
@@ -629,7 +629,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   flex: 1 1 ${v("rhythm.step-cell-size")};
   min-width: 0;
   aspect-ratio: 1;
-  max-height: ${v("rhythm.slider-block")};
+  max-height: ${v("slider-pitch")};
 }
 .nc-step {
   position: absolute;
@@ -679,8 +679,8 @@ ${MODULATED_SELECTOR} { transition: none; }
   position: relative;
   flex: none;
   align-self: stretch;
-  width: ${v("rhythm.control-gap")};
-  margin-inline: calc((${v("rhythm.control-gap")} + ${v("rhythm.step-gap")}) / -2);
+  width: ${v("control-gap")};
+  margin-inline: calc((${v("control-gap")} + ${v("rhythm.step-gap")}) / -2);
   min-height: 0;
   padding: 0;
   border: 0;
@@ -737,15 +737,15 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-step-tools {
   display: flex;
   align-items: stretch;
-  gap: ${v("rhythm.module-gap")};
-  margin-bottom: ${v("rhythm.module-gap")};
+  gap: ${v("module-gap")};
+  margin-bottom: ${v("module-gap")};
 }
 .nc-step-tools > .nc-seg { margin-bottom: 0; }
 /* No margin (nor the sparkle's): the row gap already sets the dice off the length handle, and 1024 needs the
    width for 18 px cells now that beats are split by beat-gap. */
 .nc-row-dice { flex: none; margin-inline: 0; }
 .nc-pads-dice svg { width: calc(${v("target-min")} / 3); height: calc(${v("target-min")} / 3); display: block; margin: auto; }
-.nc-fill { padding-inline: ${v("rhythm.module-gap")}; touch-action: none; user-select: none; -webkit-user-select: none; }
+.nc-fill { padding-inline: ${v("module-gap")}; touch-action: none; user-select: none; -webkit-user-select: none; }
 .nc-fill[aria-pressed="true"] { background: ${v("text")}; border-color: ${v("text")}; color: ${v("surface-page")}; }
 .nc-pads-step, .nc-pads-play, .nc-fill {
   flex: none;
@@ -763,7 +763,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   cursor: pointer;
   transition: none;
 }
-.nc-pads-play { padding-inline: ${v("rhythm.module-gap")}; }
+.nc-pads-play { padding-inline: ${v("module-gap")}; }
 .nc-pads-play[aria-pressed="true"] { background: ${v("text")}; border-color: ${v("text")}; color: ${v("surface-page")}; }
 .nc-pads-step:focus-visible, .nc-pads-play:focus-visible, .nc-fill:focus-visible {
   outline: ${v("focus-width")} solid ${v("focus-ring")};
@@ -781,7 +781,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   font-size: ${v("readout-size-small")};
   text-align: start;
   vertical-align: top;
-  padding: ${v("rhythm.control-gap")} ${v("rhythm.module-gap")};
+  padding: ${v("control-gap")} ${v("module-gap")};
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -825,9 +825,9 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   transition: none;
 }
 .nc-fx-name {
-  margin: 0 0 ${v("rhythm.module-gap")} 0;
+  margin: 0 0 ${v("module-gap")} 0;
   font-size: ${v("body-size")};
-  font-weight: ${v("rhythm.hack-weight")};
+  font-weight: ${v("fx-name-weight")};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -846,7 +846,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-panel-hd {
   display: flex;
   align-items: baseline;
-  gap: ${v("rhythm.module-gap")};
+  gap: ${v("module-gap")};
   min-width: 0;
 }
 .nc-panel-title {
@@ -877,7 +877,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-canvas {
   width: 100%;
-  height: ${v("rhythm.display-height")};
+  height: ${v("display-height")};
   display: block;
   background: transparent;
 }
@@ -894,8 +894,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   text-overflow: ellipsis;
 }
 .nc-knob {
-  width: ${v("rhythm.knob-size")};
-  height: ${v("rhythm.knob-size")};
+  width: ${v("knob-size")};
+  height: ${v("knob-size")};
   flex: none;
   border-radius: 50%;
   border: ${v("hairline")} solid ${v("divider")};
@@ -909,11 +909,11 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-knob-mark {
   position: absolute;
   left: 50%;
-  top: ${v("rhythm.control-gap")};
+  top: ${v("control-gap")};
   width: ${v("hairline")};
-  height: ${v("rhythm.control-gap")};
+  height: ${v("control-gap")};
   background: ${v("text")};
-  transform-origin: center ${v("rhythm.module-gap")};
+  transform-origin: center ${v("module-gap")};
   transform: rotate(calc(var(--knob-turn, 0) * 1deg));
   transition: none;
 }
@@ -927,7 +927,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: ${v("rhythm.control-gap")} ${v("rhythm.header-gap")};
+  gap: ${v("control-gap")} ${v("header-gap")};
   min-width: 0;
 }
 .nc-choice {
@@ -943,7 +943,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   color: ${v("text-sub")};
   font-family: ${v("font-readout")};
   font-size: ${v("readout-size-small")};
-  padding: ${v("rhythm.control-gap")} 0;
+  padding: ${v("control-gap")} 0;
   cursor: pointer;
   transition: none;
 }
@@ -969,9 +969,9 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: ${v("rhythm.control-gap")};
-  min-width: ${v("rhythm.name-width")};
-  padding: ${v("rhythm.control-gap")};
+  gap: ${v("control-gap")};
+  min-width: ${v("name-width")};
+  padding: ${v("control-gap")};
   background: ${v("surface-page")};
   border: ${v("hairline")} solid ${v("divider")};
   color: ${v("text")};
@@ -995,13 +995,13 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   /* A 44 px touch band drawn at ASTRID's 20 px pitch: the extra height overlaps the gaps, not the rows. */
   .nc-field[data-nc-slider] .nc-range {
     height: ${v("target-min")};
-    margin-block: calc((${v("rhythm.slider-block")} - ${v("target-min")}) / 2);
+    margin-block: calc((${v("slider-pitch")} - ${v("target-min")}) / 2);
   }
   /* M and S: each a full 44 px box (the button paints smaller inside), touching, never overlapping. */
   .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
-  .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("rhythm.module-gap")} * -1); }
+  .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
   .nc-ms {
-    inset: calc((${v("target-min")} - ${v("rhythm.slider-block")}) / 2);
+    inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
     width: auto;
     height: auto;
   }
@@ -1039,10 +1039,10 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   z-index: 4;
   display: flex;
   flex-direction: column;
-  gap: ${v("rhythm.module-gap")};
-  width: calc(${v("rhythm.name-width")} * 6);
-  max-width: calc(100vw - 2 * ${v("rhythm.module-gap")});
-  padding: ${v("rhythm.module-gap")};
+  gap: ${v("module-gap")};
+  width: calc(${v("name-width")} * 6);
+  max-width: calc(100vw - 2 * ${v("module-gap")});
+  padding: ${v("module-gap")};
   background: ${v("surface-page")};
   border: ${v("hairline")} solid ${v("divider")};
   color: ${v("text")};
@@ -1055,16 +1055,16 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-step-editor-scrim[data-placement="sheet"] { z-index: 4; background: ${v("text")}; opacity: ${v("rhythm.probability-dim")}; }
 .nc-step-editor[data-placement="sheet"] { z-index: 5; }
-.nc-step-editor-head { display: flex; align-items: center; justify-content: space-between; gap: ${v("rhythm.module-gap")}; }
+.nc-step-editor-head { display: flex; align-items: center; justify-content: space-between; gap: ${v("module-gap")}; }
 .nc-step-editor-row {
   display: flex;
   align-items: center;
-  gap: ${v("rhythm.module-gap")};
+  gap: ${v("module-gap")};
   min-height: ${v("target-min")};
 }
-.nc-step-editor-row .nc-label { flex: none; min-width: ${v("rhythm.name-width")}; }
+.nc-step-editor-row .nc-label { flex: none; min-width: ${v("name-width")}; }
 .nc-step-editor-row .nc-range { flex: 1 1 0; min-width: 0; height: ${v("target-min")}; }
-.nc-step-editor-row .nc-readout { flex: none; min-width: ${v("rhythm.name-width")}; text-align: right; }
+.nc-step-editor-row .nc-readout { flex: none; min-width: ${v("name-width")}; text-align: right; }
 .nc-step-editor-done {
   min-width: ${v("target-min")};
   min-height: ${v("target-min")};
@@ -1086,7 +1086,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   bottom: 0;
   width: auto;
   max-width: none;
-  padding-bottom: calc(${v("rhythm.module-gap")} + env(safe-area-inset-bottom));
+  padding-bottom: calc(${v("module-gap")} + env(safe-area-inset-bottom));
   border-width: ${v("hairline")} 0 0;
 }
 /* nc-ui toast (createToast): ASTRID's small dark chip with an uppercase, letter-spaced action.
@@ -1107,7 +1107,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   color: ${v("toast-text")};
   font-family: ${v("font-ui")};
   font-size: ${v("toast-font-size")};
-  line-height: ${v("rhythm.label-leading")};
+  line-height: ${v("label-leading")};
   white-space: nowrap;
   pointer-events: auto;
   opacity: 0;
@@ -1182,7 +1182,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
     flex: 1 0 100%;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: ${v("rhythm.control-gap")};
+    gap: ${v("control-gap")};
   }
   .nc-snap-wrap {
     width: 100%;
@@ -1215,7 +1215,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
     flex-direction: column;
     align-items: flex-start;
   }
-  .nc-module[data-nc-slim] .nc-slim { margin-top: ${v("rhythm.module-gap")}; }
+  .nc-module[data-nc-slim] .nc-slim { margin-top: ${v("module-gap")}; }
   .nc-module[data-nc-slim] .nc-slim-lines { white-space: normal; }
   .nc-fx {
     margin-inline: calc(${v("module-pad-x-desktop")} * -1);
@@ -1256,15 +1256,15 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
     z-index: 2;
     display: flex;
     align-items: center;
-    gap: ${v("rhythm.module-gap")};
-    padding-block: ${v("rhythm.control-gap")};
+    gap: ${v("module-gap")};
+    padding-block: ${v("control-gap")};
     background: ${v("surface-page")};
     border-bottom: ${v("hairline")} solid ${v("divider")};
   }
   .nc-pads {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: ${v("rhythm.module-gap")};
+    gap: ${v("module-gap")};
     touch-action: pan-y;
   }
   .nc-steps { pointer-events: none; }

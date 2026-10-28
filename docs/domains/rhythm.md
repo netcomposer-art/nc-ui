@@ -39,18 +39,6 @@ A Rhythm file may read generic semantic tokens (and the runtime surprise tokens)
 | `lane-2` | `color.accent` | lane colour 2, palette |
 | `lane-3` | `color.amber` | lane colour 3, palette |
 | `lane-4` | `color.sub-0` | lane colour 4, palette |
-| `module-gap` | `space.8` | default stack gap inside a rhythm module |
-| `control-gap` | `space.4` | control padding and focus offset |
-| `header-gap` | `space.12` | gap in a module header |
-| `head-margin` | `space.32` | space under an open module header |
-| `slider-block` | `space.20` | slider row block and step max height |
-| `name-width` | `space.48` | track name column |
-| `knob-size` | `space.20` | knob diameter |
-| `display-height` | `96px` | curve and meter canvas height (no spacing step equals 96) |
-| `button-tracking` | `tracking.7` | transport and ghost button tracking |
-| `button-pad-y` | `space.12` | button padding top/bottom |
-| `hack-weight` | `font-weight.bold` | stacked hack / fx card title |
-| `label-leading` | `leading.readout` | readout and slot digit line height |
 | `sparkle-gap` | `space.6` | space around the surprise button in a slot row |
 | `morph-max` | `space.40` | morph slider max width |
 | `morph-min` | `space.24` | morph slider min width, so the row stays one line at 360 |
@@ -91,3 +79,10 @@ velocityFillStyle(0.8); // → { "--nc-ui-velocity-fill": "#103E61" }, set on th
 ## Upstream
 
 This domain is applied in the Rhythm repo as `patches/nc-ui-rhythm-domain.patch` against nc-ui commit `7d9bb4e`. Astrid accepted the names on nc-ui branch `petra/rhythm-renames-filter-roles` (local, not published), so this tree stays `7d9bb4e` plus the patch. `gap` is `module-gap`, `gap-sm` is `control-gap`, `leading` is `label-leading`, and `gap-tight` (1px) is folded into `step-gap` (2px). `synth.filter-*` and `rhythm.filter-*` are the semantic roles `filter-lowpass`, `filter-highpass`, and `filter-bandpass`. `lane-1`…`lane-4` point at palette colours. Regenerating outputs is `node scripts/build-tokens.mjs` from the nc-ui root.
+
+## Moved to the shared kit (nc-ui 0.2.0)
+
+The kit's spacing and type roles are not Rhythm's: every instrument's modules use them. They are now semantic tokens
+(`--nc-ui-*`), with the same values and no aliases: `module-gap`, `control-gap`, `header-gap`, `head-margin`,
+`name-width`, `slider-pitch` (was `slider-block`), `knob-size`, `display-height`, `button-tracking`, `button-pad-y`,
+`fx-name-weight` (was `hack-weight`) and `label-leading`. See CHANGELOG.md for the full table.
