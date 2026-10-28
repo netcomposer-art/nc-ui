@@ -156,7 +156,9 @@ export function targets(root) {
   return [
     ...walk(join(root, "src"), (p) => isText(p) && !p.endsWith("tokens.ts")).map((p) => [p, "source"]),
     [join(root, "tokens/tokens.json"), "tokens"],
-    ...walk(join(root, "dist"), isText).map((p) => [p, p.includes("tokens") ? "tokens" : "build"]),
+    // Built CSS gets the green and opacity checks; built JS (token tables, the bundle) the green check, since its
+    // CSS is the same kit sheet already checked in nc-ui.css and its token tables list the base opacity scale.
+    ...walk(join(root, "dist"), isText).map((p) => [p, p.endsWith(".css") && !p.includes("tokens") ? "build" : "tokens"]),
   ];
 }
 

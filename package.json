@@ -1,6 +1,6 @@
 {
   "name": "@netcomposer/nc-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "The NetComposer design language: one set of tokens (colours, fonts, sizes, spacing, shading) that every NC app and module reads, so the UI stays in sync and a system-wide change is made in one place.",
   "license": "MIT",
@@ -53,6 +53,8 @@
     "src",
     "tokens",
     "scripts/build-tokens.mjs",
+    "scripts/build-dist.mjs",
+    "scripts/lint-ui.mjs",
     "docs",
     "README.md",
     "CHANGELOG.md",
@@ -61,10 +63,11 @@
     "AUTHORS"
   ],
   "scripts": {
-    "build": "node scripts/build-tokens.mjs",
-    "check": "node scripts/build-tokens.mjs --check",
+    "build": "node scripts/build-tokens.mjs && node scripts/build-dist.mjs",
+    "check": "node scripts/build-tokens.mjs --check && node scripts/build-dist.mjs --check",
+    "sizes": "node scripts/build-dist.mjs --check",
     "lint": "node scripts/lint-ui.mjs",
-    "test": "node scripts/build-tokens.mjs --check && node scripts/lint-ui.mjs && node --test test/*.test.mjs",
+    "test": "npm run check && node scripts/lint-ui.mjs && node --test test/*.test.mjs",
     "inventory": "node scripts/inventory.mjs"
   },
   "engines": {
