@@ -31,6 +31,15 @@ export {
 export { type ConfirmOptions, confirm, confirmCss } from "./primitives/confirm.js";
 export { type SwitchHandle, type SwitchOptions, createSwitch } from "./primitives/switch.js";
 export {
+  LOG_STEPS,
+  type SliderHandle,
+  type SliderSpec,
+  createSlider,
+  fromPosition,
+  sliderFactory,
+  toPosition,
+} from "./primitives/slider.js";
+export {
   TOAST_DURATION,
   type ToastCloseReason,
   type ToastHandle,
