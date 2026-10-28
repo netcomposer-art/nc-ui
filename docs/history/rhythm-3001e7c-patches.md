@@ -15,3 +15,9 @@ Nine Rhythm changes sit on top:
 10. Local seams, not part of the domain patch: `src/alias.js` (the only file that names a custom property, and the place `tokens/renames.json` is applied; `filterPaint` is the only caller of the filter roles), `src/module/`, `src/primitives/`. The touch patch does include those seams, because that is where the shared controls live.
 
 `src/alias.js` does not invent token values. Rhythm values come from the domain patch.
+
+## After the import (nc-ui 0.2.0)
+
+This file records Rhythm `3001e7c` as it was imported. The single-kit work in 0.2.0 changed the kit after that. The renames, removals and the move to 44 px and colour dimming are in [CHANGELOG.md](../../CHANGELOG.md) under 0.2.0.
+
+The confirm pins in item 9 no longer hold. `confirm.css` now uses `target-min` (44 px) on every pointer, in place of `dialog-button-min`, so its sha256 is `28c78fa578ec805d59b8789b02ee9b3bec07ed7e3733084827adb56dc3582d2f` (was `1d27fee…`). `confirm.js` is unchanged. Bass re-pins when it migrates.
