@@ -48,7 +48,6 @@ A Rhythm file may read generic semantic tokens (and the runtime surprise tokens)
 | `brand-weight` | `font-weight.medium` | instrument name weight |
 | `brand-sub-size` | `font-size.lg` | line under the instrument name |
 | `brand-sub-gap` | `space.8` | space between the instrument name and the line under it |
-| `menu-item-min` | `space.32` | slot menu item height on a fine pointer (a coarse pointer uses `target-min`) |
 
 Pattern slots themselves stay on the generic `slot-*` roles. Tapping a slot loads its pattern into the controls below. Tempo is not a per-slot value and is not a token here.
 

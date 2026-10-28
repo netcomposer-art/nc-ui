@@ -59,6 +59,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   justify-content: space-between;
   gap: ${v("header-gap")};
   min-width: 0;
+  min-height: ${v("target-min")};
 }
 .nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin")}; }
 .nc-title {
@@ -79,6 +80,8 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   color: ${v("text-sub")};
 }
 .nc-hide, .nc-slim {
+  min-width: ${v("target-min")};
+  min-height: ${v("target-min")};
   padding: 0 ${v("control-gap")};
   border: 0;
   background: transparent;
@@ -277,6 +280,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   border: ${v("hairline")} solid ${v("text")};
   background: transparent;
   color: ${v("text")};
+  min-height: ${v("target-min")};
   padding: ${v("button-pad-y")} 0;
   font-size: ${v("readout-size")};
   letter-spacing: ${v("button-tracking")};
@@ -307,6 +311,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   letter-spacing: ${v("label-tracking")};
   text-transform: uppercase;
   padding: ${v("control-gap")} 0;
+  min-height: ${v("target-min")};
   cursor: pointer;
   min-width: 0;
   max-width: 100%;
@@ -368,6 +373,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   border-radius: 0;
   color: ${v("text")};
   font-size: ${v("body-size")};
+  min-height: ${v("target-min")};
   padding: ${v("control-gap")} 0;
   cursor: pointer;
   transition: none;
@@ -979,7 +985,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-menu-btn {
   display: flex;
   align-items: center;
-  min-height: ${v("rhythm.menu-item-min")};
+  min-height: ${v("target-min")};
   border: 0;
   background: transparent;
   color: ${v("text")};
@@ -990,21 +996,19 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   cursor: pointer;
   transition: none;
 }
-@media (pointer: coarse) {
-  .nc-menu-btn { min-height: ${v("target-min")}; }
-  /* A 44 px touch band drawn at ASTRID's 20 px pitch: the extra height overlaps the gaps, not the rows. */
-  .nc-field[data-nc-slider] .nc-range {
-    height: ${v("target-min")};
-    margin-block: calc((${v("slider-pitch")} - ${v("target-min")}) / 2);
-  }
-  /* M and S: each a full 44 px box (the button paints smaller inside), touching, never overlapping. */
-  .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
-  .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
-  .nc-ms {
-    inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
-    width: auto;
-    height: auto;
-  }
+/* 44 px on every pointer (desktop too): a touch band drawn at the 20 px slider pitch; the extra height overlaps the
+   gaps, not the rows. */
+.nc-field[data-nc-slider] .nc-range {
+  height: ${v("target-min")};
+  margin-block: calc((${v("slider-pitch")} - ${v("target-min")}) / 2);
+}
+/* M and S: each a full target-min box (the button paints smaller inside), touching, never overlapping. */
+.nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
+.nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
+.nc-ms {
+  inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
+  width: auto;
+  height: auto;
 }
 .nc-slot-scrim {
   position: fixed;
@@ -1017,20 +1021,19 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: ${v("hairline")};
 }
+/* A hit pad grows a control that cannot grow its look to target-min, on every pointer. */
 .nc-hit {
-  display: none;
+  display: block;
   position: absolute;
   pointer-events: auto;
+  left: 50%;
+  top: 50%;
+  width: ${v("target-min")};
+  height: ${v("target-min")};
+  transform: translate(-50%, -50%);
 }
 @media (pointer: coarse) {
-  .nc-hit {
-    display: block;
-    left: 50%;
-    top: 50%;
-    width: ${v("target-min")};
-    height: ${v("target-min")};
-    transform: translate(-50%, -50%);
-  }
+  .nc-hit { width: ${v("target-min-coarse")}; height: ${v("target-min-coarse")}; }
 }
 /* nc-ui step editor (openStepEditor): long-press a step for velocity and chance. Sits under the step;
    a bottom sheet at phone widths. Rows are 44 px so the sliders are thumb-sized. */

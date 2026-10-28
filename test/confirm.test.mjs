@@ -16,7 +16,7 @@ const hex = (c) => {
 };
 
 test('confirm tokens are semantic, and the action on danger reads at AA', () => {
-  for (const name of ['on-danger', 'dialog-scrim', 'dialog-width', 'dialog-pad', 'dialog-gap', 'dialog-button-gap', 'dialog-button-min', 'dialog-radius'])
+  for (const name of ['on-danger', 'dialog-scrim', 'dialog-width', 'dialog-pad', 'dialog-gap', 'dialog-button-gap', 'dialog-radius'])
     assert.ok(semantic[name], name);
   assert.equal(semantic['on-danger'], base.color.paper);
   assert.equal(semantic['dialog-scrim'], 'rgba(36,36,36,0.35)', 'ink at 35%');
@@ -53,17 +53,18 @@ test('confirm.css: every token has a var() fallback equal to its current value',
     assert.ok(prop.startsWith('--nc-ui-') && semantic[name] != null, `${prop} is a semantic token`);
     assert.equal(fallback, semantic[name], `${prop} fallback`);
   }
-  for (const name of ['on-danger', 'dialog-scrim', 'dialog-width', 'dialog-pad', 'dialog-gap', 'dialog-button-gap', 'dialog-button-min', 'dialog-radius', 'dialog-leading'])
+  for (const name of ['on-danger', 'dialog-scrim', 'dialog-width', 'dialog-pad', 'dialog-gap', 'dialog-button-gap', 'dialog-radius', 'dialog-leading'])
     assert.ok(uses.some((u) => u.prop === `--nc-ui-${name}`), name);
 });
 
-test('confirm.css styles the dialog from semantic tokens, 44 px on a coarse pointer, no motion when reduced', () => {
+test('confirm.css styles the dialog from semantic tokens, 44 px on every pointer, no motion when reduced', () => {
   // Outside the var() fallbacks there are no literals.
   const bare = css.replace(/var\((--nc-ui-[a-z0-9-]+),(?:[^()]|\([^()]*\))*\)/g, 'var($1)');
   assert.doesNotMatch(bare, /--nc-rhythm-|\d+(?:px|rem|em)\b|#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i, 'semantic tokens only, no literals');
   assert.match(bare, /background: var\(--nc-ui-dialog-scrim\)/);
   assert.match(bare, /\[data-danger="true"\] \{[^}]*background: var\(--nc-ui-danger\);[^}]*color: var\(--nc-ui-on-danger\)/);
-  assert.match(bare, /@media \(pointer: coarse\) \{\s*button\.nc-ui-confirm-btn \{\s*min-width: var\(--nc-ui-target-min\);\s*min-height: var\(--nc-ui-target-min\);\s*\}/);
+  assert.match(bare, /button\.nc-ui-confirm-btn \{[^}]*min-height: var\(--nc-ui-target-min\);/);
+  assert.doesNotMatch(bare, /pointer: coarse/, 'no fine-pointer size: 44 px on desktop too');
   assert.match(bare, /transition: opacity var\(--nc-ui-motion-fade\)/);
   assert.match(bare, /transition: opacity var\(--nc-ui-motion-fade-out\)/);
   const reduced = bare.slice(bare.lastIndexOf('@media (prefers-reduced-motion: reduce)'));

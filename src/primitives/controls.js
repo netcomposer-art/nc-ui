@@ -54,12 +54,10 @@ function targetPx(root) {
   return value > 0 ? value : 44;
 }
 
-/** Grow each hit toward the coarse-pointer minimum, stopping at the next control's midpoint. */
+/** Grow each hit toward target-min on every pointer, stopping at the next control's midpoint. */
 export function placeHits(root) {
   if (!(root instanceof HTMLElement)) return;
-  const coarse = window.matchMedia?.("(pointer: coarse)").matches ?? false;
   const hits = [...root.querySelectorAll(".nc-hit")];
-  if (!coarse) return;
   const target = targetPx(root);
   const half = target / 2;
   const boxes = hits.map((hit) => hit.parentElement?.getBoundingClientRect() ?? null);

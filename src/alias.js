@@ -57,6 +57,7 @@ const semanticKinds = {
   "module-pad-x-slim": "length",
   "module-slim-column": "length",
   "target-min": "length",
+  "target-min-coarse": "length",
   "stack-card-pad-y": "length",
   "font-ui": "family",
   "font-readout": "family",
@@ -128,7 +129,6 @@ const semanticKinds = {
   "dialog-pad": "length",
   "dialog-gap": "length",
   "dialog-button-gap": "length",
-  "dialog-button-min": "length",
   "dialog-radius": "length",
   "dialog-leading": "other",
   "module-gap": "length",
@@ -176,7 +176,6 @@ const rhythmKinds = {
   "brand-weight": "other",
   "brand-sub-size": "length",
   "brand-sub-gap": "length",
-  "menu-item-min": "length",
 };
 
 /** @type {Record<string, TokenKind>} */

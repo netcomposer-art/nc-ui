@@ -302,6 +302,7 @@ export const semantic = {
   "focus-width": "1px",
   "focus-width-strong": "2px",
   "target-min": "44px",
+  "target-min-coarse": "44px",
   "hairline": "1px",
   "rule-strong": "2px",
   "trigger-dot": "6px",
@@ -328,7 +329,6 @@ export const semantic = {
   "dialog-pad": "16px",
   "dialog-gap": "12px",
   "dialog-button-gap": "8px",
-  "dialog-button-min": "32px",
   "dialog-radius": "2px",
   "dialog-leading": "1.35",
   "module-gap": "8px",
@@ -404,8 +404,7 @@ export const component = {
     "brand-tracking": ".28em",
     "brand-weight": "500",
     "brand-sub-size": "14px",
-    "brand-sub-gap": "8px",
-    "menu-item-min": "32px"
+    "brand-sub-gap": "8px"
   }
 };
 /** var(--nc-<domain>-*) references for inline styles, by domain. */
@@ -468,8 +467,7 @@ export const componentVars = {
     "brand-tracking": "var(--nc-rhythm-brand-tracking)",
     "brand-weight": "var(--nc-rhythm-brand-weight)",
     "brand-sub-size": "var(--nc-rhythm-brand-sub-size)",
-    "brand-sub-gap": "var(--nc-rhythm-brand-sub-gap)",
-    "menu-item-min": "var(--nc-rhythm-menu-item-min)"
+    "brand-sub-gap": "var(--nc-rhythm-brand-sub-gap)"
   }
 };
 /** What each component token points at: "group.name" (base) or "semantic.name". */
@@ -532,8 +530,7 @@ export const componentRefs = {
     "brand-tracking": "tracking.8",
     "brand-weight": "font-weight.medium",
     "brand-sub-size": "font-size.lg",
-    "brand-sub-gap": "space.8",
-    "menu-item-min": "space.32"
+    "brand-sub-gap": "space.8"
   }
 };
 /** Component domains: what each covers and which source paths belong to it (for the lint). */
@@ -662,6 +659,7 @@ export const vars = {
   "focus-width": "var(--nc-ui-focus-width)",
   "focus-width-strong": "var(--nc-ui-focus-width-strong)",
   "target-min": "var(--nc-ui-target-min)",
+  "target-min-coarse": "var(--nc-ui-target-min-coarse)",
   "hairline": "var(--nc-ui-hairline)",
   "rule-strong": "var(--nc-ui-rule-strong)",
   "trigger-dot": "var(--nc-ui-trigger-dot)",
@@ -688,7 +686,6 @@ export const vars = {
   "dialog-pad": "var(--nc-ui-dialog-pad)",
   "dialog-gap": "var(--nc-ui-dialog-gap)",
   "dialog-button-gap": "var(--nc-ui-dialog-button-gap)",
-  "dialog-button-min": "var(--nc-ui-dialog-button-min)",
   "dialog-radius": "var(--nc-ui-dialog-radius)",
   "dialog-leading": "var(--nc-ui-dialog-leading)",
   "module-gap": "var(--nc-ui-module-gap)",
@@ -795,7 +792,8 @@ export const refs = {
   "disabled-opacity": "opacity.35",
   "focus-width": "border.hairline",
   "focus-width-strong": "border.thick",
-  "target-min": null,
+  "target-min": "space.44",
+  "target-min-coarse": "space.44",
   "hairline": "border.hairline",
   "rule-strong": "border.thick",
   "trigger-dot": null,
@@ -822,7 +820,6 @@ export const refs = {
   "dialog-pad": "space.16",
   "dialog-gap": "space.12",
   "dialog-button-gap": "space.8",
-  "dialog-button-min": "space.32",
   "dialog-radius": "radius.xs",
   "dialog-leading": "leading.readout",
   "module-gap": "space.8",

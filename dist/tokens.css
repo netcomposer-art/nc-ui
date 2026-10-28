@@ -285,7 +285,8 @@
   --nc-ui-disabled-opacity: var(--nc-ui-opacity-35);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);
   --nc-ui-focus-width-strong: var(--nc-ui-border-thick);
-  --nc-ui-target-min: 44px;
+  --nc-ui-target-min: var(--nc-ui-space-44);
+  --nc-ui-target-min-coarse: var(--nc-ui-space-44);
   --nc-ui-hairline: var(--nc-ui-border-hairline);
   --nc-ui-rule-strong: var(--nc-ui-border-thick);
   --nc-ui-trigger-dot: 6px;
@@ -312,7 +313,6 @@
   --nc-ui-dialog-pad: var(--nc-ui-space-16);
   --nc-ui-dialog-gap: var(--nc-ui-space-12);
   --nc-ui-dialog-button-gap: var(--nc-ui-space-8);
-  --nc-ui-dialog-button-min: var(--nc-ui-space-32);
   --nc-ui-dialog-radius: var(--nc-ui-radius-xs);
   --nc-ui-dialog-leading: var(--nc-ui-leading-readout);
   --nc-ui-module-gap: var(--nc-ui-space-8);
@@ -385,7 +385,6 @@
   --nc-rhythm-brand-weight: var(--nc-ui-font-weight-medium);
   --nc-rhythm-brand-sub-size: var(--nc-ui-font-size-lg);
   --nc-rhythm-brand-sub-gap: var(--nc-ui-space-8);
-  --nc-rhythm-menu-item-min: var(--nc-ui-space-32);
 
   /* Runtime: defaults; code may override them on an element (see src/color.js) */
   --nc-ui-surprise-fill: var(--nc-ui-color-surf);

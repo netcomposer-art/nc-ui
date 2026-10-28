@@ -35,8 +35,8 @@ if (ok) reset();
   returned, layer faded out). A signal that is already aborted resolves `false` without opening.
 - The root's other children are `inert` while it is open (ones that were already inert stay inert). Keys are caught on
   the window in the capture phase, so page shortcuts (Space, digits) do not fire under it.
-- Pointer events and click, so touch, pen and mouse behave the same. Buttons are `dialog-button-min` tall on a fine
-  pointer and `target-min` (44 px) both ways on a coarse one.
+- Pointer events and click, so touch, pen and mouse behave the same. Buttons are at least `target-min` (44 px) tall on
+  every pointer, desktop included.
 - The layer fades in with `motion-fade` and out with `motion-fade-out`; the box scales from .96 with `motion-slide`.
   `prefers-reduced-motion: reduce` turns all of it off. It answers at once; the fade-out only removes the layer.
 - Self-contained: no dependencies and no `kit.js`. Vendor `src/primitives/confirm.js` and `confirm.css` side by side,
@@ -46,6 +46,6 @@ if (ok) reset();
   the token's current value as its fallback, so the dialog looks the same in an app without nc-ui tokens, and an app
   that has the tokens (Rhythm) still themes it. `test/confirm.test.mjs` checks every fallback against `dist/tokens.js`
   and the `check:theme` lint rejects a fallback that differs. Styles use semantic tokens only: `dialog-scrim` (ink at
-  35%), `dialog-width` (320px), `dialog-pad`, `dialog-gap`, `dialog-button-gap`, `dialog-button-min`, `dialog-radius`, `dialog-leading` (`leading.readout`, 1.35),
+  35%), `dialog-width` (320px), `dialog-pad`, `dialog-gap`, `dialog-button-gap`, `dialog-radius`, `dialog-leading` (`leading.readout`, 1.35),
   `on-danger` (paper; 5.27:1 on `danger`), plus `surface-page`, `text`, `text-sub`, `divider`, `danger`,
   `focus-ring`, `focus-width-strong`, `target-min`, `title-size-slim`, `body-size`, `readout-size`, `label-tracking`.

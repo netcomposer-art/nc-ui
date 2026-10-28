@@ -65,7 +65,7 @@
 button.nc-ui-confirm-btn {
   flex: 1 1 0;
   min-width: 0;
-  min-height: var(--nc-ui-dialog-button-min, 32px);
+  min-height: var(--nc-ui-target-min, 44px);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -92,12 +92,6 @@ button.nc-ui-confirm-btn[data-danger="true"] {
 button.nc-ui-confirm-btn:focus {
   outline: var(--nc-ui-focus-width-strong, 2px) solid var(--nc-ui-focus-ring, #003153);
   outline-offset: var(--nc-ui-focus-width-strong, 2px);
-}
-@media (pointer: coarse) {
-  button.nc-ui-confirm-btn {
-    min-width: var(--nc-ui-target-min, 44px);
-    min-height: var(--nc-ui-target-min, 44px);
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-ui-confirm-layer,

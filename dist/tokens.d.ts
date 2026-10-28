@@ -300,6 +300,7 @@ export declare const semantic: {
   readonly "focus-width": "1px";
   readonly "focus-width-strong": "2px";
   readonly "target-min": "44px";
+  readonly "target-min-coarse": "44px";
   readonly "hairline": "1px";
   readonly "rule-strong": "2px";
   readonly "trigger-dot": "6px";
@@ -326,7 +327,6 @@ export declare const semantic: {
   readonly "dialog-pad": "16px";
   readonly "dialog-gap": "12px";
   readonly "dialog-button-gap": "8px";
-  readonly "dialog-button-min": "32px";
   readonly "dialog-radius": "2px";
   readonly "dialog-leading": "1.35";
   readonly "module-gap": "8px";
@@ -402,7 +402,6 @@ export declare const component: {
     readonly "brand-weight": "500";
     readonly "brand-sub-size": "14px";
     readonly "brand-sub-gap": "8px";
-    readonly "menu-item-min": "32px";
   };
 };
 export declare const componentVars: {
@@ -465,7 +464,6 @@ export declare const componentVars: {
     readonly "brand-weight": "var(--nc-rhythm-brand-weight)";
     readonly "brand-sub-size": "var(--nc-rhythm-brand-sub-size)";
     readonly "brand-sub-gap": "var(--nc-rhythm-brand-sub-gap)";
-    readonly "menu-item-min": "var(--nc-rhythm-menu-item-min)";
   };
 };
 export declare const componentRefs: {
@@ -528,7 +526,6 @@ export declare const componentRefs: {
     readonly "brand-weight": "font-weight.medium";
     readonly "brand-sub-size": "font-size.lg";
     readonly "brand-sub-gap": "space.8";
-    readonly "menu-item-min": "space.32";
   };
 };
 export declare const domains: {
@@ -642,6 +639,7 @@ export declare const vars: {
   readonly "focus-width": "var(--nc-ui-focus-width)";
   readonly "focus-width-strong": "var(--nc-ui-focus-width-strong)";
   readonly "target-min": "var(--nc-ui-target-min)";
+  readonly "target-min-coarse": "var(--nc-ui-target-min-coarse)";
   readonly "hairline": "var(--nc-ui-hairline)";
   readonly "rule-strong": "var(--nc-ui-rule-strong)";
   readonly "trigger-dot": "var(--nc-ui-trigger-dot)";
@@ -668,7 +666,6 @@ export declare const vars: {
   readonly "dialog-pad": "var(--nc-ui-dialog-pad)";
   readonly "dialog-gap": "var(--nc-ui-dialog-gap)";
   readonly "dialog-button-gap": "var(--nc-ui-dialog-button-gap)";
-  readonly "dialog-button-min": "var(--nc-ui-dialog-button-min)";
   readonly "dialog-radius": "var(--nc-ui-dialog-radius)";
   readonly "dialog-leading": "var(--nc-ui-dialog-leading)";
   readonly "module-gap": "var(--nc-ui-module-gap)";
@@ -774,7 +771,8 @@ export declare const refs: {
   readonly "disabled-opacity": "opacity.35";
   readonly "focus-width": "border.hairline";
   readonly "focus-width-strong": "border.thick";
-  readonly "target-min": null;
+  readonly "target-min": "space.44";
+  readonly "target-min-coarse": "space.44";
   readonly "hairline": "border.hairline";
   readonly "rule-strong": "border.thick";
   readonly "trigger-dot": null;
@@ -801,7 +799,6 @@ export declare const refs: {
   readonly "dialog-pad": "space.16";
   readonly "dialog-gap": "space.12";
   readonly "dialog-button-gap": "space.8";
-  readonly "dialog-button-min": "space.32";
   readonly "dialog-radius": "radius.xs";
   readonly "dialog-leading": "leading.readout";
   readonly "module-gap": "space.8";
