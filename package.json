@@ -52,7 +52,7 @@
   "scripts": {
     "build": "node scripts/build-tokens.mjs",
     "check": "node scripts/build-tokens.mjs --check",
-    "test": "node scripts/build-tokens.mjs --check && node --test test/",
+    "test": "node scripts/build-tokens.mjs --check && node --test test/*.test.mjs",
     "inventory": "node scripts/inventory.mjs"
   },
   "engines": {
