@@ -87,7 +87,7 @@ function sectionHeading(wrap, section) {
   if (!section.title) return;
   if (!section.panel) {
     const heading = document.createElement("h3");
-    heading.className = "nc-fx-name";
+    heading.className = "nc-ui-fx-name";
     heading.textContent = section.title;
     wrap.append(heading);
     return;

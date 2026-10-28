@@ -1316,11 +1316,11 @@ function renderCanvas(control) {
 
 function renderFx(control, lookup) {
   const card = document.createElement("div");
-  card.className = "nc-fx";
+  card.className = "nc-ui-fx";
   card.dataset.ncId = control.id;
   card.dataset.ncDepth = String(control.depth);
   const name = document.createElement("h3");
-  name.className = "nc-fx-name";
+  name.className = "nc-ui-fx-name";
   name.textContent = control.title;
   card.append(name);
   for (const child of control.controls) card.append(renderControl(child, lookup));

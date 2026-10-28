@@ -5,7 +5,7 @@ import { MODULATED_SELECTOR } from "../modulated.js";
 export function kitCss() {
   const stack = (n) => `
     .nc-module[data-nc-place="stack"][data-nc-shade="${n}"],
-    .nc-fx[data-nc-depth="${n}"] {
+    .nc-ui-fx[data-nc-depth="${n}"] {
       background: ${v(`module-bg-stack-${n}`)};
       ${prop("text-sub")}: ${v(`module-sub-stack-${n}`)};
       ${prop("divider")}: ${v(`module-div-stack-${n}`)};
@@ -241,7 +241,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
 .nc-range:disabled::-webkit-slider-thumb { background: ${v("text-sub")}; }
 .nc-range:disabled::-moz-range-thumb { background: ${v("text-sub")}; }
 .nc-range:disabled::-moz-range-progress { background: ${v("text-sub")}; }
-[data-nc-dim="true"] .nc-label, [data-nc-dim="true"] .nc-readout, [data-nc-dim="true"] .nc-fx-name,
+[data-nc-dim="true"] .nc-label, [data-nc-dim="true"] .nc-readout, [data-nc-dim="true"] .nc-ui-fx-name,
 [data-nc-dim="true"] .nc-select { color: ${v("text-sub")}; }
 [data-nc-dim="true"] .nc-range { accent-color: ${v("text-sub")}; }
 [data-nc-dim="true"] .nc-range::-webkit-slider-thumb { background: ${v("text-sub")}; }
@@ -838,13 +838,13 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   outline-width: ${v("playhead-width")};
   outline-offset: ${v("playhead-offset")};
 }
-.nc-fx {
+.nc-ui-fx {
   margin-inline: calc(${v("module-pad")} * -1);
   padding: ${v("stack-card-pad-y")} ${v("module-pad")};
   min-width: 0;
   transition: none;
 }
-.nc-fx-name {
+.nc-ui-fx-name {
   margin: 0 0 ${v("module-gap")} 0;
   font-size: ${v("body-size")};
   font-weight: ${v("fx-name-weight")};
@@ -1233,7 +1233,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   }
   .nc-module[data-nc-slim] .nc-slim { margin-top: ${v("module-gap")}; }
   .nc-module[data-nc-slim] .nc-slim-lines { white-space: normal; }
-  .nc-fx {
+  .nc-ui-fx {
     margin-inline: calc(${v("module-pad-x-desktop")} * -1);
     padding-inline: ${v("module-pad-x-desktop")};
   }
