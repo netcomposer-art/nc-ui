@@ -50,11 +50,15 @@
     "./nc-ui.css": "./dist/nc-ui.css",
     "./nc-ui.fallback.css": "./dist/nc-ui.fallback.css",
     "./inject": "./dist/nc-ui-inject.min.js",
-    "./vite": "./vite.js"
+    "./vite": {
+      "types": "./vite.d.ts",
+      "import": "./vite.js"
+    }
   },
   "files": [
     "dist",
     "vite.js",
+    "vite.d.ts",
     "src",
     "tokens",
     "scripts/build-tokens.mjs",
