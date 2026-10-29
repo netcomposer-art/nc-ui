@@ -6,6 +6,8 @@
 //   dist/nc-ui-inject.min.js  the JS-injected CSS entry alone: installTheme() puts the kit sheet in a <style> at
 //                         runtime (as Rhythm does), so the kit costs JS bytes, not CSS bytes. Link tokens.css with it.
 //   dist/confirm.css      copy of src/primitives/confirm.css (self-contained)
+//   dist/nc-ui.fallback.css  nc-ui.css inside @layer nc-ui-fallback: the copy an app bundles, so the live
+//                         /nc-ui/nc-ui.css (unlayered, served by the site) always wins over it
 //   dist/tailwind-preset.js   Tailwind v3 preset: theme keys → var(--nc-ui-*) only (S2: tokens are the source)
 //   dist/tailwind-theme.css   Tailwind v4 @theme inline block, the same mapping
 // `--check` builds in memory and fails if a committed file differs. `--sizes` prints min+gz sizes.
@@ -99,6 +101,7 @@ export async function outputs() {
   return {
     "dist/nc-ui-inject.min.js": inject.outputFiles[0].text,
     "dist/nc-ui.css": css,
+    "dist/nc-ui.fallback.css": `${HEADER}@layer nc-ui-fallback {\n${css.slice(HEADER.length)}\n}\n`,
     "dist/nc-ui.min.css": minCss,
     "dist/nc-ui.min.js": js.outputFiles[0].text,
     "dist/confirm.css": confirm,

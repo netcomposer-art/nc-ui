@@ -46,10 +46,15 @@
     "./color": {
       "types": "./src/color.d.ts",
       "import": "./src/color.js"
-    }
+    },
+    "./nc-ui.css": "./dist/nc-ui.css",
+    "./nc-ui.fallback.css": "./dist/nc-ui.fallback.css",
+    "./inject": "./dist/nc-ui-inject.min.js",
+    "./vite": "./vite.js"
   },
   "files": [
     "dist",
+    "vite.js",
     "src",
     "tokens",
     "scripts/build-tokens.mjs",
