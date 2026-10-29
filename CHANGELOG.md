@@ -13,7 +13,11 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 - `.nc-seg`: ASTRID's underline tabs (hairline row, accent `tab-mark` under the chosen tab), replacing the filled black segmented bar. Radio semantics unchanged.
 - Controls drawn at ASTRID's sizes; the 44 px target is an invisible pad on a coarse pointer (`target-min`). Toggles and on/off are regular weight (`control-weight`).
 - Page frame: `.nc-page`, `.nc-page-hd`, `.nc-page-body` and the `page-*` tokens (ASTRID's 24/48/64 px gutters, header divider, module inset).
-- New tokens: `control-weight`, `tab-size`, `tab-pad-y`, `tab-mark`, `select-pad-end`, `page-*`, base `space-64`.
+- Live kit: `@netcomposer/nc-ui/vite` (`ncUiLive`), `dist/nc-ui.fallback.css`, `installTheme()` in `@layer nc-ui-fallback` (docs/live.md).
+- `scripts/guard-app.mjs` (`nc-ui-guard`): per-app ratchet on raw colours, fonts, px and Tailwind arbitrary values.
+- Motion tokens in ASTRID's shape: `motion-fade`, `-fade-out`, `-slide` are durations; `-easing` tokens beside them; press/thumb/meter motion roles.
+- Fixes from the Bass migration: FX/stacked cards set `slider-track` from their divider (the track vanished); tablets (769-1023 px) get the 2 x 5 slot grid; `.nc-page-title`, `.nc-page-sub`, `.nc-page-actions`, `.nc-page-action` (ASTRID's header).
+- New tokens: `page-title-size`, `page-title-tracking`, `page-sub-size`, `page-sub-gap`, `page-action-gap`, `control-weight`, `tab-size`, `tab-pad-y`, `tab-mark`, `select-pad-end`, `page-*`, base `space-64`.
 ## [Unreleased]
 
 ## [0.2.0] - unreleased (not published): nc-ui is the shared module kit

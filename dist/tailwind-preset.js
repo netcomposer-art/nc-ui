@@ -78,6 +78,8 @@ const theme = {
     "nc-tab-pad-y": "var(--nc-ui-tab-pad-y)",
     "nc-tab-mark": "var(--nc-ui-tab-mark)",
     "nc-select-pad-end": "var(--nc-ui-select-pad-end)",
+    "nc-page-sub-gap": "var(--nc-ui-page-sub-gap)",
+    "nc-page-action-gap": "var(--nc-ui-page-action-gap)",
     "nc-page-pad-x": "var(--nc-ui-page-pad-x)",
     "nc-page-pad-x-md": "var(--nc-ui-page-pad-x-md)",
     "nc-page-pad-x-xl": "var(--nc-ui-page-pad-x-xl)",
@@ -124,6 +126,8 @@ const theme = {
     "nc-sparkle-size": "var(--nc-ui-sparkle-size)",
     "nc-sparkle-icon-size": "var(--nc-ui-sparkle-icon-size)",
     "nc-tab-size": "var(--nc-ui-tab-size)",
+    "nc-page-title-size": "var(--nc-ui-page-title-size)",
+    "nc-page-sub-size": "var(--nc-ui-page-sub-size)",
     "nc-toast-font-size": "var(--nc-ui-toast-font-size)",
     "nc-knob-size": "var(--nc-ui-knob-size)"
   },
@@ -136,6 +140,7 @@ const theme = {
   "letterSpacing": {
     "nc-title-tracking": "var(--nc-ui-title-tracking)",
     "nc-label-tracking": "var(--nc-ui-label-tracking)",
+    "nc-page-title-tracking": "var(--nc-ui-page-title-tracking)",
     "nc-button-tracking": "var(--nc-ui-button-tracking)"
   },
   "lineHeight": {

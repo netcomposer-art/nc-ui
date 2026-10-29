@@ -73,6 +73,8 @@
   --spacing-nc-tab-pad-y: var(--nc-ui-tab-pad-y);
   --spacing-nc-tab-mark: var(--nc-ui-tab-mark);
   --spacing-nc-select-pad-end: var(--nc-ui-select-pad-end);
+  --spacing-nc-page-sub-gap: var(--nc-ui-page-sub-gap);
+  --spacing-nc-page-action-gap: var(--nc-ui-page-action-gap);
   --spacing-nc-page-pad-x: var(--nc-ui-page-pad-x);
   --spacing-nc-page-pad-x-md: var(--nc-ui-page-pad-x-md);
   --spacing-nc-page-pad-x-xl: var(--nc-ui-page-pad-x-xl);
@@ -115,6 +117,8 @@
   --text-nc-sparkle-size: var(--nc-ui-sparkle-size);
   --text-nc-sparkle-icon-size: var(--nc-ui-sparkle-icon-size);
   --text-nc-tab-size: var(--nc-ui-tab-size);
+  --text-nc-page-title-size: var(--nc-ui-page-title-size);
+  --text-nc-page-sub-size: var(--nc-ui-page-sub-size);
   --text-nc-toast-font-size: var(--nc-ui-toast-font-size);
   --text-nc-knob-size: var(--nc-ui-knob-size);
   --font-weight-nc-title-weight: var(--nc-ui-title-weight);
@@ -123,6 +127,7 @@
   --font-weight-nc-fx-name-weight: var(--nc-ui-fx-name-weight);
   --tracking-nc-title-tracking: var(--nc-ui-title-tracking);
   --tracking-nc-label-tracking: var(--nc-ui-label-tracking);
+  --tracking-nc-page-title-tracking: var(--nc-ui-page-title-tracking);
   --tracking-nc-button-tracking: var(--nc-ui-button-tracking);
   --leading-nc-dialog-leading: var(--nc-ui-dialog-leading);
   --leading-nc-label-leading: var(--nc-ui-label-leading);

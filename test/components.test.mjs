@@ -144,3 +144,19 @@ test("switch colours follow plan 5.1: off sub, on text with an accent hairline",
   assert.match(on, /border-bottom-color: var\(--nc-ui-accent\)/);
   assert.match(rule(".nc-ui-switch:focus-visible"), /outline: var\(--nc-ui-focus-width\) solid var\(--nc-ui-focus-ring\)/);
 });
+
+test("FX and stacked cards draw the slider track in their own divider shade, so it never vanishes", () => {
+  for (const n of [1, 2, 3, 4])
+    assert.match(css, new RegExp(`data-nc-depth="${n}"\\] \\{[^}]*--nc-ui-slider-track: var\\(--nc-ui-module-div-stack-${n}\\)`));
+});
+
+test("tablets (769-1023 px) get the same 2 x 5 slot grid as phones and desktop", () => {
+  assert.match(css, /@media \(min-width: 769px\) and \(max-width: 1023px\) \{\s*\.nc-slot-line \{ flex-wrap: wrap; \}\s*\.nc-snap-row \{[^}]*repeat\(5, minmax\(0, 1fr\)\)/);
+});
+
+test("page header: ASTRID's title, sub line and text actions", () => {
+  assert.match(rule(".nc-page-title"), /font-size: var\(--nc-ui-page-title-size\)/);
+  assert.match(rule(".nc-page-title"), /letter-spacing: var\(--nc-ui-page-title-tracking\)/);
+  assert.match(rule(".nc-page-action"), /color: var\(--nc-ui-text-sub\)/);
+  assert.match(css, /:is\([^)]*\.nc-page-action[^)]*\)::before/);
+});

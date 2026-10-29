@@ -346,6 +346,11 @@
   --nc-ui-tab-pad-y: var(--nc-ui-space-6);
   --nc-ui-tab-mark: var(--nc-ui-border-thick);
   --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-page-title-size: var(--nc-ui-font-size-xl);
+  --nc-ui-page-title-tracking: var(--nc-ui-tracking-8);
+  --nc-ui-page-sub-size: var(--nc-ui-font-size-lg);
+  --nc-ui-page-sub-gap: var(--nc-ui-space-8);
+  --nc-ui-page-action-gap: var(--nc-ui-space-24);
   --nc-ui-page-pad-x: var(--nc-ui-space-24);
   --nc-ui-page-pad-x-md: var(--nc-ui-space-48);
   --nc-ui-page-pad-x-xl: var(--nc-ui-space-64);

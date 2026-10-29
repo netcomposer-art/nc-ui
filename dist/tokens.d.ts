@@ -361,6 +361,11 @@ export declare const semantic: {
   readonly "tab-pad-y": "6px";
   readonly "tab-mark": "2px";
   readonly "select-pad-end": "18px";
+  readonly "page-title-size": "15px";
+  readonly "page-title-tracking": ".28em";
+  readonly "page-sub-size": "14px";
+  readonly "page-sub-gap": "8px";
+  readonly "page-action-gap": "24px";
   readonly "page-pad-x": "24px";
   readonly "page-pad-x-md": "48px";
   readonly "page-pad-x-xl": "64px";
@@ -719,6 +724,11 @@ export declare const vars: {
   readonly "tab-pad-y": "var(--nc-ui-tab-pad-y)";
   readonly "tab-mark": "var(--nc-ui-tab-mark)";
   readonly "select-pad-end": "var(--nc-ui-select-pad-end)";
+  readonly "page-title-size": "var(--nc-ui-page-title-size)";
+  readonly "page-title-tracking": "var(--nc-ui-page-title-tracking)";
+  readonly "page-sub-size": "var(--nc-ui-page-sub-size)";
+  readonly "page-sub-gap": "var(--nc-ui-page-sub-gap)";
+  readonly "page-action-gap": "var(--nc-ui-page-action-gap)";
   readonly "page-pad-x": "var(--nc-ui-page-pad-x)";
   readonly "page-pad-x-md": "var(--nc-ui-page-pad-x-md)";
   readonly "page-pad-x-xl": "var(--nc-ui-page-pad-x-xl)";
@@ -874,6 +884,11 @@ export declare const refs: {
   readonly "tab-pad-y": "space.6";
   readonly "tab-mark": "border.thick";
   readonly "select-pad-end": "space.18";
+  readonly "page-title-size": "font-size.xl";
+  readonly "page-title-tracking": "tracking.8";
+  readonly "page-sub-size": "font-size.lg";
+  readonly "page-sub-gap": "space.8";
+  readonly "page-action-gap": "space.24";
   readonly "page-pad-x": "space.24";
   readonly "page-pad-x-md": "space.48";
   readonly "page-pad-x-xl": "space.64";

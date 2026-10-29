@@ -348,6 +348,11 @@
   --nc-ui-tab-pad-y: var(--nc-ui-space-6);
   --nc-ui-tab-mark: var(--nc-ui-border-thick);
   --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-page-title-size: var(--nc-ui-font-size-xl);
+  --nc-ui-page-title-tracking: var(--nc-ui-tracking-8);
+  --nc-ui-page-sub-size: var(--nc-ui-font-size-lg);
+  --nc-ui-page-sub-gap: var(--nc-ui-space-8);
+  --nc-ui-page-action-gap: var(--nc-ui-space-24);
   --nc-ui-page-pad-x: var(--nc-ui-space-24);
   --nc-ui-page-pad-x-md: var(--nc-ui-space-48);
   --nc-ui-page-pad-x-xl: var(--nc-ui-space-64);
@@ -444,14 +449,43 @@ button, input, select { font: inherit; color: inherit; }
 }
 .nc-page-hd {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--nc-ui-header-gap);
+  flex-direction: column;
+  gap: var(--nc-ui-page-action-gap);
   min-width: 0;
   padding-bottom: var(--nc-ui-page-head-gap);
   border-bottom: var(--nc-ui-hairline) solid var(--nc-ui-divider);
 }
 .nc-page-body { min-width: 0; padding-top: var(--nc-ui-page-body-gap); }
+/* Page title (ASTRID: "ASTRID / SYNTH / 01"), the line under it, and the header's text actions (Save, Load, Panic). */
+.nc-page-title {
+  margin: 0;
+  font-size: var(--nc-ui-page-title-size);
+  font-weight: var(--nc-ui-label-weight);
+  letter-spacing: var(--nc-ui-page-title-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nc-page-sub { margin: var(--nc-ui-page-sub-gap) 0 0; font-size: var(--nc-ui-page-sub-size); color: var(--nc-ui-text-sub); }
+.nc-page-title .nc-page-sep { color: var(--nc-ui-text-sub); }
+.nc-page-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--nc-ui-control-gap) var(--nc-ui-page-action-gap); min-width: 0; }
+.nc-page-action {
+  border: 0;
+  border-bottom: var(--nc-ui-hairline) solid transparent;
+  background: transparent;
+  padding: 0 0 var(--nc-ui-control-gap);
+  color: var(--nc-ui-text-sub);
+  font-size: var(--nc-ui-label-size);
+  font-weight: var(--nc-ui-control-weight);
+  letter-spacing: var(--nc-ui-label-tracking);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition-property: color, border-color;
+  transition-duration: var(--nc-ui-transition-feedback);
+}
+.nc-page-action:hover { color: var(--nc-ui-text); border-bottom-color: var(--nc-ui-text); }
+.nc-page-action:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-control-gap); }
 .nc-module {
   background: var(--nc-ui-module-bg-adjacent-1);
   color: var(--nc-ui-text);
@@ -474,6 +508,7 @@ button, input, select { font: inherit; color: inherit; }
       background: var(--nc-ui-module-bg-stack-1);
       --nc-ui-text-sub: var(--nc-ui-module-sub-stack-1);
       --nc-ui-divider: var(--nc-ui-module-div-stack-1);
+      --nc-ui-slider-track: var(--nc-ui-module-div-stack-1);
     }
 
     .nc-module[data-nc-place="stack"][data-nc-shade="2"],
@@ -481,6 +516,7 @@ button, input, select { font: inherit; color: inherit; }
       background: var(--nc-ui-module-bg-stack-2);
       --nc-ui-text-sub: var(--nc-ui-module-sub-stack-2);
       --nc-ui-divider: var(--nc-ui-module-div-stack-2);
+      --nc-ui-slider-track: var(--nc-ui-module-div-stack-2);
     }
 
     .nc-module[data-nc-place="stack"][data-nc-shade="3"],
@@ -488,6 +524,7 @@ button, input, select { font: inherit; color: inherit; }
       background: var(--nc-ui-module-bg-stack-3);
       --nc-ui-text-sub: var(--nc-ui-module-sub-stack-3);
       --nc-ui-divider: var(--nc-ui-module-div-stack-3);
+      --nc-ui-slider-track: var(--nc-ui-module-div-stack-3);
     }
 
     .nc-module[data-nc-place="stack"][data-nc-shade="4"],
@@ -495,6 +532,7 @@ button, input, select { font: inherit; color: inherit; }
       background: var(--nc-ui-module-bg-stack-4);
       --nc-ui-text-sub: var(--nc-ui-module-sub-stack-4);
       --nc-ui-divider: var(--nc-ui-module-div-stack-4);
+      --nc-ui-slider-track: var(--nc-ui-module-div-stack-4);
     }
 .nc-module[data-nc-shade="1"] .nc-section[data-nc-inset="true"] { background: var(--nc-ui-module-bg-adjacent-2); }
 .nc-module[data-nc-shade="2"] .nc-section[data-nc-inset="true"] { background: var(--nc-ui-module-bg-adjacent-3); }
@@ -1367,8 +1405,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 /* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
    centred on it. A select cannot carry a pad, so it grows itself. */
 @media (pointer: coarse) {
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary) { position: relative; }
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary)::before {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action)::before {
     content: "";
     position: absolute;
     left: 50%;
@@ -1708,7 +1746,20 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 }
 @media (min-width: 768px) {
   .nc-page { padding: var(--nc-ui-page-pad-y-md) var(--nc-ui-page-pad-x-md); }
-  .nc-page-hd { padding-bottom: var(--nc-ui-page-head-gap-md); }
+  .nc-page-hd { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: var(--nc-ui-page-head-gap-md); }
+}
+/* Tablets (769-1023 px): the same 2 x 5 slot grid as phones and desktop; one row of 10 drew 14 px slots here. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .nc-slot-line { flex-wrap: wrap; }
+  .nc-snap-row {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--nc-ui-control-gap);
+  }
+  .nc-snap-wrap { width: 100%; max-width: none; height: var(--nc-ui-target-min); }
+  .nc-snap { font-size: var(--nc-ui-readout-size); }
+  .nc-snap-wrap > .nc-hit { display: none; }
 }
 @media (min-width: 1024px) {
   .nc-page-body { padding-top: var(--nc-ui-page-body-gap-lg); }

@@ -9,6 +9,7 @@ export function kitCss() {
       background: ${v(`module-bg-stack-${n}`)};
       ${prop("text-sub")}: ${v(`module-sub-stack-${n}`)};
       ${prop("divider")}: ${v(`module-div-stack-${n}`)};
+      ${prop("slider-track")}: ${v(`module-div-stack-${n}`)};
     }`;
   const adjacent = (n) =>
     `.nc-module[data-nc-place="adjacent"][data-nc-shade="${n}"] { background: ${v(`module-bg-adjacent-${n}`)}; }`;
@@ -44,14 +45,43 @@ button, input, select { font: inherit; color: inherit; }
 }
 .nc-page-hd {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: ${v("header-gap")};
+  flex-direction: column;
+  gap: ${v("page-action-gap")};
   min-width: 0;
   padding-bottom: ${v("page-head-gap")};
   border-bottom: ${v("hairline")} solid ${v("divider")};
 }
 .nc-page-body { min-width: 0; padding-top: ${v("page-body-gap")}; }
+/* Page title (ASTRID: "ASTRID / SYNTH / 01"), the line under it, and the header's text actions (Save, Load, Panic). */
+.nc-page-title {
+  margin: 0;
+  font-size: ${v("page-title-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("page-title-tracking")};
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nc-page-sub { margin: ${v("page-sub-gap")} 0 0; font-size: ${v("page-sub-size")}; color: ${v("text-sub")}; }
+.nc-page-title .nc-page-sep { color: ${v("text-sub")}; }
+.nc-page-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: ${v("control-gap")} ${v("page-action-gap")}; min-width: 0; }
+.nc-page-action {
+  border: 0;
+  border-bottom: ${v("hairline")} solid transparent;
+  background: transparent;
+  padding: 0 0 ${v("control-gap")};
+  color: ${v("text-sub")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("control-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  cursor: pointer;
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-page-action:hover { color: ${v("text")}; border-bottom-color: ${v("text")}; }
+.nc-page-action:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
 .nc-module {
   background: ${v("module-bg-adjacent-1")};
   color: ${v("text")};
@@ -930,8 +960,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
    centred on it. A select cannot carry a pad, so it grows itself. */
 @media (pointer: coarse) {
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary) { position: relative; }
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary)::before {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action)::before {
     content: "";
     position: absolute;
     left: 50%;
@@ -1271,7 +1301,20 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 @media (min-width: 768px) {
   .nc-page { padding: ${v("page-pad-y-md")} ${v("page-pad-x-md")}; }
-  .nc-page-hd { padding-bottom: ${v("page-head-gap-md")}; }
+  .nc-page-hd { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: ${v("page-head-gap-md")}; }
+}
+/* Tablets (769-1023 px): the same 2 x 5 slot grid as phones and desktop; one row of 10 drew 14 px slots here. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .nc-slot-line { flex-wrap: wrap; }
+  .nc-snap-row {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: ${v("control-gap")};
+  }
+  .nc-snap-wrap { width: 100%; max-width: none; height: ${v("target-min")}; }
+  .nc-snap { font-size: ${v("readout-size")}; }
+  .nc-snap-wrap > .nc-hit { display: none; }
 }
 @media (min-width: 1024px) {
   .nc-page-body { padding-top: ${v("page-body-gap-lg")}; }
