@@ -18,3 +18,7 @@ Edit `tokens/tokens.json` (values) or `src/primitives/kit.js` (control styles) â
 - **Apps own structure; nc-ui owns the look.** App CSS may lay out its own surfaces (pattern editors) but never writes a raw colour, font or size; it reads `var(--nc-ui-*)`.
 - **Kit CSS must stay compatible with the DOM the deployed apps render.** A kit change that needs new markup ships with the app PRs that render it. The kit's screenshot check covers every module.
 - **Canvas reads tokens at paint time** (`readLive()`), not from a build-time import, so drawings follow a token change too.
+
+## The guard (every app's CI)
+
+`node <nc-ui>/scripts/guard-app.mjs <src dirs> --baseline ui-guard.json` counts raw colours, font families, px sizes and Tailwind arbitrary values (`text-[11px]`) per file. It is a ratchet: a file's count may only go down, and a new file starts at zero. After removing raw values, rerun with `--update` to lower the floor. A deliberate exception is marked on its line with `ui-guard: allow <reason>`.
