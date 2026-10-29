@@ -257,6 +257,9 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   height: max(100%, ${v("target-min")});
   transform: translateX(-50%);
 }
+/* The chip's ::before is already its touch box and stops at the slider; a hit pad on top of it covered the top
+   half of the tempo slider, so a drag there tapped instead (Rhythm #40). */
+.nc-tap > .nc-hit { display: none; }
 .nc-tap:hover { border-color: ${v("text-sub")}; color: ${v("text")}; }
 .nc-tap:active { background: ${v("text")}; border-color: ${v("text")}; color: ${v("surface-page")}; }
 .nc-tap:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
@@ -1136,13 +1139,16 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   height: ${v("target-min")};
   margin-block: calc((${v("slider-pitch")} - ${v("target-min")}) / 2);
 }
-/* M and S: each a full target-min box (the button paints smaller inside), touching, never overlapping. */
-.nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
-.nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
-.nc-ms {
-  inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
-  width: auto;
-  height: auto;
+/* M and S on touch: each a full target-min box (the button paints smaller inside), touching, never overlapping.
+   Only on a coarse pointer: on every pointer it made each lane target-min tall on desktop (Rhythm #40). */
+@media (pointer: coarse) {
+  .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
+  .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
+  .nc-ms {
+    inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
+    width: auto;
+    height: auto;
+  }
 }
 .nc-slot-scrim {
   position: fixed;

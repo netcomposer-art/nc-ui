@@ -160,3 +160,9 @@ test("page header: ASTRID's title, sub line and text actions", () => {
   assert.match(rule(".nc-page-action"), /color: var\(--nc-ui-text-sub\)/);
   assert.match(css, /:is\([^)]*\.nc-page-action[^)]*\)::before/);
 });
+
+test("M/S 44 px boxes only on touch; the tap chip has no extra hit pad over the slider", () => {
+  assert.match(css, /@media \(pointer: coarse\) \{\s*\.nc-ms-wrap \{ flex-basis: var\(--nc-ui-target-min\)/);
+  assert.doesNotMatch(css, /\n\.nc-ms-wrap \{ flex-basis/, "not on every pointer");
+  assert.match(css, /\.nc-tap > \.nc-hit \{ display: none; \}/);
+});
