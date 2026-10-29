@@ -133,6 +133,7 @@
   --nc-ui-space-40: 40px;
   --nc-ui-space-44: 44px;
   --nc-ui-space-48: 48px;
+  --nc-ui-space-64: 64px;
   --nc-ui-space-unit: 0.25rem;
   /* radius */
   --nc-ui-radius-none: 0;
@@ -325,11 +326,20 @@
   --nc-ui-fx-name-weight: var(--nc-ui-font-weight-bold);
   --nc-ui-label-leading: var(--nc-ui-leading-readout);
   --nc-ui-motion-press: var(--nc-ui-duration-press);
-  --nc-ui-switch-track-width: var(--nc-ui-space-28);
-  --nc-ui-switch-track-height: var(--nc-ui-space-16);
-  --nc-ui-switch-knob: var(--nc-ui-space-10);
-  --nc-ui-switch-knob-inset: var(--nc-ui-space-2);
-  --nc-ui-switch-gap: var(--nc-ui-space-8);
+  --nc-ui-control-weight: var(--nc-ui-font-weight-regular);
+  --nc-ui-tab-size: var(--nc-ui-font-size-sm);
+  --nc-ui-tab-pad-y: var(--nc-ui-space-6);
+  --nc-ui-tab-mark: var(--nc-ui-border-thick);
+  --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-page-pad-x: var(--nc-ui-space-24);
+  --nc-ui-page-pad-x-md: var(--nc-ui-space-48);
+  --nc-ui-page-pad-x-xl: var(--nc-ui-space-64);
+  --nc-ui-page-pad-y: var(--nc-ui-space-32);
+  --nc-ui-page-pad-y-md: var(--nc-ui-space-48);
+  --nc-ui-page-head-gap: var(--nc-ui-space-32);
+  --nc-ui-page-head-gap-md: var(--nc-ui-space-48);
+  --nc-ui-page-body-gap: var(--nc-ui-space-16);
+  --nc-ui-page-body-gap-lg: var(--nc-ui-space-48);
 
   /* Tier 3: component roles, one namespace per domain (a module uses only its own domain) */
   /* synth */

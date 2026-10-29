@@ -48,7 +48,7 @@ const bundle = async (code) =>
 test("tree-shaking: an app that imports one component does not get the slider factory or the kit sheet", async () => {
   const sw = await bundle('import { createSwitch } from "./src/index.js"; createSwitch();');
   assert.doesNotMatch(sw, /needs 0 < min < max/, "slider factory left out");
-  assert.doesNotMatch(sw, /nc-ui-switch-track::after/, "kit sheet left out");
+  assert.doesNotMatch(sw, /\.nc-ui-switch-text > span/, "kit sheet left out");
   assert.ok(sw.length < 2000, `createSwitch alone is ${sw.length} B`);
   const sl = await bundle('export { sliderFactory } from "./src/primitives/slider.js";');
   assert.match(sl, /needs 0 < min < max/);
@@ -57,7 +57,7 @@ test("tree-shaking: an app that imports one component does not get the slider fa
 
 test("the JS-injected CSS entry adds the kit sheet with no CSS file; the static CSS needs no JS", async () => {
   const inject = read("dist/nc-ui-inject.min.js");
-  assert.match(inject, /nc-ui-switch-track/);
+  assert.match(inject, /nc-ui-switch-text/);
   assert.doesNotMatch(inject, /needs 0 < min < max/);
   const { installDom } = await import("./helpers/dom.mjs");
   const { document } = installDom();

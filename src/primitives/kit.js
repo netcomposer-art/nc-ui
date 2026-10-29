@@ -37,6 +37,21 @@ html, body {
 button, input, select { font: inherit; color: inherit; }
 .nc [hidden] { display: none !important; }
 .nc-stack { display: flex; flex-direction: column; min-width: 0; }
+/* ASTRID's page frame: side gutters, a header with a divider under it, then the modules, inset from the edges. */
+.nc-page {
+  min-width: 0;
+  padding: ${v("page-pad-y")} ${v("page-pad-x")};
+}
+.nc-page-hd {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: ${v("header-gap")};
+  min-width: 0;
+  padding-bottom: ${v("page-head-gap")};
+  border-bottom: ${v("hairline")} solid ${v("divider")};
+}
+.nc-page-body { min-width: 0; padding-top: ${v("page-body-gap")}; }
 .nc-module {
   background: ${v("module-bg-adjacent-1")};
   color: ${v("text")};
@@ -59,7 +74,6 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   justify-content: space-between;
   gap: ${v("header-gap")};
   min-width: 0;
-  min-height: ${v("target-min")};
 }
 .nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin")}; }
 .nc-title {
@@ -80,8 +94,6 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   color: ${v("text-sub")};
 }
 .nc-hide, .nc-slim {
-  min-width: ${v("target-min")};
-  min-height: ${v("target-min")};
   padding: 0 ${v("control-gap")};
   border: 0;
   background: transparent;
@@ -318,12 +330,12 @@ ${MODULATED_SELECTOR} { transition: none; }
   background: transparent;
   color: ${v("text-sub")};
   font-size: ${v("label-size")};
-  font-weight: ${v("label-weight")};
+  font-weight: ${v("control-weight")};
   letter-spacing: ${v("label-tracking")};
   text-transform: uppercase;
-  padding: ${v("control-gap")} 0;
-  min-height: ${v("target-min")};
+  padding: 0 0 ${v("control-gap")};
   cursor: pointer;
+  align-self: flex-start;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -333,6 +345,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   transition-duration: ${v("transition-feedback")};
 }
 .nc-toggle:hover, .nc-toggle[aria-pressed="true"] { color: ${v("text")}; }
+.nc-toggle:hover { border-bottom-color: ${v("text")}; }
 .nc-toggle[aria-pressed="true"] { border-bottom-color: ${v("accent")}; }
 .nc-toggle[data-nc-role="mute"][aria-pressed="true"] { color: ${v("rhythm.track-mute")}; }
 .nc-toggle[data-nc-role="solo"][aria-pressed="true"] {
@@ -343,33 +356,41 @@ ${MODULATED_SELECTOR} { transition: none; }
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: ${v("control-gap")};
 }
+/* Underline tabs (ASTRID .nc-seg): words on a hairline, the chosen one in text with a tab-mark accent bar on the
+   line. Radio semantics stay (role="radio", aria-checked). */
 .nc-seg {
-  display: inline-flex;
-  border: ${v("hairline")} solid ${v("divider")};
-  border-radius: ${v("slot-radius")};
-  overflow: hidden;
+  display: flex;
+  border-bottom: ${v("hairline")} solid ${v("divider")};
   margin-bottom: ${v("module-gap")};
+  min-width: 0;
 }
 .nc-seg > button {
   flex: 1 1 0;
-  min-height: ${v("target-min")};
-  min-width: ${v("target-min")};
-  padding: 0 ${v("header-gap")};
+  position: relative;
+  min-width: 0;
+  padding: ${v("tab-pad-y")} 0;
   border: 0;
-  border-inline-end: ${v("hairline")} solid ${v("divider")};
   background: transparent;
   color: ${v("text-sub")};
-  font-size: ${v("label-size")};
-  font-weight: ${v("label-weight")};
-  letter-spacing: ${v("label-tracking")};
-  text-transform: uppercase;
+  font-size: ${v("tab-size")};
+  font-weight: ${v("control-weight")};
+  white-space: nowrap;
   cursor: pointer;
-  transition-property: color, background-color;
+  transition-property: color;
   transition-duration: ${v("transition-feedback")};
 }
-.nc-seg > button:last-child { border-inline-end: 0; }
+.nc-seg:has(> button:nth-child(4)) > button { font-size: ${v("label-size")}; padding-inline: ${v("control-gap")}; }
 .nc-seg > button:hover { color: ${v("text")}; }
-.nc-seg > button[aria-checked="true"] { background: ${v("text")}; color: ${v("surface-page")}; }
+.nc-seg > button[aria-checked="true"] { color: ${v("text")}; }
+.nc-seg > button[aria-checked="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(${v("hairline")} * -1);
+  height: ${v("tab-mark")};
+  background: ${v("accent")};
+}
 .nc-seg > button:focus-visible {
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: calc(${v("focus-width")} * -1);
@@ -384,11 +405,11 @@ ${MODULATED_SELECTOR} { transition: none; }
   border-radius: 0;
   color: ${v("text")};
   font-size: ${v("body-size")};
-  min-height: ${v("target-min")};
-  padding: ${v("control-gap")} 0;
+  padding: ${v("control-gap")} ${v("select-pad-end")} ${v("control-gap")} 0;
   cursor: pointer;
   transition: none;
 }
+.nc-select:hover:not(:disabled) { border-bottom-color: ${v("text-sub")}; }
 .nc-select:focus-visible { outline: none; border-bottom-color: ${v("accent")}; }
 /* Slots on one line, Morph under them as a slider row (label and value, then the slider). */
 .nc-slot-row { flex-direction: column; align-items: stretch; gap: ${v("module-gap")}; }
@@ -759,7 +780,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   gap: ${v("module-gap")};
   margin-bottom: ${v("module-gap")};
 }
-.nc-step-tools > .nc-seg { margin-bottom: 0; }
+.nc-step-tools > .nc-seg { flex: 1 1 auto; align-self: flex-end; margin-bottom: 0; }
 /* No margin (nor the sparkle's): the row gap already sets the dice off the length handle, and 1024 needs the
    width for 18 px cells now that beats are split by beat-gap. */
 .nc-row-dice { flex: none; margin-inline: 0; }
@@ -860,7 +881,6 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   align-items: center;
   justify-content: space-between;
   gap: ${v("module-gap")};
-  min-height: ${v("target-min")};
   margin-bottom: ${v("module-gap")};
   min-width: 0;
 }
@@ -869,7 +889,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-more > summary {
   display: flex;
   align-items: center;
-  min-height: ${v("target-min")};
+  padding-block: ${v("control-gap")};
   cursor: pointer;
   font-size: ${v("label-size")};
   font-weight: ${v("label-weight")};
@@ -879,60 +899,49 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-ui-more > summary:hover { color: ${v("text")}; }
 .nc-ui-more > summary:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
-/* The switch (plan 5.3 V2, R8): role="switch", the word then the track; hover takes the word to text; the knob
-   travels on motion-press; both words share one cell so the width never changes. */
+/* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
+   text with an accent hairline under it; hover takes the word and the line to text. Both words share one grid cell,
+   so the control never changes width when it flips. */
 .nc-ui-switch {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   flex: none;
-  gap: ${v("switch-gap")};
-  min-width: ${v("target-min")};
-  min-height: ${v("target-min")};
   margin: 0;
-  padding: 0;
+  padding: 0 0 ${v("control-gap")};
   border: 0;
+  border-bottom: ${v("hairline")} solid transparent;
   background: transparent;
   cursor: pointer;
   font: inherit;
   font-size: ${v("label-size")};
-  font-weight: ${v("label-weight")};
+  font-weight: ${v("control-weight")};
   letter-spacing: ${v("label-tracking")};
   text-transform: uppercase;
   color: ${v("text-sub")};
-  transition: color ${v("motion-press")} ease-out;
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
 }
-.nc-ui-switch[aria-checked="true"] { color: ${v("accent")}; }
-.nc-ui-switch:hover { color: ${v("text")}; }
-.nc-ui-switch:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+.nc-ui-switch[aria-checked="true"] { color: ${v("text")}; border-bottom-color: ${v("accent")}; }
+.nc-ui-switch:hover { color: ${v("text")}; border-bottom-color: ${v("text")}; }
+.nc-ui-switch:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
 .nc-ui-switch-text { display: inline-grid; }
 .nc-ui-switch-text > span { grid-area: 1 / 1; }
 .nc-ui-switch[aria-checked="true"] [data-nc-off], .nc-ui-switch[aria-checked="false"] [data-nc-on] { visibility: hidden; }
-.nc-ui-switch-track {
-  position: relative;
-  flex: none;
-  width: ${v("switch-track-width")};
-  height: ${v("switch-track-height")};
-  border: ${v("hairline")} solid ${v("divider")};
-  border-radius: calc(${v("switch-track-height")} / 2);
-  background: transparent;
-  transition: background-color ${v("motion-press")} ease-out, border-color ${v("motion-press")} ease-out;
-}
-.nc-ui-switch:hover .nc-ui-switch-track { border-color: ${v("text-sub")}; }
-.nc-ui-switch-track::after {
-  content: "";
-  position: absolute;
-  top: ${v("switch-knob-inset")};
-  left: ${v("switch-knob-inset")};
-  width: ${v("switch-knob")};
-  height: ${v("switch-knob")};
-  border-radius: 50%;
-  background: ${v("text-sub")};
-  transition: transform ${v("motion-press")} ease-out, background-color ${v("motion-press")} ease-out;
-}
-.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track { background: ${v("accent")}; border-color: ${v("accent")}; }
-.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track::after {
-  background: ${v("surface-page")};
-  transform: translateX(calc(${v("switch-track-width")} - ${v("switch-knob")} - 2 * ${v("switch-knob-inset")} - 2 * ${v("hairline")}));
+/* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
+   centred on it. A select cannot carry a pad, so it grows itself. */
+@media (pointer: coarse) {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary)::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, ${v("target-min")});
+    height: max(100%, ${v("target-min")});
+    transform: translate(-50%, -50%);
+  }
+  .nc-toggle { overflow: visible; text-overflow: clip; }
+  .nc-select { min-height: ${v("target-min")}; }
 }
 /* A panel (Rhythm's Parameters, under the grid): a page-coloured area, full bleed to the module's sides and
    bottom, a hairline above, a title and what it edits, and its controls in columns from 1024 px. */
@@ -1260,6 +1269,16 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   font-family: ${v("font-ui")};
   pointer-events: none;
 }
+@media (min-width: 768px) {
+  .nc-page { padding: ${v("page-pad-y-md")} ${v("page-pad-x-md")}; }
+  .nc-page-hd { padding-bottom: ${v("page-head-gap-md")}; }
+}
+@media (min-width: 1024px) {
+  .nc-page-body { padding-top: ${v("page-body-gap-lg")}; }
+}
+@media (min-width: 1280px) {
+  .nc-page { padding-inline: ${v("page-pad-x-xl")}; }
+}
 @media (min-width: 1024px) {
   .nc-stack[data-nc-layout="adjacent"] {
     display: grid;
@@ -1387,7 +1406,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
-  .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-ui-switch-track, .nc-ui-switch-track::after,
+  .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
   .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"] {
     transition: none;
     animation: none;

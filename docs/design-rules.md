@@ -5,9 +5,23 @@
 
 nc-ui is that one place. These rules are a draft: Peter confirms or changes them before they become CI rules. Petra's lint, contract test and screenshot harness enforce them (see the README, "Where the tooling plugs in").
 
+## 0. ASTRID is the north star (Peter, 2026-10)
+
+Every module (Synth, Rhythm, Bass, Studio, and anything new) looks like ASTRID. When the kit and ASTRID disagree, the kit changes. Peter's decisions:
+
+| # | decision | in the kit |
+|---|---|---|
+| 1 | Icons are fine where space is tight (dense rows, mobile): ▶ on Bass's Play stays | rule 1 below |
+| 2 | On/off is ASTRID's text toggle (the word On / Off, accent hairline when on), not an iOS switch | `createSwitch` keeps its API; `.nc-ui-switch` has no track |
+| 3 | Segmented controls are ASTRID's underline tabs, not a filled black bar | `.nc-seg`: hairline row, `tab-mark` accent bar under the chosen tab |
+| 4 | Slider thumbs are solid (ASTRID) | `.nc-range` thumb is `slider-thumb` |
+| 5 | ASTRID's page frame everywhere: side gutters, a divider under the header, modules inset | `.nc-page`, `.nc-page-hd`, `.nc-page-body`; `page-*` tokens |
+
+Sizes: controls are drawn at ASTRID's sizes (toggle about 20 px, tab 28, select 27, slider 20). On a touch screen (`pointer: coarse`) an invisible pad grows each text control to `target-min` (44 px), centred on it, as ASTRID does. A select can't carry a pad, so it grows itself on touch. Buttons stay 44 px (ASTRID's are 41).
+
 ## 1. Peter's UI rules
 
-1. **Ultra-minimal.** Labels, readouts, hairlines, and nothing else. No icons where a word works, no decoration, no shadows, no rounded cards. Colour is reserved for state (accent = on / selected / playing, danger = an error).
+1. **Ultra-minimal.** Labels, readouts, hairlines, and nothing else. Words by default; an icon only where space is tight (dense rows, mobile). No decoration, no shadows, no rounded cards. Colour is reserved for state (accent = on / selected / playing, danger = an error).
 2. **Hide rather than delete.** A module, panel or control the player doesn't want is hidden (`−` / `+`), stays mounted, keeps its state and comes back exactly as it was. Nothing is destroyed by tidying the screen.
 3. **Motion is a state change, or it follows the audio.** A button press (ASTRID `.nc-btn:active` scales to .985), a fade, a slide-in, a module reveal, and the Undo toast use only `motion-fade` (.2 s), `motion-fade-out` (.25 s), `motion-slide` (.22 s), and `transition-feedback` (.15 s). Each is 100–250 ms, and each is off under `prefers-reduced-motion: reduce`.
    - Meters, the playhead, and voice activity may update every frame. A slider, knob, or other value driven by an LFO or another external source never tweens: `data-modulated` is present only while that source drives it, and `[data-modulated], [data-modulated] *` set `transition: none`.

@@ -139,6 +139,7 @@ export declare const base: {
     readonly "40": "40px";
     readonly "44": "44px";
     readonly "48": "48px";
+    readonly "64": "64px";
     readonly "unit": "0.25rem";
   };
   readonly "radius": {
@@ -339,11 +340,20 @@ export declare const semantic: {
   readonly "fx-name-weight": "700";
   readonly "label-leading": "1.35";
   readonly "motion-press": ".1s";
-  readonly "switch-track-width": "28px";
-  readonly "switch-track-height": "16px";
-  readonly "switch-knob": "10px";
-  readonly "switch-knob-inset": "2px";
-  readonly "switch-gap": "8px";
+  readonly "control-weight": "400";
+  readonly "tab-size": "12px";
+  readonly "tab-pad-y": "6px";
+  readonly "tab-mark": "2px";
+  readonly "select-pad-end": "18px";
+  readonly "page-pad-x": "24px";
+  readonly "page-pad-x-md": "48px";
+  readonly "page-pad-x-xl": "64px";
+  readonly "page-pad-y": "32px";
+  readonly "page-pad-y-md": "48px";
+  readonly "page-head-gap": "32px";
+  readonly "page-head-gap-md": "48px";
+  readonly "page-body-gap": "16px";
+  readonly "page-body-gap-lg": "48px";
 };
 export declare const component: {
   readonly "synth": {
@@ -679,11 +689,20 @@ export declare const vars: {
   readonly "fx-name-weight": "var(--nc-ui-fx-name-weight)";
   readonly "label-leading": "var(--nc-ui-label-leading)";
   readonly "motion-press": "var(--nc-ui-motion-press)";
-  readonly "switch-track-width": "var(--nc-ui-switch-track-width)";
-  readonly "switch-track-height": "var(--nc-ui-switch-track-height)";
-  readonly "switch-knob": "var(--nc-ui-switch-knob)";
-  readonly "switch-knob-inset": "var(--nc-ui-switch-knob-inset)";
-  readonly "switch-gap": "var(--nc-ui-switch-gap)";
+  readonly "control-weight": "var(--nc-ui-control-weight)";
+  readonly "tab-size": "var(--nc-ui-tab-size)";
+  readonly "tab-pad-y": "var(--nc-ui-tab-pad-y)";
+  readonly "tab-mark": "var(--nc-ui-tab-mark)";
+  readonly "select-pad-end": "var(--nc-ui-select-pad-end)";
+  readonly "page-pad-x": "var(--nc-ui-page-pad-x)";
+  readonly "page-pad-x-md": "var(--nc-ui-page-pad-x-md)";
+  readonly "page-pad-x-xl": "var(--nc-ui-page-pad-x-xl)";
+  readonly "page-pad-y": "var(--nc-ui-page-pad-y)";
+  readonly "page-pad-y-md": "var(--nc-ui-page-pad-y-md)";
+  readonly "page-head-gap": "var(--nc-ui-page-head-gap)";
+  readonly "page-head-gap-md": "var(--nc-ui-page-head-gap-md)";
+  readonly "page-body-gap": "var(--nc-ui-page-body-gap)";
+  readonly "page-body-gap-lg": "var(--nc-ui-page-body-gap-lg)";
   readonly "surprise-fill": "var(--nc-ui-surprise-fill)";
   readonly "surprise-ink": "var(--nc-ui-surprise-ink)";
   readonly "surprise-on": "var(--nc-ui-surprise-on)";
@@ -816,11 +835,20 @@ export declare const refs: {
   readonly "fx-name-weight": "font-weight.bold";
   readonly "label-leading": "leading.readout";
   readonly "motion-press": "duration.press";
-  readonly "switch-track-width": "space.28";
-  readonly "switch-track-height": "space.16";
-  readonly "switch-knob": "space.10";
-  readonly "switch-knob-inset": "space.2";
-  readonly "switch-gap": "space.8";
+  readonly "control-weight": "font-weight.regular";
+  readonly "tab-size": "font-size.sm";
+  readonly "tab-pad-y": "space.6";
+  readonly "tab-mark": "border.thick";
+  readonly "select-pad-end": "space.18";
+  readonly "page-pad-x": "space.24";
+  readonly "page-pad-x-md": "space.48";
+  readonly "page-pad-x-xl": "space.64";
+  readonly "page-pad-y": "space.32";
+  readonly "page-pad-y-md": "space.48";
+  readonly "page-head-gap": "space.32";
+  readonly "page-head-gap-md": "space.48";
+  readonly "page-body-gap": "space.16";
+  readonly "page-body-gap-lg": "space.48";
 };
 export declare const constants: {
   readonly "label-min-contrast": 4.5;
