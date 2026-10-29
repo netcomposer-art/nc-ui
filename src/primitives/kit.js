@@ -1217,7 +1217,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   white-space: nowrap;
   pointer-events: auto;
   opacity: 0;
-  transition: opacity ${v("motion-fade")};
+  transition: opacity ${v("motion-fade")} ${v("motion-fade-easing")};
 }
 .nc-ui-toast[data-placement="bottom"] { bottom: calc(${v("toast-offset")} + env(safe-area-inset-bottom)); }
 .nc-ui-toast[data-placement="top"] { top: calc(${v("toast-offset")} + env(safe-area-inset-top)); }
@@ -1226,7 +1226,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-toast[data-state="closing"] {
   opacity: 0;
   pointer-events: none;
-  transition: opacity ${v("motion-fade-out")};
+  transition: opacity ${v("motion-fade-out")} ${v("motion-fade-out-easing")};
 }
 .nc-ui-toast-message { overflow: hidden; text-overflow: ellipsis; }
 .nc-ui-toast-action {

@@ -33,9 +33,13 @@ test('Peter\'s required roles exist', () => {
     'target-min', 'module-slim-column']) assert.ok(c.semantic.has(n), n);
   for (const n of ['synth.keybed-height', 'meaning.tension', 'situation.drawer-bg'])
     assert.ok(c.component.has(n), n);
-  assert.equal(c.semantic.get('motion-fade').value, '.2s ease');
-  assert.equal(c.semantic.get('motion-fade-out').value, '.25s ease-out');
-  assert.equal(c.semantic.get('motion-slide').value, '.22s ease-out');
+  // ASTRID's shape: a duration token and a separate easing token (so ASTRID's `var(motion-fade) var(motion-fade-easing)` works).
+  assert.equal(c.semantic.get('motion-fade').value, '.2s');
+  assert.equal(c.semantic.get('motion-fade-easing').value, 'ease');
+  assert.equal(c.semantic.get('motion-fade-out').value, '.25s');
+  assert.equal(c.semantic.get('motion-fade-out-easing').value, 'ease-out');
+  assert.equal(c.semantic.get('motion-slide').value, '.22s');
+  assert.equal(c.semantic.get('motion-slide-easing').value, 'ease-out');
   assert.equal(c.semantic.get('filter-lowpass').cssVar, '--nc-ui-filter-lowpass');
   assert.equal(c.semantic.get('target-min').value, '44px');
   assert.equal(c.semantic.get('target-min').cssVar, '--nc-ui-target-min');

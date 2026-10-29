@@ -148,8 +148,14 @@
   --nc-ui-stroke-curve: 1.4;
   --nc-ui-stroke-bold: 1.5;
   --nc-ui-stroke-dot: 7;
+  /* easing */
+  --nc-ui-easing-ease: ease;
+  --nc-ui-easing-ease-out: ease-out;
+  --nc-ui-easing-linear: linear;
   /* duration */
   --nc-ui-duration-meter: .07s;
+  --nc-ui-duration-meter-rise: 0s;
+  --nc-ui-duration-meter-fall: .2s;
   --nc-ui-duration-press: .1s;
   --nc-ui-duration-fast: .15s;
   --nc-ui-duration-fade: .2s;
@@ -279,9 +285,18 @@
   --nc-ui-label-on-fill-light: var(--nc-ui-color-white);
   --nc-ui-skeleton-highlight: var(--nc-ui-color-skeleton-hi);
   --nc-ui-transition-feedback: var(--nc-ui-duration-fast);
-  --nc-ui-motion-fade: .2s ease;
-  --nc-ui-motion-fade-out: .25s ease-out;
-  --nc-ui-motion-slide: .22s ease-out;
+  --nc-ui-motion-fade: var(--nc-ui-duration-fade);
+  --nc-ui-motion-fade-easing: var(--nc-ui-easing-ease);
+  --nc-ui-motion-fade-out: var(--nc-ui-duration-trig);
+  --nc-ui-motion-fade-out-easing: var(--nc-ui-easing-ease-out);
+  --nc-ui-motion-slide: var(--nc-ui-duration-drawer);
+  --nc-ui-motion-slide-easing: var(--nc-ui-easing-ease-out);
+  --nc-ui-motion-press-easing: var(--nc-ui-easing-ease-out);
+  --nc-ui-motion-thumb: var(--nc-ui-duration-fast);
+  --nc-ui-motion-thumb-easing: var(--nc-ui-easing-ease);
+  --nc-ui-motion-meter-rise: var(--nc-ui-duration-meter-rise);
+  --nc-ui-motion-meter-fall: var(--nc-ui-duration-meter-fall);
+  --nc-ui-motion-meter-easing: var(--nc-ui-easing-linear);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);
   --nc-ui-focus-width-strong: var(--nc-ui-border-thick);
   --nc-ui-target-min: var(--nc-ui-space-44);

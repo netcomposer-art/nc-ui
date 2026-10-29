@@ -144,6 +144,12 @@ const theme = {
   },
   "transitionDuration": {
     "nc-transition-feedback": "var(--nc-ui-transition-feedback)",
+    "nc-motion-fade": "var(--nc-ui-motion-fade)",
+    "nc-motion-fade-out": "var(--nc-ui-motion-fade-out)",
+    "nc-motion-slide": "var(--nc-ui-motion-slide)",
+    "nc-motion-thumb": "var(--nc-ui-motion-thumb)",
+    "nc-motion-meter-rise": "var(--nc-ui-motion-meter-rise)",
+    "nc-motion-meter-fall": "var(--nc-ui-motion-meter-fall)",
     "nc-motion-press": "var(--nc-ui-motion-press)"
   },
   "minHeight": {
