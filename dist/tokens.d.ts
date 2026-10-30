@@ -331,6 +331,7 @@ export declare const semantic: {
   readonly "fader-cap-height": "14px";
   readonly "fader-cap": "#242424";
   readonly "fader-cap-line": "#F5F5F5";
+  readonly "fader-cap-master": "#003153";
   readonly "fader-track": "rgba(36,36,36,0.25)";
   readonly "strip-width": "88px";
   readonly "strip-width-master": "112px";
@@ -719,6 +720,7 @@ export declare const vars: {
   readonly "fader-cap-height": "var(--nc-ui-fader-cap-height)";
   readonly "fader-cap": "var(--nc-ui-fader-cap)";
   readonly "fader-cap-line": "var(--nc-ui-fader-cap-line)";
+  readonly "fader-cap-master": "var(--nc-ui-fader-cap-master)";
   readonly "fader-track": "var(--nc-ui-fader-track)";
   readonly "strip-width": "var(--nc-ui-strip-width)";
   readonly "strip-width-master": "var(--nc-ui-strip-width-master)";
@@ -904,6 +906,7 @@ export declare const refs: {
   readonly "fader-cap-height": "space.14";
   readonly "fader-cap": "color.ink";
   readonly "fader-cap-line": "color.paper";
+  readonly "fader-cap-master": "color.accent";
   readonly "fader-track": null;
   readonly "strip-width": null;
   readonly "strip-width-master": null;

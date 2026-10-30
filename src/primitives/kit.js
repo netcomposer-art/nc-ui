@@ -1509,6 +1509,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   background: ${v("fader-cap-line")};
 }
 .nc-fader[data-dragging="true"] .nc-fader-cap { background: ${v("accent")}; }
+/* The master's cap in Prussian blue (Peter, 2026-10-30): the master reads apart from the channels at a glance. */
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] .nc-fader-cap { background: ${v("fader-cap-master")}; }
 .nc-fader:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
 /* The level meter: peak over RMS in the lighter Prussian blue, a hold line, a clip light on top. It follows the audio
    every frame (transforms written by the meter's own ballistics), so nothing here transitions. */
