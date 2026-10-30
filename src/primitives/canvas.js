@@ -79,6 +79,53 @@ export function paintCanvas(canvas, control) {
     canvas.dataset.ncAccent = ctx.strokeStyle;
     return;
   }
+  if (control.paint === "waveform") {
+    // A sample (NYX's pads): min/max pairs per column across the width, the played region tinted, its start and
+    // end and any slice points as marks, and where the voice is now (position 0..1, while it plays).
+    const peaks = Array.isArray(control.peaks) ? control.peaks : [];
+    const [r0, r1] = Array.isArray(control.region) ? control.region : [0, 1];
+    const accent = readLive(canvas, "accent");
+    const quiet = readLive(canvas, "text-sub");
+    const mid = h / 2;
+    ctx.fillStyle = readLive(canvas, "accent-soft");
+    ctx.fillRect(clamp(r0) * w, 0, (clamp(r1) - clamp(r0)) * w, h);
+    ctx.strokeStyle = readLive(canvas, "divider");
+    ctx.beginPath();
+    ctx.moveTo(0, mid);
+    ctx.lineTo(w, mid);
+    ctx.stroke();
+    const cols = Math.floor(peaks.length / 2);
+    for (let c = 0; c < cols; c++) {
+      const x = ((c + 0.5) / cols) * w;
+      const lo = Math.max(-1, Math.min(1, peaks[c * 2] ?? 0));
+      const hi = Math.max(-1, Math.min(1, peaks[c * 2 + 1] ?? 0));
+      const f = (c + 0.5) / cols;
+      ctx.strokeStyle = f >= r0 && f <= r1 ? accent : quiet;
+      ctx.beginPath();
+      ctx.moveTo(x, mid - hi * (mid - 1));
+      ctx.lineTo(x, mid - lo * (mid - 1) + 0.5);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = accent;
+    for (const m of [r0, r1, ...(Array.isArray(control.markers) ? control.markers : [])]) {
+      const x = Math.round(clamp(m) * (w - 1)) + 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    if (typeof control.position === "number" && control.position >= 0) {
+      ctx.fillStyle = readLive(canvas, "text");
+      ctx.fillRect(Math.round(clamp(control.position) * (w - 1)), 0, 1, h);
+    }
+    if (!cols) {
+      ctx.fillStyle = quiet;
+      ctx.font = font;
+      ctx.fillText(control.empty ?? "Empty", 0, mid + 4);
+    }
+    canvas.dataset.ncAccent = accent;
+    return;
+  }
   if (control.paint === "meter") {
     const level = clamp(control.level ?? 0);
     ctx.fillStyle = readLive(canvas, "divider");
