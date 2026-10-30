@@ -13,7 +13,7 @@ export declare const base: {
     readonly "accent": "#003153";
     readonly "accent-wash": "rgba(0,49,83,0.07)";
     readonly "astrid-orange": "#EB512E";
-    readonly "petra-blue": "#79D3F9";
+    readonly "petra-blue": "#5AC4F7";
     readonly "olive-green": "#9CA536";
     readonly "paper-bright": "#FCFCFC";
     readonly "accent-pad": "#1A6193";
@@ -387,7 +387,7 @@ export declare const semantic: {
   readonly "select-pad-end": "18px";
   readonly "page-head-bg": "#FCFCFC";
   readonly "instrument-astrid": "#EB512E";
-  readonly "instrument-petra": "#79D3F9";
+  readonly "instrument-petra": "#5AC4F7";
   readonly "instrument-olive": "#9CA536";
   readonly "page-title-size": "15px";
   readonly "page-title-tracking": ".28em";
