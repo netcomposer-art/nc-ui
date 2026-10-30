@@ -1338,6 +1338,11 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   scrollbar-width: thin;
   padding-inline: ${v("module-pad")} ${v("control-gap")};
   padding-bottom: ${v("module-pad")};
+  /* The channel strips sit on the master's shade (Peter, 2026-10-30): the lightest step of the stack. */
+  background: ${v("module-bg-stack-1")};
+  ${prop("text-sub")}: ${v("module-sub-stack-1")};
+  ${prop("divider")}: ${v("module-div-stack-1")};
+  ${prop("slider-track")}: ${v("module-div-stack-1")};
 }
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
   grid-area: fx;
