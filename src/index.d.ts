@@ -290,6 +290,8 @@ export interface StripControl {
   resetText?: string;
   /** Tick labels on the scale between fader and meter: `value` is a position. */
   ticks?: { value: number; label: string }[];
+  /** The instrument family: its name is drawn in its identity colour (instrument-astrid / -petra / -olive). */
+  identity?: "astrid" | "petra" | "olive";
   /** 2: a stereo (two-sided) meter. */
   channels?: 1 | 2;
   /** The master strip: wider. */

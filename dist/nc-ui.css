@@ -1885,6 +1885,11 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   text-transform: uppercase;
   color: var(--nc-ui-text);
 }
+/* The instrument's identity colour on its strip name (the master stays text); silent still dims by colour. */
+.nc-strip[data-nc-identity="astrid"] { --strip-identity: var(--nc-ui-instrument-astrid); }
+.nc-strip[data-nc-identity="petra"] { --strip-identity: var(--nc-ui-instrument-petra); }
+.nc-strip[data-nc-identity="olive"] { --strip-identity: var(--nc-ui-instrument-olive); }
+.nc-strip[data-nc-identity] .nc-strip-name { color: var(--strip-identity); }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: var(--nc-ui-text-sub); }
 .nc-strip-ms { display: flex; gap: var(--nc-ui-control-gap); height: var(--nc-ui-slider-pitch); }
 .nc-strip-sends { display: flex; align-items: flex-start; gap: var(--nc-ui-module-gap); }
@@ -2112,6 +2117,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 }
 @media (max-width: 768px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }
+  /* Phones: the master as narrow as a channel strip, so the strips keep the room. */
+  .nc-strip[data-nc-master] { width: var(--nc-ui-strip-width); }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] { padding-inline: 0; }
 }
 @media (min-width: 1024px) {
   .nc-module-body[data-nc-layout="console"] {

@@ -1593,6 +1593,8 @@ function patchStrip(node, control) {
   }
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;
+  if (control.identity) node.dataset.ncIdentity = control.identity;
+  else delete node.dataset.ncIdentity;
 }
 
 /** The meter handle of a strip control (for the host's per-frame update), from the module or strip element. */

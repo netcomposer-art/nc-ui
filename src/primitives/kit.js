@@ -1413,6 +1413,11 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   text-transform: uppercase;
   color: ${v("text")};
 }
+/* The instrument's identity colour on its strip name (the master stays text); silent still dims by colour. */
+.nc-strip[data-nc-identity="astrid"] { --strip-identity: ${v("instrument-astrid")}; }
+.nc-strip[data-nc-identity="petra"] { --strip-identity: ${v("instrument-petra")}; }
+.nc-strip[data-nc-identity="olive"] { --strip-identity: ${v("instrument-olive")}; }
+.nc-strip[data-nc-identity] .nc-strip-name { color: var(--strip-identity); }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
 .nc-strip-ms { display: flex; gap: ${v("control-gap")}; height: ${v("slider-pitch")}; }
 .nc-strip-sends { display: flex; align-items: flex-start; gap: ${v("module-gap")}; }
@@ -1640,6 +1645,9 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 @media (max-width: 768px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }
+  /* Phones: the master as narrow as a channel strip, so the strips keep the room. */
+  .nc-strip[data-nc-master] { width: ${v("strip-width")}; }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] { padding-inline: 0; }
 }
 @media (min-width: 1024px) {
   .nc-module-body[data-nc-layout="console"] {
