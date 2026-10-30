@@ -234,7 +234,7 @@ export interface CanvasControl {
   type: "canvas";
   id: string;
   label: string;
-  paint: "filter" | "envelope" | "meter" | "playhead" | "swatch";
+  paint: "filter" | "envelope" | "meter" | "playhead" | "swatch" | "waveform";
   mode?: FilterPaint;
   cutoff?: number;
   resonance?: number;
@@ -242,6 +242,16 @@ export interface CanvasControl {
   level?: number;
   step?: number;
   steps?: number;
+  /** waveform: min/max pairs per column (-1..1), left to right. */
+  peaks?: number[];
+  /** waveform: the played part, 0..1 of the sample (tinted, start and end marked). */
+  region?: [number, number];
+  /** waveform: more marks, 0..1 (slice points). */
+  markers?: number[];
+  /** waveform: where the voice is now, 0..1; absent or negative while silent. */
+  position?: number;
+  /** waveform: the words shown when there is no sample. */
+  empty?: string;
 }
 export interface FxControl {
   type: "fx";
