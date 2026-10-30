@@ -101,6 +101,7 @@ export async function outputs() {
   return {
     "dist/nc-ui-inject.min.js": inject.outputFiles[0].text,
     "dist/nc-ui.css": css,
+    "dist/tokens.fallback.css": `${HEADER}@layer nc-ui-fallback {\n${read("dist/tokens.css")}\n}\n`,
     "dist/nc-ui.fallback.css": `${HEADER}@layer nc-ui-fallback {\n${css.slice(HEADER.length)}\n}\n`,
     "dist/nc-ui.min.css": minCss,
     "dist/nc-ui.min.js": js.outputFiles[0].text,

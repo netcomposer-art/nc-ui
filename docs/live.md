@@ -6,8 +6,9 @@
 
 1. **One copy, served by the site.** netcomposer.art serves this package's `dist/` at `/nc-ui/` (`tools/pull-ui.mjs` in the site repo; `/nc-ui/BUILD.txt` names the nc-ui commit).
 2. **Every app links it.** `ncUiLive()` from `@netcomposer/nc-ui/vite` adds `<link rel="stylesheet" href="/nc-ui/nc-ui.css" data-nc-ui-live>` last in `<head>`. All apps are on one origin (Studio iframes too), so they all read the same file.
-3. **Bundled copies only fill in.** An app still bundles nc-ui, but inside `@layer nc-ui-fallback` (`dist/nc-ui.fallback.css`, and `installTheme()` for the JS-injected kit). An unlayered rule always beats a layered one, so the live sheet wins whatever the order; the bundled copy shows only if `/nc-ui/` is missing.
-4. **Standalone dev looks the same.** `ncUiLive()` serves `/nc-ui/` from this package's `dist/` in `vite dev` and `vite preview`.
+3. **The backup loads only if needed.** `ncUiLive()` emits the layered fallback (`nc-ui-fallback.css`) next to the app's index.html and the live `<link>` loads it from its `onerror`, so a normal visit parses the kit once. Apps should not also import `nc-ui.fallback.css` (that double parse cost Bass a 58 ms boot task at ×4 CPU). Older bundled copies still work:
+4. **Bundled copies only fill in.** An app still bundles nc-ui, but inside `@layer nc-ui-fallback` (`dist/nc-ui.fallback.css`, and `installTheme()` for the JS-injected kit). An unlayered rule always beats a layered one, so the live sheet wins whatever the order; the bundled copy shows only if `/nc-ui/` is missing.
+5. **Standalone dev looks the same.** `ncUiLive()` serves `/nc-ui/` from this package's `dist/` in `vite dev` and `vite preview`.
 
 ## Changing the look
 

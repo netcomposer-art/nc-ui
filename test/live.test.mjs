@@ -55,3 +55,31 @@ test("the Vite plugin links /nc-ui/nc-ui.css last in <head> and serves /nc-ui/ f
   served[0]({ url: "/rhythm/" }, {}, () => { passed = true; });
   assert.ok(passed, "other paths pass through");
 });
+
+test("fallback on demand: a build emits nc-ui-fallback.css and the live link loads it only on error", async () => {
+  const { FALLBACK_FILE, fallbackFor } = await import("../vite.js");
+  assert.equal(fallbackFor("/nc-ui/nc-ui.css"), "nc-ui.fallback.css");
+  assert.equal(fallbackFor("/nc-ui/tokens.css"), "tokens.fallback.css");
+  for (const href of ["/nc-ui/nc-ui.css", "/nc-ui/tokens.css"]) {
+    const plugin = ncUiLive({ href });
+    plugin.configResolved({ base: "/bass/", command: "build" });
+    const [tag] = plugin.transformIndexHtml.handler();
+    assert.equal(tag.attrs.href, href);
+    assert.match(tag.attrs.onerror, /l\.href='\/bass\/nc-ui-fallback\.css'/);
+    const emitted = [];
+    plugin.generateBundle.call({ emitFile: (f) => emitted.push(f) });
+    assert.equal(emitted.length, 1);
+    assert.equal(emitted[0].fileName, FALLBACK_FILE);
+    assert.match(emitted[0].source, /@layer nc-ui-fallback \{/);
+  }
+  const off = ncUiLive({ fallback: false });
+  off.configResolved({ base: "/", command: "build" });
+  assert.equal(off.transformIndexHtml.handler()[0].attrs.onerror, undefined);
+  const emitted = [];
+  off.generateBundle.call({ emitFile: (f) => emitted.push(f) });
+  assert.equal(emitted.length, 0);
+  // Dev and preview serve /nc-ui/ themselves, so no handler there.
+  const dev = ncUiLive();
+  dev.configResolved({ base: "/", command: "serve" });
+  assert.equal(dev.transformIndexHtml.handler()[0].attrs.onerror, undefined);
+});
