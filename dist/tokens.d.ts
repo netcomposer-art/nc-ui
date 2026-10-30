@@ -385,6 +385,7 @@ export declare const semantic: {
   readonly "tab-pad-y": "6px";
   readonly "tab-mark": "2px";
   readonly "select-pad-end": "18px";
+  readonly "page-head-layer": "20";
   readonly "page-head-bg": "#FCFCFC";
   readonly "instrument-astrid": "#EB512E";
   readonly "instrument-petra": "#5AC4F7";
@@ -771,6 +772,7 @@ export declare const vars: {
   readonly "tab-pad-y": "var(--nc-ui-tab-pad-y)";
   readonly "tab-mark": "var(--nc-ui-tab-mark)";
   readonly "select-pad-end": "var(--nc-ui-select-pad-end)";
+  readonly "page-head-layer": "var(--nc-ui-page-head-layer)";
   readonly "page-head-bg": "var(--nc-ui-page-head-bg)";
   readonly "instrument-astrid": "var(--nc-ui-instrument-astrid)";
   readonly "instrument-petra": "var(--nc-ui-instrument-petra)";
@@ -954,6 +956,7 @@ export declare const refs: {
   readonly "tab-pad-y": "space.6";
   readonly "tab-mark": "border.thick";
   readonly "select-pad-end": "space.18";
+  readonly "page-head-layer": null;
   readonly "page-head-bg": "color.paper-bright";
   readonly "instrument-astrid": "color.astrid-orange";
   readonly "instrument-petra": "color.petra-blue";

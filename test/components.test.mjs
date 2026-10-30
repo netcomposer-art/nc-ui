@@ -173,3 +173,8 @@ test("title band: page-head-bg behind the header, from the page top to the divid
   assert.match(rule(".nc-page-hd::before"), /bottom: 0/);
   assert.match(css, /@media \(min-width: 1280px\) \{[^}]*\}\s*\.nc-page-hd::before \{ left: calc\(var\(--nc-ui-page-pad-x-xl\) \* -1\)/);
 });
+
+test("the page header is its own layer above the modules, so a header menu opens over them (Rhythm #40)", () => {
+  assert.match(rule(".nc-page-hd"), /position: relative;[\s\S]*z-index: var\(--nc-ui-page-head-layer\)/);
+  assert.doesNotMatch(rule(".nc-page-hd"), /isolation: isolate/);
+});

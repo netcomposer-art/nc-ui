@@ -51,7 +51,9 @@ button, input, select { font: inherit; color: inherit; }
   padding-bottom: ${v("page-head-gap")};
   border-bottom: ${v("hairline")} solid ${v("divider")};
   position: relative;
-  isolation: isolate;
+  /* Its own layer above the page body: the band sits behind the header's content, and a menu that opens from the
+     header (Bass's and Rhythm's phone menu) draws over the modules, not under them. */
+  z-index: ${v("page-head-layer")};
 }
 /* The title band (Peter): page-head-bg from the top of the page down to the header's divider, edge to edge. It
    reaches into the page's padding, so it never widens the page; the divider keeps its inset. */
