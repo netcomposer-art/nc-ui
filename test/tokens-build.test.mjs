@@ -122,3 +122,14 @@ test('CSS is one :root block, prefixed, no duplicates', () => {
   assert.equal(new Set(names).size, names.length);
   assert.ok(names.every((n) => n.startsWith('--nc-ui-') || /^--nc-(synth|meaning|situation|rhythm)-/.test(n)));
 });
+
+test("instrument identity colours (Peter, 2026-10-29): ASTRID, PETRA, OLIVE; OLIVE's green is the lint's one named exception", async () => {
+  const { semantic } = await import("../dist/tokens.js");
+  assert.equal(semantic["instrument-astrid"].toUpperCase(), "#EB512E");
+  assert.equal(semantic["instrument-petra"].toUpperCase(), "#79D3F9");
+  assert.equal(semantic["instrument-olive"].toUpperCase(), "#9CA536");
+  const { findGreen, IDENTITY_COLOURS } = await import("../scripts/lint-ui.mjs");
+  assert.deepEqual([...IDENTITY_COLOURS], ["#9ca536"]);
+  assert.equal(findGreen("color: #9CA536;").length, 0);
+  assert.equal(findGreen("color: #9CA537;").length, 1, "only that exact olive, not greens near it");
+});

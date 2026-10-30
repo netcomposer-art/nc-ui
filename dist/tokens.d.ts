@@ -12,6 +12,9 @@ export declare const base: {
     readonly "surf": "#EAEAEA";
     readonly "accent": "#003153";
     readonly "accent-wash": "rgba(0,49,83,0.07)";
+    readonly "astrid-orange": "#EB512E";
+    readonly "petra-blue": "#79D3F9";
+    readonly "olive-green": "#9CA536";
     readonly "accent-pad": "#1A6193";
     readonly "accent-velocity-min": "#477399";
     readonly "shade-1": "#F3F3F3";
@@ -381,6 +384,9 @@ export declare const semantic: {
   readonly "tab-pad-y": "6px";
   readonly "tab-mark": "2px";
   readonly "select-pad-end": "18px";
+  readonly "instrument-astrid": "#EB512E";
+  readonly "instrument-petra": "#79D3F9";
+  readonly "instrument-olive": "#9CA536";
   readonly "page-title-size": "15px";
   readonly "page-title-tracking": ".28em";
   readonly "page-sub-size": "14px";
@@ -763,6 +769,9 @@ export declare const vars: {
   readonly "tab-pad-y": "var(--nc-ui-tab-pad-y)";
   readonly "tab-mark": "var(--nc-ui-tab-mark)";
   readonly "select-pad-end": "var(--nc-ui-select-pad-end)";
+  readonly "instrument-astrid": "var(--nc-ui-instrument-astrid)";
+  readonly "instrument-petra": "var(--nc-ui-instrument-petra)";
+  readonly "instrument-olive": "var(--nc-ui-instrument-olive)";
   readonly "page-title-size": "var(--nc-ui-page-title-size)";
   readonly "page-title-tracking": "var(--nc-ui-page-title-tracking)";
   readonly "page-sub-size": "var(--nc-ui-page-sub-size)";
@@ -942,6 +951,9 @@ export declare const refs: {
   readonly "tab-pad-y": "space.6";
   readonly "tab-mark": "border.thick";
   readonly "select-pad-end": "space.18";
+  readonly "instrument-astrid": "color.astrid-orange";
+  readonly "instrument-petra": "color.petra-blue";
+  readonly "instrument-olive": "color.olive-green";
   readonly "page-title-size": "font-size.xl";
   readonly "page-title-tracking": "tracking.8";
   readonly "page-sub-size": "font-size.lg";
