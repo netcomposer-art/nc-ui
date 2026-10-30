@@ -1910,7 +1910,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   width: 100%;
   height: 100%;
   padding: 0;
-  border: var(--nc-ui-hairline) solid var(--nc-ui-divider);
+  border: var(--nc-ui-hairline) solid var(--nc-ui-strip-hacks-text);
   border-radius: var(--nc-ui-slot-radius);
   background: transparent;
   color: var(--nc-ui-strip-hacks-text);

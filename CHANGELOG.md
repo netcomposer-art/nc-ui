@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Console strips: the Hacks button's outline is `strip-hacks-text` (#8C8C8C), darker than the divider (Peter).
 - Console strips: the Hacks label is mixed case ("Hacks") in a lighter grey, the new `strip-hacks-text` (`color.hacks-grey`, #8C8C8C, 3.2:1 on the strips); hover and pressed are unchanged.
 - Console strips: `onHacks` / `hacks` / `hacksLabel` add a Hacks toggle above M and S (pressed in the master accent, `fader-cap-master`). Every strip keeps the row, so faders still line up.
 - `createSwitch` / `.nc-ui-switch`: ASTRID's text on/off (the word, an accent hairline when on). Same API; the track and knob are gone, and so are the `switch-track-width`, `switch-track-height`, `switch-knob`, `switch-knob-inset` and `switch-gap` tokens.

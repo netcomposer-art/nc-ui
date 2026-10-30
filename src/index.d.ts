@@ -305,7 +305,7 @@ export interface StripControl {
   onHacks?: () => void;
   /** The Hacks button is pressed (this strip's stack is the one shown). */
   hacks?: boolean;
-  /** The Hacks button's text (default "Hacks"). */
+  /** The Hacks button's text (default "Hacks"; the Studio says "Inserts"). */
   hacksLabel?: string;
   /** Adds the M button. */
   onMute?: () => void;
