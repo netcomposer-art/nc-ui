@@ -372,6 +372,7 @@
   --nc-ui-tab-pad-y: var(--nc-ui-space-6);
   --nc-ui-tab-mark: var(--nc-ui-border-thick);
   --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-page-head-layer: 20;
   --nc-ui-page-head-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-instrument-astrid: var(--nc-ui-color-astrid-orange);
   --nc-ui-instrument-petra: var(--nc-ui-color-petra-blue);
@@ -483,7 +484,9 @@ button, input, select { font: inherit; color: inherit; }
   padding-bottom: var(--nc-ui-page-head-gap);
   border-bottom: var(--nc-ui-hairline) solid var(--nc-ui-divider);
   position: relative;
-  isolation: isolate;
+  /* Its own layer above the page body: the band sits behind the header's content, and a menu that opens from the
+     header (Bass's and Rhythm's phone menu) draws over the modules, not under them. */
+  z-index: var(--nc-ui-page-head-layer);
 }
 /* The title band (Peter): page-head-bg from the top of the page down to the header's divider, edge to edge. It
    reaches into the page's padding, so it never widens the page; the divider keeps its inset. */
