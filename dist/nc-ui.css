@@ -1915,6 +1915,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   color: var(--nc-ui-strip-hacks-text);
   font-size: var(--nc-ui-label-size);
   font-weight: var(--nc-ui-label-weight);
+  /* Stated, not left out: an older bundled copy of the kit (an app's fallback layer) set uppercase and tracking. */
+  letter-spacing: normal;
+  text-transform: none;
   cursor: pointer;
   transition: none;
 }
