@@ -318,6 +318,7 @@
   --nc-ui-fader-cap-height: var(--nc-ui-space-14);
   --nc-ui-fader-cap: var(--nc-ui-color-ink);
   --nc-ui-fader-cap-line: var(--nc-ui-color-paper);
+  --nc-ui-fader-cap-master: var(--nc-ui-color-accent);
   --nc-ui-fader-track: color-mix(in srgb, var(--nc-ui-color-ink) 25%, transparent);
   --nc-ui-strip-width: 88px;
   --nc-ui-strip-width-master: 112px;
@@ -1985,6 +1986,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   background: var(--nc-ui-fader-cap-line);
 }
 .nc-fader[data-dragging="true"] .nc-fader-cap { background: var(--nc-ui-accent); }
+/* The master's cap in Prussian blue (Peter, 2026-10-30): the master reads apart from the channels at a glance. */
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] .nc-fader-cap { background: var(--nc-ui-fader-cap-master); }
 .nc-fader:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-control-gap); }
 /* The level meter: peak over RMS in the lighter Prussian blue, a hold line, a clip light on top. It follows the audio
    every frame (transforms written by the meter's own ballistics), so nothing here transitions. */

@@ -54,6 +54,7 @@ const theme = {
     "nc-instrument-petra": "var(--nc-ui-instrument-petra)",
     "nc-instrument-olive": "var(--nc-ui-instrument-olive)",
     "nc-instrument-lucy": "var(--nc-ui-instrument-lucy)",
+    "nc-fader-cap-master": "var(--nc-ui-fader-cap-master)",
     "nc-filter-lowpass": "var(--nc-ui-filter-lowpass)",
     "nc-filter-highpass": "var(--nc-ui-filter-highpass)",
     "nc-filter-bandpass": "var(--nc-ui-filter-bandpass)",

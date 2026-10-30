@@ -149,6 +149,7 @@ const semanticKinds = {
   "instrument-petra": "color",
   "instrument-olive": "color",
   "instrument-lucy": "color",
+  "fader-cap-master": "color",
   "page-title-size": "length",
   "page-title-tracking": "other",
   "page-sub-size": "length",
