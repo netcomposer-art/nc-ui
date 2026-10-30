@@ -1431,7 +1431,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   width: 100%;
   height: 100%;
   padding: 0;
-  border: ${v("hairline")} solid ${v("divider")};
+  border: ${v("hairline")} solid ${v("strip-hacks-text")};
   border-radius: ${v("slot-radius")};
   background: transparent;
   color: ${v("strip-hacks-text")};
