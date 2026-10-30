@@ -104,7 +104,6 @@ function consoleDef(state, calls) {
         area: "strips",
         controls: [
           strip("bass", "Bass", {
-            identity: "olive",
             mute: state.mute,
             silent: state.mute,
             onMute: () => calls.push(["mute"]),
@@ -162,7 +161,7 @@ test("strip control: name, M/S, compact sends, fader + scale + meter, readout; p
   assert.equal(strip.querySelector(".nc-fader").style.getPropertyValue("--fader-pos"), "0.3");
   assert.equal(strip.querySelector('[data-nc-ms="mute"]').getAttribute("aria-pressed"), "true");
   assert.equal(strip.dataset.silent, "true");
-  assert.equal(strip.dataset.ncIdentity, "olive");
+  assert.equal(strip.dataset.ncIdentity, undefined, "no identity colour on strips (Peter)");
   mod.el.remove();
 });
 
@@ -180,8 +179,8 @@ test("console CSS: tokens only; strips scroll on phones with the master pinned; 
   assert.match(rule(".nc-meter-rms") + rule(".nc-meter-peak"), /meter-fill|meter-peak/);
   assert.match(css, /@media \(max-width: 1023px\) \{\s*\.nc-module-body\[data-nc-layout="console"\] \{[^}]*"strips master" "fx fx"/);
   assert.match(css, /\[data-nc-area="strips"\] \{[^}]*overflow-x: auto/);
-  assert.match(rule('.nc-strip[data-nc-identity="olive"]'), /--strip-identity: var\(--nc-ui-instrument-olive\)/);
-  assert.match(rule(".nc-strip[data-nc-identity] .nc-strip-name"), /color: var\(--strip-identity\)/);
+  // Identity colours belong to each instrument's own title only (Peter): never on a strip.
+  assert.doesNotMatch(css, /nc-strip[^{]*identity|instrument-(astrid|petra|olive)\)[^;]*;[^}]*\}[^{]*nc-strip/);
   assert.match(css, /@media \(max-width: 768px\) \{[^@]*\.nc-strip\[data-nc-master\] \{ width: var\(--nc-ui-strip-width\); \}/);
 });
 
