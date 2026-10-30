@@ -166,3 +166,10 @@ test("M/S 44 px boxes only on touch; the tap chip has no extra hit pad over the 
   assert.doesNotMatch(css, /\n\.nc-ms-wrap \{ flex-basis/, "not on every pointer");
   assert.match(css, /\.nc-tap > \.nc-hit \{ display: none; \}/);
 });
+
+test("title band: page-head-bg behind the header, from the page top to the divider, inside the page padding", () => {
+  assert.match(rule(".nc-page-hd::before"), /background: var\(--nc-ui-page-head-bg\)/);
+  assert.match(rule(".nc-page-hd::before"), /top: calc\(var\(--nc-ui-page-pad-y\) \* -1\)/);
+  assert.match(rule(".nc-page-hd::before"), /bottom: 0/);
+  assert.match(css, /@media \(min-width: 1280px\) \{[^}]*\}\s*\.nc-page-hd::before \{ left: calc\(var\(--nc-ui-page-pad-x-xl\) \* -1\)/);
+});

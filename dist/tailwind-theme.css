@@ -46,6 +46,7 @@
   --color-nc-fader-cap: var(--nc-ui-fader-cap);
   --color-nc-fader-cap-line: var(--nc-ui-fader-cap-line);
   --color-nc-fader-track: var(--nc-ui-fader-track);
+  --color-nc-page-head-bg: var(--nc-ui-page-head-bg);
   --color-nc-instrument-astrid: var(--nc-ui-instrument-astrid);
   --color-nc-instrument-petra: var(--nc-ui-instrument-petra);
   --color-nc-instrument-olive: var(--nc-ui-instrument-olive);

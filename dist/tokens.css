@@ -15,6 +15,7 @@
   --nc-ui-color-astrid-orange: #EB512E;
   --nc-ui-color-petra-blue: #79D3F9;
   --nc-ui-color-olive-green: #9CA536;
+  --nc-ui-color-paper-bright: #FCFCFC;
   --nc-ui-color-accent-pad: #1A6193;
   --nc-ui-color-accent-velocity-min: #477399;
   --nc-ui-color-shade-1: #F3F3F3;
@@ -369,6 +370,7 @@
   --nc-ui-tab-pad-y: var(--nc-ui-space-6);
   --nc-ui-tab-mark: var(--nc-ui-border-thick);
   --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-page-head-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-instrument-astrid: var(--nc-ui-color-astrid-orange);
   --nc-ui-instrument-petra: var(--nc-ui-color-petra-blue);
   --nc-ui-instrument-olive: var(--nc-ui-color-olive-green);

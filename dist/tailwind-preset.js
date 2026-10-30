@@ -49,6 +49,7 @@ const theme = {
     "nc-fader-cap": "var(--nc-ui-fader-cap)",
     "nc-fader-cap-line": "var(--nc-ui-fader-cap-line)",
     "nc-fader-track": "var(--nc-ui-fader-track)",
+    "nc-page-head-bg": "var(--nc-ui-page-head-bg)",
     "nc-instrument-astrid": "var(--nc-ui-instrument-astrid)",
     "nc-instrument-petra": "var(--nc-ui-instrument-petra)",
     "nc-instrument-olive": "var(--nc-ui-instrument-olive)",

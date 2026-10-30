@@ -50,6 +50,21 @@ button, input, select { font: inherit; color: inherit; }
   min-width: 0;
   padding-bottom: ${v("page-head-gap")};
   border-bottom: ${v("hairline")} solid ${v("divider")};
+  position: relative;
+  isolation: isolate;
+}
+/* The title band (Peter): page-head-bg from the top of the page down to the header's divider, edge to edge. It
+   reaches into the page's padding, so it never widens the page; the divider keeps its inset. */
+.nc-page-hd::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: calc(${v("page-pad-y")} * -1);
+  bottom: 0;
+  left: calc(${v("page-pad-x")} * -1);
+  right: calc(${v("page-pad-x")} * -1);
+  background: ${v("page-head-bg")};
+  pointer-events: none;
 }
 .nc-page-body { min-width: 0; padding-top: ${v("page-body-gap")}; }
 /* Page title (ASTRID: "ASTRID / SYNTH / 01"), the line under it, and the header's text actions (Save, Load, Panic). */
@@ -1660,6 +1675,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 @media (min-width: 768px) {
   .nc-page { padding: ${v("page-pad-y-md")} ${v("page-pad-x-md")}; }
   .nc-page-hd { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: ${v("page-head-gap-md")}; }
+  .nc-page-hd::before { top: calc(${v("page-pad-y-md")} * -1); left: calc(${v("page-pad-x-md")} * -1); right: calc(${v("page-pad-x-md")} * -1); }
 }
 /* Tablets (769-1023 px): the same 2 x 5 slot grid as phones and desktop; one row of 10 drew 14 px slots here. */
 @media (min-width: 769px) and (max-width: 1023px) {
@@ -1679,6 +1695,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 @media (min-width: 1280px) {
   .nc-page { padding-inline: ${v("page-pad-x-xl")}; }
+  .nc-page-hd::before { left: calc(${v("page-pad-x-xl")} * -1); right: calc(${v("page-pad-x-xl")} * -1); }
 }
 @media (min-width: 1024px) {
   .nc-stack[data-nc-layout="adjacent"] {
