@@ -17,6 +17,7 @@
   --nc-ui-color-astrid-orange: #EB512E;
   --nc-ui-color-petra-blue: #5AC4F7;
   --nc-ui-color-olive-green: #9CA536;
+  --nc-ui-color-lucy-purple: #9B30FF;
   --nc-ui-color-paper-bright: #FCFCFC;
   --nc-ui-color-accent-pad: #1A6193;
   --nc-ui-color-accent-velocity-min: #477399;
@@ -377,6 +378,7 @@
   --nc-ui-instrument-astrid: var(--nc-ui-color-astrid-orange);
   --nc-ui-instrument-petra: var(--nc-ui-color-petra-blue);
   --nc-ui-instrument-olive: var(--nc-ui-color-olive-green);
+  --nc-ui-instrument-lucy: var(--nc-ui-color-lucy-purple);
   --nc-ui-page-title-size: var(--nc-ui-font-size-xl);
   --nc-ui-page-title-tracking: var(--nc-ui-tracking-8);
   --nc-ui-page-sub-size: var(--nc-ui-font-size-lg);

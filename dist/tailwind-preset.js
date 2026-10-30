@@ -53,6 +53,7 @@ const theme = {
     "nc-instrument-astrid": "var(--nc-ui-instrument-astrid)",
     "nc-instrument-petra": "var(--nc-ui-instrument-petra)",
     "nc-instrument-olive": "var(--nc-ui-instrument-olive)",
+    "nc-instrument-lucy": "var(--nc-ui-instrument-lucy)",
     "nc-filter-lowpass": "var(--nc-ui-filter-lowpass)",
     "nc-filter-highpass": "var(--nc-ui-filter-highpass)",
     "nc-filter-bandpass": "var(--nc-ui-filter-bandpass)",

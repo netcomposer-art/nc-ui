@@ -148,6 +148,7 @@ const semanticKinds = {
   "instrument-astrid": "color",
   "instrument-petra": "color",
   "instrument-olive": "color",
+  "instrument-lucy": "color",
   "page-title-size": "length",
   "page-title-tracking": "other",
   "page-sub-size": "length",
