@@ -1857,7 +1857,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   flex: none;
   width: var(--nc-ui-strip-width);
   display: grid;
-  grid-template-rows: auto var(--nc-ui-slider-pitch) calc(var(--nc-ui-knob-size) + var(--nc-ui-control-gap) + var(--nc-ui-label-size) * var(--nc-ui-label-leading)) auto auto;
+  grid-template-rows: auto var(--nc-ui-slider-pitch) var(--nc-ui-slider-pitch) calc(var(--nc-ui-knob-size) + var(--nc-ui-control-gap) + var(--nc-ui-label-size) * var(--nc-ui-label-leading)) auto auto;
   justify-items: center;
   row-gap: var(--nc-ui-module-gap);
   min-width: 0;
@@ -1898,6 +1898,33 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: var(--nc-ui-text-sub); }
 .nc-strip-ms { display: flex; gap: var(--nc-ui-control-gap); height: var(--nc-ui-slider-pitch); }
+/* Hacks: a full-width toggle above M and S; pressed while the console's fx area shows this strip's stack. */
+.nc-strip-hacks { display: flex; width: 100%; height: var(--nc-ui-slider-pitch); }
+.nc-hacks-wrap { position: relative; flex: 1 1 auto; height: var(--nc-ui-slider-pitch); }
+.nc-hacks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: var(--nc-ui-hairline) solid var(--nc-ui-divider);
+  border-radius: var(--nc-ui-slot-radius);
+  background: transparent;
+  color: var(--nc-ui-text-sub);
+  font-size: var(--nc-ui-label-size);
+  font-weight: var(--nc-ui-label-weight);
+  letter-spacing: var(--nc-ui-label-tracking);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: none;
+}
+.nc-hacks:hover { color: var(--nc-ui-text); }
+.nc-hacks[aria-pressed="true"] {
+  background: var(--nc-ui-fader-cap-master);
+  border-color: var(--nc-ui-fader-cap-master);
+  color: var(--nc-ui-surface-page);
+}
+.nc-hacks:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 .nc-strip-sends { display: flex; align-items: flex-start; gap: var(--nc-ui-module-gap); }
 .nc-field[data-nc-compact] {
   flex-direction: column-reverse;

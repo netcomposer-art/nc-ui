@@ -1381,7 +1381,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   flex: none;
   width: ${v("strip-width")};
   display: grid;
-  grid-template-rows: auto ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+  grid-template-rows: auto ${v("slider-pitch")} ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
   justify-items: center;
   row-gap: ${v("module-gap")};
   min-width: 0;
@@ -1422,6 +1422,33 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
 .nc-strip-ms { display: flex; gap: ${v("control-gap")}; height: ${v("slider-pitch")}; }
+/* Hacks: a full-width toggle above M and S; pressed while the console's fx area shows this strip's stack. */
+.nc-strip-hacks { display: flex; width: 100%; height: ${v("slider-pitch")}; }
+.nc-hacks-wrap { position: relative; flex: 1 1 auto; height: ${v("slider-pitch")}; }
+.nc-hacks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: ${v("hairline")} solid ${v("divider")};
+  border-radius: ${v("slot-radius")};
+  background: transparent;
+  color: ${v("text-sub")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: none;
+}
+.nc-hacks:hover { color: ${v("text")}; }
+.nc-hacks[aria-pressed="true"] {
+  background: ${v("fader-cap-master")};
+  border-color: ${v("fader-cap-master")};
+  color: ${v("surface-page")};
+}
+.nc-hacks:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 .nc-strip-sends { display: flex; align-items: flex-start; gap: ${v("module-gap")}; }
 .nc-field[data-nc-compact] {
   flex-direction: column-reverse;
