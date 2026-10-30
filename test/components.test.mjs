@@ -52,15 +52,34 @@ test("the switch never changes width: both words are always in the box", () => {
   assert.doesNotMatch(css, /\[data-nc-(on|off)\][^{]*\{[^}]*display: none/);
 });
 
-test("switch CSS: 44 px target, hover state, tokens only, motion-press", () => {
+test("switch CSS: ASTRID text on/off, no track, 44 px pad on touch only, tokens only", () => {
   const base = rule(".nc-ui-switch");
-  assert.match(base, /min-height: var\(--nc-ui-target-min\)/);
-  assert.match(base, /min-width: var\(--nc-ui-target-min\)/);
+  assert.doesNotMatch(base, /min-height|min-width/, "drawn at ASTRID size, not 44 px");
+  assert.match(base, /font-weight: var\(--nc-ui-control-weight\)/);
+  assert.match(base, /border-bottom: var\(--nc-ui-hairline\) solid transparent/);
   assert.match(rule(".nc-ui-switch:hover"), /color: var\(--nc-ui-text\)/);
-  assert.match(rule(".nc-ui-switch-track"), /width: var\(--nc-ui-switch-track-width\)/);
-  assert.match(rule(".nc-ui-switch-track::after"), /transform var\(--nc-ui-motion-press\)/);
-  assert.match(css, /\.nc-ui-switch\[aria-checked="true"\] \.nc-ui-switch-track \{ background: var\(--nc-ui-accent\)/);
-  assert.match(css, /prefers-reduced-motion[\s\S]*\.nc-ui-switch, \.nc-ui-switch-track/);
+  assert.doesNotMatch(css, /nc-ui-switch-track|--nc-ui-switch-/, "the track and its tokens are gone");
+  assert.equal(createSwitch().el.querySelector(".nc-ui-switch-track"), null);
+  assert.match(css, /@media \(pointer: coarse\) \{\s*:is\([^)]*\.nc-ui-switch[^)]*\) \{ position: relative; \}\s*:is\([^)]*\.nc-ui-switch[^)]*\)::before \{[^}]*width: max\(100%, var\(--nc-ui-target-min\)\)/);
+  assert.match(css, /prefers-reduced-motion[\s\S]*\.nc-ui-switch, \.nc-select/);
+});
+
+test("segmented control is ASTRID's underline tabs: hairline row, accent tab-mark, no fill", () => {
+  assert.match(rule(".nc-seg"), /border-bottom: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\)/);
+  assert.doesNotMatch(rule(".nc-seg"), /border-radius|border: /);
+  const on = rule('.nc-seg > button[aria-checked="true"]');
+  assert.match(on, /color: var\(--nc-ui-text\)/);
+  assert.doesNotMatch(on, /background/);
+  assert.match(rule('.nc-seg > button[aria-checked="true"]::after'), /height: var\(--nc-ui-tab-mark\)/);
+  assert.match(rule('.nc-seg > button[aria-checked="true"]::after'), /background: var\(--nc-ui-accent\)/);
+  assert.doesNotMatch(rule(".nc-seg > button"), /min-height/);
+});
+
+test("page frame: ASTRID gutters, a header over a divider, then the modules", () => {
+  assert.match(rule(".nc-page"), /padding: var\(--nc-ui-page-pad-y\) var\(--nc-ui-page-pad-x\)/);
+  assert.match(rule(".nc-page-hd"), /border-bottom: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\)/);
+  assert.match(css, /@media \(min-width: 768px\) \{\s*\.nc-page \{ padding: var\(--nc-ui-page-pad-y-md\) var\(--nc-ui-page-pad-x-md\)/);
+  assert.match(css, /@media \(min-width: 1280px\) \{\s*\.nc-page \{ padding-inline: var\(--nc-ui-page-pad-x-xl\)/);
 });
 
 test("FX card: kit namespace, header switch named by the title, colour dim when off, More", () => {
@@ -88,8 +107,8 @@ test("FX card: kit namespace, header switch named by the title, colour dim when 
   const more = card.querySelector("details.nc-ui-more");
   assert.equal(more.querySelector("summary").textContent, "More");
   assert.ok(more.querySelector('[data-nc-id="drive-lfo"]'));
-  assert.match(rule(".nc-ui-more > summary"), /min-height: var\(--nc-ui-target-min\)/);
-  assert.match(rule(".nc-ui-fx-hd"), /min-height: var\(--nc-ui-target-min\)/);
+  assert.doesNotMatch(rule(".nc-ui-more > summary"), /min-height/);
+  assert.match(css, /:is\([^)]*\.nc-ui-more > summary[^)]*\)::before/);
 });
 
 test("an FX card without `on` has no switch (Rhythm's hacks stay as they are)", () => {
@@ -118,10 +137,39 @@ test("defineModule: header switch only when `on` is given; off dims the body by 
 });
 
 
-test("switch colours follow plan 5.1: off sub/divider, on accent with a page-coloured knob", () => {
+test("switch colours follow plan 5.1: off sub, on text with an accent hairline", () => {
   assert.match(rule(".nc-ui-switch"), /color: var\(--nc-ui-text-sub\)/);
-  assert.match(rule(".nc-ui-switch-track"), /border: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\)/);
-  assert.match(rule(".nc-ui-switch-track::after"), /background: var\(--nc-ui-text-sub\)/);
-  assert.match(rule('.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track::after'), /background: var\(--nc-ui-surface-page\)/);
+  const on = rule('.nc-ui-switch[aria-checked="true"]');
+  assert.match(on, /color: var\(--nc-ui-text\)/);
+  assert.match(on, /border-bottom-color: var\(--nc-ui-accent\)/);
   assert.match(rule(".nc-ui-switch:focus-visible"), /outline: var\(--nc-ui-focus-width\) solid var\(--nc-ui-focus-ring\)/);
+});
+
+test("FX and stacked cards draw the slider track in their own divider shade, so it never vanishes", () => {
+  for (const n of [1, 2, 3, 4])
+    assert.match(css, new RegExp(`data-nc-depth="${n}"\\] \\{[^}]*--nc-ui-slider-track: var\\(--nc-ui-module-div-stack-${n}\\)`));
+});
+
+test("tablets (769-1023 px) get the same 2 x 5 slot grid as phones and desktop", () => {
+  assert.match(css, /@media \(min-width: 769px\) and \(max-width: 1023px\) \{\s*\.nc-slot-line \{ flex-wrap: wrap; \}\s*\.nc-snap-row \{[^}]*repeat\(5, minmax\(0, 1fr\)\)/);
+});
+
+test("page header: ASTRID's title, sub line and text actions", () => {
+  assert.match(rule(".nc-page-title"), /font-size: var\(--nc-ui-page-title-size\)/);
+  assert.match(rule(".nc-page-title"), /letter-spacing: var\(--nc-ui-page-title-tracking\)/);
+  assert.match(rule(".nc-page-action"), /color: var\(--nc-ui-text-sub\)/);
+  assert.match(css, /:is\([^)]*\.nc-page-action[^)]*\)::before/);
+});
+
+test("M/S 44 px boxes only on touch; the tap chip has no extra hit pad over the slider", () => {
+  assert.match(css, /@media \(pointer: coarse\) \{\s*\.nc-ms-wrap \{ flex-basis: var\(--nc-ui-target-min\)/);
+  assert.doesNotMatch(css, /\n\.nc-ms-wrap \{ flex-basis/, "not on every pointer");
+  assert.match(css, /\.nc-tap > \.nc-hit \{ display: none; \}/);
+});
+
+test("title band: page-head-bg behind the header, from the page top to the divider, inside the page padding", () => {
+  assert.match(rule(".nc-page-hd::before"), /background: var\(--nc-ui-page-head-bg\)/);
+  assert.match(rule(".nc-page-hd::before"), /top: calc\(var\(--nc-ui-page-pad-y\) \* -1\)/);
+  assert.match(rule(".nc-page-hd::before"), /bottom: 0/);
+  assert.match(css, /@media \(min-width: 1280px\) \{[^}]*\}\s*\.nc-page-hd::before \{ left: calc\(var\(--nc-ui-page-pad-x-xl\) \* -1\)/);
 });

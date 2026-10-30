@@ -65,8 +65,8 @@ test('confirm.css styles the dialog from semantic tokens, 44 px on every pointer
   assert.match(bare, /\[data-danger="true"\] \{[^}]*background: var\(--nc-ui-danger\);[^}]*color: var\(--nc-ui-on-danger\)/);
   assert.match(bare, /button\.nc-ui-confirm-btn \{[^}]*min-height: var\(--nc-ui-target-min\);/);
   assert.doesNotMatch(bare, /pointer: coarse/, 'no fine-pointer size: 44 px on desktop too');
-  assert.match(bare, /transition: opacity var\(--nc-ui-motion-fade\)/);
-  assert.match(bare, /transition: opacity var\(--nc-ui-motion-fade-out\)/);
+  assert.match(bare, /transition: opacity var\(--nc-ui-motion-fade\) var\(--nc-ui-motion-fade-easing\)/);
+  assert.match(bare, /transition: opacity var\(--nc-ui-motion-fade-out\) var\(--nc-ui-motion-fade-out-easing\)/);
   const reduced = bare.slice(bare.lastIndexOf('@media (prefers-reduced-motion: reduce)'));
   for (const sel of ['.nc-ui-confirm-layer,', '.nc-ui-confirm-layer[data-state="closing"]', '.nc-ui-confirm,', 'button.nc-ui-confirm-btn'])
     assert.ok(reduced.includes(sel), sel);

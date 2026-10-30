@@ -9,6 +9,7 @@ export function kitCss() {
       background: ${v(`module-bg-stack-${n}`)};
       ${prop("text-sub")}: ${v(`module-sub-stack-${n}`)};
       ${prop("divider")}: ${v(`module-div-stack-${n}`)};
+      ${prop("slider-track")}: ${v(`module-div-stack-${n}`)};
     }`;
   const adjacent = (n) =>
     `.nc-module[data-nc-place="adjacent"][data-nc-shade="${n}"] { background: ${v(`module-bg-adjacent-${n}`)}; }`;
@@ -37,6 +38,65 @@ html, body {
 button, input, select { font: inherit; color: inherit; }
 .nc [hidden] { display: none !important; }
 .nc-stack { display: flex; flex-direction: column; min-width: 0; }
+/* ASTRID's page frame: side gutters, a header with a divider under it, then the modules, inset from the edges. */
+.nc-page {
+  min-width: 0;
+  padding: ${v("page-pad-y")} ${v("page-pad-x")};
+}
+.nc-page-hd {
+  display: flex;
+  flex-direction: column;
+  gap: ${v("page-action-gap")};
+  min-width: 0;
+  padding-bottom: ${v("page-head-gap")};
+  border-bottom: ${v("hairline")} solid ${v("divider")};
+  position: relative;
+  isolation: isolate;
+}
+/* The title band (Peter): page-head-bg from the top of the page down to the header's divider, edge to edge. It
+   reaches into the page's padding, so it never widens the page; the divider keeps its inset. */
+.nc-page-hd::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: calc(${v("page-pad-y")} * -1);
+  bottom: 0;
+  left: calc(${v("page-pad-x")} * -1);
+  right: calc(${v("page-pad-x")} * -1);
+  background: ${v("page-head-bg")};
+  pointer-events: none;
+}
+.nc-page-body { min-width: 0; padding-top: ${v("page-body-gap")}; }
+/* Page title (ASTRID: "ASTRID / SYNTH / 01"), the line under it, and the header's text actions (Save, Load, Panic). */
+.nc-page-title {
+  margin: 0;
+  font-size: ${v("page-title-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("page-title-tracking")};
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nc-page-sub { margin: ${v("page-sub-gap")} 0 0; font-size: ${v("page-sub-size")}; color: ${v("text-sub")}; }
+.nc-page-title .nc-page-sep { color: ${v("text-sub")}; }
+.nc-page-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: ${v("control-gap")} ${v("page-action-gap")}; min-width: 0; }
+.nc-page-action {
+  border: 0;
+  border-bottom: ${v("hairline")} solid transparent;
+  background: transparent;
+  padding: 0 0 ${v("control-gap")};
+  color: ${v("text-sub")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("control-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  cursor: pointer;
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-page-action:hover { color: ${v("text")}; border-bottom-color: ${v("text")}; }
+.nc-page-action:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
 .nc-module {
   background: ${v("module-bg-adjacent-1")};
   color: ${v("text")};
@@ -59,9 +119,14 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   justify-content: space-between;
   gap: ${v("header-gap")};
   min-width: 0;
-  min-height: ${v("target-min")};
 }
 .nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin")}; }
+/* A compact header (defineModule compact): the title at the slim size and the index on one slim line, a small gap
+   under it. For a module that sits over others (the Studio's Mix). */
+.nc-module[data-nc-compact] .nc-title { font-size: ${v("title-size-slim")}; }
+.nc-module[data-nc-compact][data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin-compact")}; }
+.nc-module[data-nc-compact]:not([data-nc-slim]) { padding-top: ${v("module-gap")}; }
+.nc-module[data-nc-compact][data-nc-slim] { padding-block: ${v("module-gap")}; }
 .nc-title {
   margin: 0;
   min-width: 0;
@@ -80,8 +145,6 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   color: ${v("text-sub")};
 }
 .nc-hide, .nc-slim {
-  min-width: ${v("target-min")};
-  min-height: ${v("target-min")};
   padding: 0 ${v("control-gap")};
   border: 0;
   background: transparent;
@@ -215,6 +278,9 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   height: max(100%, ${v("target-min")});
   transform: translateX(-50%);
 }
+/* The chip's ::before is already its touch box and stops at the slider; a hit pad on top of it covered the top
+   half of the tempo slider, so a drag there tapped instead (Rhythm #40). */
+.nc-tap > .nc-hit { display: none; }
 .nc-tap:hover { border-color: ${v("text-sub")}; color: ${v("text")}; }
 .nc-tap:active { background: ${v("text")}; border-color: ${v("text")}; color: ${v("surface-page")}; }
 .nc-tap:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
@@ -318,12 +384,12 @@ ${MODULATED_SELECTOR} { transition: none; }
   background: transparent;
   color: ${v("text-sub")};
   font-size: ${v("label-size")};
-  font-weight: ${v("label-weight")};
+  font-weight: ${v("control-weight")};
   letter-spacing: ${v("label-tracking")};
   text-transform: uppercase;
-  padding: ${v("control-gap")} 0;
-  min-height: ${v("target-min")};
+  padding: 0 0 ${v("control-gap")};
   cursor: pointer;
+  align-self: flex-start;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
@@ -333,6 +399,7 @@ ${MODULATED_SELECTOR} { transition: none; }
   transition-duration: ${v("transition-feedback")};
 }
 .nc-toggle:hover, .nc-toggle[aria-pressed="true"] { color: ${v("text")}; }
+.nc-toggle:hover { border-bottom-color: ${v("text")}; }
 .nc-toggle[aria-pressed="true"] { border-bottom-color: ${v("accent")}; }
 .nc-toggle[data-nc-role="mute"][aria-pressed="true"] { color: ${v("rhythm.track-mute")}; }
 .nc-toggle[data-nc-role="solo"][aria-pressed="true"] {
@@ -343,33 +410,41 @@ ${MODULATED_SELECTOR} { transition: none; }
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: ${v("control-gap")};
 }
+/* Underline tabs (ASTRID .nc-seg): words on a hairline, the chosen one in text with a tab-mark accent bar on the
+   line. Radio semantics stay (role="radio", aria-checked). */
 .nc-seg {
-  display: inline-flex;
-  border: ${v("hairline")} solid ${v("divider")};
-  border-radius: ${v("slot-radius")};
-  overflow: hidden;
+  display: flex;
+  border-bottom: ${v("hairline")} solid ${v("divider")};
   margin-bottom: ${v("module-gap")};
+  min-width: 0;
 }
 .nc-seg > button {
   flex: 1 1 0;
-  min-height: ${v("target-min")};
-  min-width: ${v("target-min")};
-  padding: 0 ${v("header-gap")};
+  position: relative;
+  min-width: 0;
+  padding: ${v("tab-pad-y")} 0;
   border: 0;
-  border-inline-end: ${v("hairline")} solid ${v("divider")};
   background: transparent;
   color: ${v("text-sub")};
-  font-size: ${v("label-size")};
-  font-weight: ${v("label-weight")};
-  letter-spacing: ${v("label-tracking")};
-  text-transform: uppercase;
+  font-size: ${v("tab-size")};
+  font-weight: ${v("control-weight")};
+  white-space: nowrap;
   cursor: pointer;
-  transition-property: color, background-color;
+  transition-property: color;
   transition-duration: ${v("transition-feedback")};
 }
-.nc-seg > button:last-child { border-inline-end: 0; }
+.nc-seg:has(> button:nth-child(4)) > button { font-size: ${v("label-size")}; padding-inline: ${v("control-gap")}; }
 .nc-seg > button:hover { color: ${v("text")}; }
-.nc-seg > button[aria-checked="true"] { background: ${v("text")}; color: ${v("surface-page")}; }
+.nc-seg > button[aria-checked="true"] { color: ${v("text")}; }
+.nc-seg > button[aria-checked="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(${v("hairline")} * -1);
+  height: ${v("tab-mark")};
+  background: ${v("accent")};
+}
 .nc-seg > button:focus-visible {
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: calc(${v("focus-width")} * -1);
@@ -384,11 +459,11 @@ ${MODULATED_SELECTOR} { transition: none; }
   border-radius: 0;
   color: ${v("text")};
   font-size: ${v("body-size")};
-  min-height: ${v("target-min")};
-  padding: ${v("control-gap")} 0;
+  padding: ${v("control-gap")} ${v("select-pad-end")} ${v("control-gap")} 0;
   cursor: pointer;
   transition: none;
 }
+.nc-select:hover:not(:disabled) { border-bottom-color: ${v("text-sub")}; }
 .nc-select:focus-visible { outline: none; border-bottom-color: ${v("accent")}; }
 /* Slots on one line, Morph under them as a slider row (label and value, then the slider). */
 .nc-slot-row { flex-direction: column; align-items: stretch; gap: ${v("module-gap")}; }
@@ -759,7 +834,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   gap: ${v("module-gap")};
   margin-bottom: ${v("module-gap")};
 }
-.nc-step-tools > .nc-seg { margin-bottom: 0; }
+.nc-step-tools > .nc-seg { flex: 1 1 auto; align-self: flex-end; margin-bottom: 0; }
 /* No margin (nor the sparkle's): the row gap already sets the dice off the length handle, and 1024 needs the
    width for 18 px cells now that beats are split by beat-gap. */
 .nc-row-dice { flex: none; margin-inline: 0; }
@@ -860,7 +935,6 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   align-items: center;
   justify-content: space-between;
   gap: ${v("module-gap")};
-  min-height: ${v("target-min")};
   margin-bottom: ${v("module-gap")};
   min-width: 0;
 }
@@ -869,7 +943,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-more > summary {
   display: flex;
   align-items: center;
-  min-height: ${v("target-min")};
+  padding-block: ${v("control-gap")};
   cursor: pointer;
   font-size: ${v("label-size")};
   font-weight: ${v("label-weight")};
@@ -879,60 +953,49 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-ui-more > summary:hover { color: ${v("text")}; }
 .nc-ui-more > summary:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
-/* The switch (plan 5.3 V2, R8): role="switch", the word then the track; hover takes the word to text; the knob
-   travels on motion-press; both words share one cell so the width never changes. */
+/* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
+   text with an accent hairline under it; hover takes the word and the line to text. Both words share one grid cell,
+   so the control never changes width when it flips. */
 .nc-ui-switch {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   flex: none;
-  gap: ${v("switch-gap")};
-  min-width: ${v("target-min")};
-  min-height: ${v("target-min")};
   margin: 0;
-  padding: 0;
+  padding: 0 0 ${v("control-gap")};
   border: 0;
+  border-bottom: ${v("hairline")} solid transparent;
   background: transparent;
   cursor: pointer;
   font: inherit;
   font-size: ${v("label-size")};
-  font-weight: ${v("label-weight")};
+  font-weight: ${v("control-weight")};
   letter-spacing: ${v("label-tracking")};
   text-transform: uppercase;
   color: ${v("text-sub")};
-  transition: color ${v("motion-press")} ease-out;
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
 }
-.nc-ui-switch[aria-checked="true"] { color: ${v("accent")}; }
-.nc-ui-switch:hover { color: ${v("text")}; }
-.nc-ui-switch:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+.nc-ui-switch[aria-checked="true"] { color: ${v("text")}; border-bottom-color: ${v("accent")}; }
+.nc-ui-switch:hover { color: ${v("text")}; border-bottom-color: ${v("text")}; }
+.nc-ui-switch:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
 .nc-ui-switch-text { display: inline-grid; }
 .nc-ui-switch-text > span { grid-area: 1 / 1; }
 .nc-ui-switch[aria-checked="true"] [data-nc-off], .nc-ui-switch[aria-checked="false"] [data-nc-on] { visibility: hidden; }
-.nc-ui-switch-track {
-  position: relative;
-  flex: none;
-  width: ${v("switch-track-width")};
-  height: ${v("switch-track-height")};
-  border: ${v("hairline")} solid ${v("divider")};
-  border-radius: calc(${v("switch-track-height")} / 2);
-  background: transparent;
-  transition: background-color ${v("motion-press")} ease-out, border-color ${v("motion-press")} ease-out;
-}
-.nc-ui-switch:hover .nc-ui-switch-track { border-color: ${v("text-sub")}; }
-.nc-ui-switch-track::after {
-  content: "";
-  position: absolute;
-  top: ${v("switch-knob-inset")};
-  left: ${v("switch-knob-inset")};
-  width: ${v("switch-knob")};
-  height: ${v("switch-knob")};
-  border-radius: 50%;
-  background: ${v("text-sub")};
-  transition: transform ${v("motion-press")} ease-out, background-color ${v("motion-press")} ease-out;
-}
-.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track { background: ${v("accent")}; border-color: ${v("accent")}; }
-.nc-ui-switch[aria-checked="true"] .nc-ui-switch-track::after {
-  background: ${v("surface-page")};
-  transform: translateX(calc(${v("switch-track-width")} - ${v("switch-knob")} - 2 * ${v("switch-knob-inset")} - 2 * ${v("hairline")}));
+/* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
+   centred on it. A select cannot carry a pad, so it grows itself. */
+@media (pointer: coarse) {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action)::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, ${v("target-min")});
+    height: max(100%, ${v("target-min")});
+    transform: translate(-50%, -50%);
+  }
+  .nc-toggle { overflow: visible; text-overflow: clip; }
+  .nc-select { min-height: ${v("target-min")}; }
 }
 /* A panel (Rhythm's Parameters, under the grid): a page-coloured area, full bleed to the module's sides and
    bottom, a hairline above, a title and what it edits, and its controls in columns from 1024 px. */
@@ -1097,13 +1160,16 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   height: ${v("target-min")};
   margin-block: calc((${v("slider-pitch")} - ${v("target-min")}) / 2);
 }
-/* M and S: each a full target-min box (the button paints smaller inside), touching, never overlapping. */
-.nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
-.nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
-.nc-ms {
-  inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
-  width: auto;
-  height: auto;
+/* M and S on touch: each a full target-min box (the button paints smaller inside), touching, never overlapping.
+   Only on a coarse pointer: on every pointer it made each lane target-min tall on desktop (Rhythm #40). */
+@media (pointer: coarse) {
+  .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
+  .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
+  .nc-ms {
+    inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
+    width: auto;
+    height: auto;
+  }
 }
 .nc-slot-scrim {
   position: fixed;
@@ -1208,7 +1274,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   white-space: nowrap;
   pointer-events: auto;
   opacity: 0;
-  transition: opacity ${v("motion-fade")};
+  transition: opacity ${v("motion-fade")} ${v("motion-fade-easing")};
 }
 .nc-ui-toast[data-placement="bottom"] { bottom: calc(${v("toast-offset")} + env(safe-area-inset-bottom)); }
 .nc-ui-toast[data-placement="top"] { top: calc(${v("toast-offset")} + env(safe-area-inset-top)); }
@@ -1217,7 +1283,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-toast[data-state="closing"] {
   opacity: 0;
   pointer-events: none;
-  transition: opacity ${v("motion-fade-out")};
+  transition: opacity ${v("motion-fade-out")} ${v("motion-fade-out-easing")};
 }
 .nc-ui-toast-message { overflow: hidden; text-overflow: ellipsis; }
 .nc-ui-toast-action {
@@ -1247,6 +1313,355 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   pointer-events: none;
   white-space: nowrap;
 }
+/* Console (the Studio's Mix): channel strips, the FX cards, then the master strip, on one row. The body bleeds to the
+   module's sides and bottom so each area is a shade block: strips on the module, the FX cards one adjacent shade
+   darker each, and the master darkest (stack-1), so the row reads as the signal path ending on the right. */
+.nc-module-body[data-nc-layout="console"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: "strips fx master";
+  align-items: stretch;
+  gap: 0;
+  margin-inline: calc(${v("module-pad")} * -1);
+  margin-bottom: calc(${v("module-pad")} * -1);
+  border-top: ${v("hairline")} solid ${v("divider")};
+}
+.nc-module-body[data-nc-layout="console"] > .nc-section { gap: 0; padding-top: ${v("stack-card-pad-y")}; }
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] {
+  grid-area: strips;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  padding-inline: ${v("module-pad")} ${v("control-gap")};
+  padding-bottom: ${v("module-pad")};
+}
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
+  grid-area: fx;
+  display: grid;
+  grid-template-columns: repeat(3, ${v("fx-card-width")});
+  align-items: stretch;
+  padding-top: 0;
+}
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] {
+  grid-area: master;
+  align-items: center;
+  padding-inline: ${v("control-gap")} ${v("module-pad")};
+  padding-bottom: ${v("module-pad")};
+  background: ${v("module-bg-stack-1")};
+  ${prop("text-sub")}: ${v("module-sub-stack-1")};
+  ${prop("divider")}: ${v("module-div-stack-1")};
+  ${prop("slider-track")}: ${v("module-div-stack-1")};
+}
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx {
+  margin: 0;
+  padding: ${v("stack-card-pad-y")} ${v("module-pad")} ${v("module-pad")};
+  ${prop("text-sub")}: inherit;
+  ${prop("divider")}: inherit;
+  ${prop("slider-track")}: inherit;
+}
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="1"] { background: ${v("module-bg-adjacent-2")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="2"] { background: ${v("module-bg-adjacent-3")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="3"] { background: ${v("module-bg-adjacent-4")}; }
+/* In the console a card is a column: a select row gets the same space under it as a slider row. */
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx { display: flex; flex-direction: column; gap: ${v("module-gap")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx > .nc-field:not([data-nc-slider]) { padding-bottom: ${v("module-gap")}; }
+/* One channel strip: name, M and S, sends, then the fader with its scale and meter, then the readout. Every strip
+   (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up. */
+.nc-strip {
+  position: relative;
+  flex: none;
+  width: ${v("strip-width")};
+  display: grid;
+  grid-template-rows: auto ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+  justify-items: center;
+  row-gap: ${v("module-gap")};
+  min-width: 0;
+  padding-inline: ${v("control-gap")};
+}
+.nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
+.nc-strip[data-nc-master] { width: ${v("strip-width-master")}; }
+/* Name row: the name, and the remove × when the strip can be removed. */
+.nc-strip-hd { display: flex; align-items: baseline; justify-content: center; gap: ${v("control-gap")}; max-width: 100%; min-width: 0; }
+.nc-strip-remove {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("label-size")};
+  line-height: 1;
+  cursor: pointer;
+  transition-property: color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-strip-remove::before { content: ""; position: absolute; inset: calc(${v("control-gap")} * -1); }
+.nc-strip-remove:hover { color: ${v("danger")}; }
+.nc-strip-remove:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-strip-name {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  color: ${v("text")};
+}
+.nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
+.nc-strip-ms { display: flex; gap: ${v("control-gap")}; height: ${v("slider-pitch")}; }
+.nc-strip-sends { display: flex; align-items: flex-start; gap: ${v("module-gap")}; }
+.nc-field[data-nc-compact] {
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: ${v("control-gap")};
+}
+.nc-field[data-nc-compact] .nc-label { min-width: 0; line-height: ${v("label-leading")}; }
+.nc-field[data-nc-compact] .nc-readout { display: none; }
+/* A compact knob draws its amount: a ring over its 270° travel, filled in the meter blue up to the value. */
+.nc-field[data-nc-compact] .nc-knob {
+  border: 0;
+  background:
+    radial-gradient(closest-side, ${v("surface-page")} 70%, transparent 72%),
+    conic-gradient(from 225deg, ${v("meter-fill")} calc(var(--knob-turn, 0) * 1deg), ${v("meter-track")} 0 270deg, transparent 0);
+}
+/* Its mark starts at the bottom of the travel (7:30) and turns 270° to 4:30, along the ring. */
+.nc-field[data-nc-compact] .nc-knob-mark { transform: rotate(calc((var(--knob-turn, 0) - 135) * 1deg)); }
+.nc-strip-body {
+  display: grid;
+  grid-template-columns: ${v("fader-cap-width")} auto auto;
+  grid-template-rows: ${v("clip-size")} ${v("fader-height")};
+  justify-content: center;
+  column-gap: ${v("control-gap")};
+  row-gap: ${v("control-gap")};
+  padding-block: calc(${v("fader-cap-height")} / 2);
+}
+.nc-strip-body > .nc-fader { grid-column: 1; grid-row: 2; }
+.nc-strip-body > .nc-scale { grid-column: 2; grid-row: 2; }
+.nc-strip-body > .nc-meter { grid-column: 3; grid-row: 1 / span 2; }
+/* The dB scale between fader and meter: faint mono labels, each centred on its level. */
+.nc-scale {
+  position: relative;
+  width: 3ch;
+  font-family: ${v("font-readout")};
+  font-size: ${v("scale-size")};
+  font-variant-numeric: tabular-nums;
+  color: ${v("text-sub")};
+}
+.nc-scale-tick {
+  position: absolute;
+  right: 0;
+  top: calc((1 - var(--tick-pos, 0)) * 100%);
+  transform: translateY(-50%);
+  line-height: 1;
+  white-space: nowrap;
+}
+/* The console fader: a slot and a flat cap with a line across its centre. The cap follows the hand: no transition. */
+.nc-fader {
+  position: relative;
+  width: ${v("fader-cap-width")};
+  height: 100%;
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: none;
+}
+.nc-fader-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: ${v("rule-strong")};
+  transform: translateX(-50%);
+  background: ${v("fader-track")};
+}
+.nc-fader-cap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: ${v("fader-cap-height")};
+  top: calc((1 - var(--fader-pos, 0)) * 100%);
+  transform: translateY(-50%);
+  background: ${v("fader-cap")};
+  transition: none;
+}
+.nc-fader-cap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: ${v("hairline")};
+  transform: translateY(-50%);
+  background: ${v("fader-cap-line")};
+}
+.nc-fader[data-dragging="true"] .nc-fader-cap { background: ${v("accent")}; }
+.nc-fader:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
+/* The level meter: peak over RMS in the lighter Prussian blue, a hold line, a clip light on top. It follows the audio
+   every frame (transforms written by the meter's own ballistics), so nothing here transitions. */
+.nc-meter {
+  display: grid;
+  grid-template-rows: subgrid;
+  row-gap: ${v("control-gap")};
+  justify-items: stretch;
+}
+.nc-meter-clip {
+  position: relative;
+  display: block;
+  height: ${v("clip-size")};
+  padding: 0;
+  border: 0;
+  background: ${v("meter-track")};
+  cursor: pointer;
+  transition: none;
+}
+.nc-meter-clip::before {
+  content: "";
+  position: absolute;
+  inset: calc(${v("control-gap")} * -1);
+}
+.nc-meter-clip[data-lit="true"] { background: ${v("meter-clip")}; }
+.nc-meter-clip:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-meter-bars { display: flex; gap: ${v("hairline")}; height: 100%; }
+.nc-meter-bar {
+  position: relative;
+  width: ${v("meter-width")};
+  height: 100%;
+  overflow: hidden;
+  background: ${v("meter-track")};
+}
+.nc-meter-peak, .nc-meter-rms {
+  position: absolute;
+  inset: 0;
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition: none;
+}
+.nc-meter-peak { background: ${v("meter-peak")}; }
+.nc-meter-rms { background: ${v("meter-fill")}; }
+.nc-meter-hold {
+  position: absolute;
+  inset: 0;
+  border-top: ${v("rule-strong")} solid ${v("meter-hold-mark")};
+  transform: translateY(100%);
+  transition: none;
+}
+.nc-meter-hold[data-off="true"] { visibility: hidden; }
+.nc-strip-db {
+  min-width: 0;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size")};
+  font-variant-numeric: tabular-nums;
+  color: ${v("text")};
+  white-space: nowrap;
+  cursor: default;
+  transition: none;
+}
+.nc-strip-db:not(:disabled) { cursor: text; }
+.nc-strip-db:hover { text-decoration: underline; text-decoration-color: ${v("divider")}; text-underline-offset: ${v("control-gap")}; }
+/* The type-in: the readout opened as a field, the same size and font, an accent hairline under it. */
+.nc-strip-db-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: ${v("hairline")} solid ${v("accent")};
+  border-radius: 0;
+  background: transparent;
+  color: ${v("text")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size")};
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.nc-strip-db-input:focus-visible { outline: none; }
+/* The add slot: a ghost strip after the last channel, "+ Add" over a select of what can be added. */
+.nc-strip-add {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: ${v("strip-width")};
+  margin-inline-start: ${v("module-gap")};
+  border: ${v("hairline")} dashed ${v("divider")};
+  color: ${v("text-sub")};
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-strip-add:hover, .nc-strip-add:focus-within { color: ${v("text")}; border-color: ${v("text-sub")}; }
+.nc-strip-add-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: ${v("control-gap")};
+  pointer-events: none;
+}
+.nc-strip-add-plus { font-family: ${v("font-readout")}; font-size: ${v("title-size-slim")}; line-height: 1; }
+.nc-strip-add-label {
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+}
+/* The select covers the slot (fully transparent, not dimmed), so a click anywhere on it opens the list. */
+.nc-strip-add-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: ${v("body-size")};
+}
+.nc-strip-add:has(.nc-strip-add-select:focus-visible) { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-strip-db:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+/* Phones and tablets: the strips scroll in their row with the master pinned at the right; the FX cards go under them
+   (three across on tablets, stacked on phones). */
+@media (max-width: 1023px) {
+  .nc-module-body[data-nc-layout="console"] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "strips master" "fx fx";
+  }
+}
+@media (max-width: 1023px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 768px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }
+  /* Phones: the master as narrow as a channel strip, so the strips keep the room. */
+  .nc-strip[data-nc-master] { width: ${v("strip-width")}; }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] { padding-inline: 0; }
+}
+@media (min-width: 1024px) {
+  .nc-module-body[data-nc-layout="console"] {
+    margin-inline: calc(${v("module-pad-x-desktop")} * -1);
+    margin-bottom: calc(${v("module-pad-y-desktop")} * -1);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] {
+    padding-inline-start: ${v("module-pad-x-desktop")};
+    padding-bottom: ${v("module-pad-y-desktop")};
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] {
+    padding-inline-end: ${v("module-pad-x-desktop")};
+    padding-bottom: ${v("module-pad-y-desktop")};
+  }
+  .nc-module-body[data-nc-layout="console"] .nc-ui-fx {
+    margin: 0;
+    padding: ${v("stack-card-pad-y")} ${v("module-pad-x-desktop")} ${v("module-pad-y-desktop")};
+  }
+}
 /* Pinned to its containing block's corner at zero size, so wherever it sits in a control (after a long label or
    note, in an unpositioned box) it can never reach past the page edge. It is empty and never shown; it only carries
    the accent and the UI font for token reads. */
@@ -1259,6 +1674,31 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   background: ${v("accent")};
   font-family: ${v("font-ui")};
   pointer-events: none;
+}
+@media (min-width: 768px) {
+  .nc-page { padding: ${v("page-pad-y-md")} ${v("page-pad-x-md")}; }
+  .nc-page-hd { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: ${v("page-head-gap-md")}; }
+  .nc-page-hd::before { top: calc(${v("page-pad-y-md")} * -1); left: calc(${v("page-pad-x-md")} * -1); right: calc(${v("page-pad-x-md")} * -1); }
+}
+/* Tablets (769-1023 px): the same 2 x 5 slot grid as phones and desktop; one row of 10 drew 14 px slots here. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .nc-slot-line { flex-wrap: wrap; }
+  .nc-snap-row {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: ${v("control-gap")};
+  }
+  .nc-snap-wrap { width: 100%; max-width: none; height: ${v("target-min")}; }
+  .nc-snap { font-size: ${v("readout-size")}; }
+  .nc-snap-wrap > .nc-hit { display: none; }
+}
+@media (min-width: 1024px) {
+  .nc-page-body { padding-top: ${v("page-body-gap-lg")}; }
+}
+@media (min-width: 1280px) {
+  .nc-page { padding-inline: ${v("page-pad-x-xl")}; }
+  .nc-page-hd::before { left: calc(${v("page-pad-x-xl")} * -1); right: calc(${v("page-pad-x-xl")} * -1); }
 }
 @media (min-width: 1024px) {
   .nc-stack[data-nc-layout="adjacent"] {
@@ -1387,8 +1827,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
-  .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-ui-switch-track, .nc-ui-switch-track::after,
-  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"] {
+  .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
+  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip {
     transition: none;
     animation: none;
   }

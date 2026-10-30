@@ -12,6 +12,10 @@
   --nc-ui-color-surf: #EAEAEA;
   --nc-ui-color-accent: #003153;
   --nc-ui-color-accent-wash: color-mix(in srgb, var(--nc-ui-color-accent) 7%, transparent);
+  --nc-ui-color-astrid-orange: #EB512E;
+  --nc-ui-color-petra-blue: #5AC4F7;
+  --nc-ui-color-olive-green: #9CA536;
+  --nc-ui-color-paper-bright: #FCFCFC;
   --nc-ui-color-accent-pad: #1A6193;
   --nc-ui-color-accent-velocity-min: #477399;
   --nc-ui-color-shade-1: #F3F3F3;
@@ -133,6 +137,7 @@
   --nc-ui-space-40: 40px;
   --nc-ui-space-44: 44px;
   --nc-ui-space-48: 48px;
+  --nc-ui-space-64: 64px;
   --nc-ui-space-unit: 0.25rem;
   /* radius */
   --nc-ui-radius-none: 0;
@@ -147,8 +152,15 @@
   --nc-ui-stroke-curve: 1.4;
   --nc-ui-stroke-bold: 1.5;
   --nc-ui-stroke-dot: 7;
+  /* easing */
+  --nc-ui-easing-ease: ease;
+  --nc-ui-easing-ease-out: ease-out;
+  --nc-ui-easing-linear: linear;
   /* duration */
   --nc-ui-duration-meter: .07s;
+  --nc-ui-duration-meter-rise: 0s;
+  --nc-ui-duration-meter-fall: .2s;
+  --nc-ui-duration-meter-hold: 1.5s;
   --nc-ui-duration-press: .1s;
   --nc-ui-duration-fast: .15s;
   --nc-ui-duration-fade: .2s;
@@ -278,9 +290,37 @@
   --nc-ui-label-on-fill-light: var(--nc-ui-color-white);
   --nc-ui-skeleton-highlight: var(--nc-ui-color-skeleton-hi);
   --nc-ui-transition-feedback: var(--nc-ui-duration-fast);
-  --nc-ui-motion-fade: .2s ease;
-  --nc-ui-motion-fade-out: .25s ease-out;
-  --nc-ui-motion-slide: .22s ease-out;
+  --nc-ui-motion-fade: var(--nc-ui-duration-fade);
+  --nc-ui-motion-fade-easing: var(--nc-ui-easing-ease);
+  --nc-ui-motion-fade-out: var(--nc-ui-duration-trig);
+  --nc-ui-motion-fade-out-easing: var(--nc-ui-easing-ease-out);
+  --nc-ui-motion-slide: var(--nc-ui-duration-drawer);
+  --nc-ui-motion-slide-easing: var(--nc-ui-easing-ease-out);
+  --nc-ui-motion-press-easing: var(--nc-ui-easing-ease-out);
+  --nc-ui-motion-thumb: var(--nc-ui-duration-fast);
+  --nc-ui-motion-thumb-easing: var(--nc-ui-easing-ease);
+  --nc-ui-motion-meter-rise: var(--nc-ui-duration-meter-rise);
+  --nc-ui-motion-meter-fall: var(--nc-ui-duration-meter-fall);
+  --nc-ui-motion-meter-easing: var(--nc-ui-easing-linear);
+  --nc-ui-motion-meter-hold: var(--nc-ui-duration-meter-hold);
+  --nc-ui-meter-fill: var(--nc-ui-color-accent-pad);
+  --nc-ui-meter-peak: color-mix(in srgb, var(--nc-ui-color-accent-pad) 40%, transparent);
+  --nc-ui-meter-hold-mark: var(--nc-ui-color-accent);
+  --nc-ui-meter-clip: var(--nc-ui-color-red);
+  --nc-ui-meter-track: var(--nc-ui-color-div-0);
+  --nc-ui-meter-width: var(--nc-ui-space-8);
+  --nc-ui-clip-size: var(--nc-ui-space-6);
+  --nc-ui-fader-height: 220px;
+  --nc-ui-fader-cap-width: var(--nc-ui-space-28);
+  --nc-ui-fader-cap-height: var(--nc-ui-space-14);
+  --nc-ui-fader-cap: var(--nc-ui-color-ink);
+  --nc-ui-fader-cap-line: var(--nc-ui-color-paper);
+  --nc-ui-fader-track: color-mix(in srgb, var(--nc-ui-color-ink) 25%, transparent);
+  --nc-ui-strip-width: 88px;
+  --nc-ui-strip-width-master: 112px;
+  --nc-ui-fx-card-width: 232px;
+  --nc-ui-head-margin-compact: var(--nc-ui-space-12);
+  --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);
   --nc-ui-focus-width-strong: var(--nc-ui-border-thick);
   --nc-ui-target-min: var(--nc-ui-space-44);
@@ -325,11 +365,29 @@
   --nc-ui-fx-name-weight: var(--nc-ui-font-weight-bold);
   --nc-ui-label-leading: var(--nc-ui-leading-readout);
   --nc-ui-motion-press: var(--nc-ui-duration-press);
-  --nc-ui-switch-track-width: var(--nc-ui-space-28);
-  --nc-ui-switch-track-height: var(--nc-ui-space-16);
-  --nc-ui-switch-knob: var(--nc-ui-space-10);
-  --nc-ui-switch-knob-inset: var(--nc-ui-space-2);
-  --nc-ui-switch-gap: var(--nc-ui-space-8);
+  --nc-ui-control-weight: var(--nc-ui-font-weight-regular);
+  --nc-ui-tab-size: var(--nc-ui-font-size-sm);
+  --nc-ui-tab-pad-y: var(--nc-ui-space-6);
+  --nc-ui-tab-mark: var(--nc-ui-border-thick);
+  --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-page-head-bg: var(--nc-ui-color-paper-bright);
+  --nc-ui-instrument-astrid: var(--nc-ui-color-astrid-orange);
+  --nc-ui-instrument-petra: var(--nc-ui-color-petra-blue);
+  --nc-ui-instrument-olive: var(--nc-ui-color-olive-green);
+  --nc-ui-page-title-size: var(--nc-ui-font-size-xl);
+  --nc-ui-page-title-tracking: var(--nc-ui-tracking-8);
+  --nc-ui-page-sub-size: var(--nc-ui-font-size-lg);
+  --nc-ui-page-sub-gap: var(--nc-ui-space-8);
+  --nc-ui-page-action-gap: var(--nc-ui-space-24);
+  --nc-ui-page-pad-x: var(--nc-ui-space-24);
+  --nc-ui-page-pad-x-md: var(--nc-ui-space-48);
+  --nc-ui-page-pad-x-xl: var(--nc-ui-space-64);
+  --nc-ui-page-pad-y: var(--nc-ui-space-32);
+  --nc-ui-page-pad-y-md: var(--nc-ui-space-48);
+  --nc-ui-page-head-gap: var(--nc-ui-space-32);
+  --nc-ui-page-head-gap-md: var(--nc-ui-space-48);
+  --nc-ui-page-body-gap: var(--nc-ui-space-16);
+  --nc-ui-page-body-gap-lg: var(--nc-ui-space-48);
 
   /* Tier 3: component roles, one namespace per domain (a module uses only its own domain) */
   /* synth */

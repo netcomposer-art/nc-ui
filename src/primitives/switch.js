@@ -1,6 +1,6 @@
 // A real on/off switch (fx-blocks' header switch, moved into the kit): a <button role="switch"> with aria-checked,
-// named by the title it sits next to. The ON/OFF word and a track with a knob. Both words share one grid cell, so
-// the switch never changes width when it flips. Styles are in kit.js (.nc-ui-switch); every length is a token.
+// named by the title it sits next to. ASTRID's text on/off: the word alone (On / Off), no track. Both words share one
+// grid cell, so the switch never changes width when it flips. Styles are in kit.js (.nc-ui-switch); every length is a token.
 
 /**
  * @param {{
@@ -33,10 +33,7 @@ export function createSwitch(options = {}) {
   off.dataset.ncOff = "";
   off.textContent = options.offText ?? "Off";
   text.append(on, off);
-  const track = doc.createElement("span");
-  track.className = "nc-ui-switch-track";
-  track.setAttribute("aria-hidden", "true");
-  el.append(text, track);
+  el.append(text);
 
   let checked = false;
   const set = (next) => {

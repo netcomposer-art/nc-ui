@@ -52,6 +52,8 @@ function flatten(def) {
   for (const control of lists) {
     out.push(control);
     if (control.type === "fx") out.push(...control.controls, ...(control.more ?? []));
+    if (control.type === "strip")
+      out.push(...(control.sends ?? []).map((send) => ({ ...send, type: "knob", compact: true })));
   }
   return out;
 }
@@ -62,9 +64,9 @@ function findControl(def, id) {
 }
 
 function signature(def) {
-  const shape = (def.sections ?? [])
-    .map((section) => `${section.id}${section.panel ? ":panel" : ""}`)
-    .join(",");
+  const shape = `${def.layout ?? ""}:${(def.sections ?? [])
+    .map((section) => `${section.id}${section.panel ? ":panel" : ""}${section.area ? `@${section.area}` : ""}`)
+    .join(",")}`;
   return `${shape}#${flatten(def)
     .map((control) => {
       if (control.type === "stepGrid") {
@@ -76,6 +78,8 @@ function signature(def) {
         return `button:${control.id}${control.onSparkle ? ":spark" : ""}`;
       if (control.type === "select")
         return `select:${control.id}:${control.options.map((option) => option.value).join(",")}`;
+      if (control.type === "strip")
+        return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}${control.onRemove ? "x" : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
       if (control.type === "fx")
         return `fx:${control.id}:${control.depth}:${control.on === undefined ? "" : "sw"}:${control.controls.map((child) => child.id).join(",")}/${(control.more ?? []).map((child) => child.id).join(",")}`;
       return `${control.type}:${control.id}`;
@@ -142,12 +146,20 @@ function renderBody(body, def) {
   }
   body.dataset.ncSignature = next;
   body.replaceChildren();
+  // A console (the Studio's Mix): sections placed by area (strips, fx, master) on one row, not stacked.
+  if (def.layout === "console") body.dataset.ncLayout = "console";
+  else delete body.dataset.ncLayout;
   for (const section of sections) {
     const wrap = document.createElement("div");
     wrap.className = "nc-section";
     wrap.dataset.ncSection = section.id;
     // A shaded inset panel, one shade darker than its module (ASTRID's Hacks panel inside VCA).
     if (section.inset) wrap.dataset.ncInset = "true";
+    if (section.area) wrap.dataset.ncArea = section.area;
+    if (section.label) {
+      wrap.setAttribute("role", "group");
+      wrap.setAttribute("aria-label", section.label);
+    }
     // A panel: its own page-coloured area under the section before it, a title plus the subject it edits, and its
     // controls in columns (the Parameters panel under Rhythm's grid; one column on phones).
     if (section.panel) {
@@ -179,6 +191,8 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
   el.dataset.ncPlace = "adjacent";
   el.dataset.ncShade = "1";
   if (def.lead) el.dataset.ncLead = "";
+  // A compact header: the title and index on one slim line (the Studio's Mix, which sits over the instruments).
+  if (def.compact) el.dataset.ncCompact = "";
   const hidden = readHidden(safeStorage(), storageKey).has(def.id);
   const head = document.createElement("header");
   head.className = "nc-module-hd";
@@ -252,6 +266,8 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
     el,
     update(next) {
       defs.set(el, next);
+      if (next.compact) el.dataset.ncCompact = "";
+      else delete el.dataset.ncCompact;
       title.textContent = next.title;
       status.textContent = next.status ?? "";
       if (next.status !== undefined) status.setAttribute("aria-live", "polite");
@@ -464,17 +480,69 @@ export function renderGallery(host) {
       ],
     },
   ];
+  const ticks = [
+    { value: 1, label: "+6" },
+    { value: 0.9, label: "0" },
+    { value: 0.8, label: "−6" },
+    { value: 0.7, label: "−12" },
+    { value: 0.5, label: "−24" },
+    { value: 0.1, label: "−48" },
+  ];
+  const strip = (id, label, value, extra = {}) => ({
+    type: "strip",
+    id,
+    label,
+    value,
+    valueText: label === "Master" ? "0.0" : "−6.0",
+    defaultValue: value,
+    ticks,
+    onChange: noop,
+    ...extra,
+  });
+  const send = (id, label, value) => ({ id, label, min: 0, max: 1, step: 0.01, value, onChange: noop });
+  specs.push({
+    id: "gallery-mix",
+    title: "Mix",
+    layout: "console",
+    sections: [
+      {
+        id: "strips",
+        area: "strips",
+        controls: ["Rhythm", "Bass", "Synth"].map((name, i) =>
+          strip(`strip-${i}`, name, 0.8, {
+            mute: i === 2,
+            silent: i === 2,
+            onMute: noop,
+            onSolo: noop,
+            sends: [send(`send-a-${i}`, "A", 0.4), send(`send-b-${i}`, "B", 0.2)],
+          }),
+        ),
+      },
+      {
+        id: "fx",
+        area: "fx",
+        controls: [
+          { type: "fx", id: "mix-a", title: "A · Reverb", depth: 1, on: true, controls: [slider("return-a")] },
+          { type: "fx", id: "mix-b", title: "B · Delay", depth: 2, on: true, controls: [slider("return-b")] },
+          { type: "fx", id: "mix-i", title: "Insert · Drive", depth: 3, on: false, controls: [slider("drive-i")] },
+        ],
+      },
+      { id: "master", area: "master", controls: [strip("strip-master", "Master", 0.9, { master: true, channels: 2 })] },
+    ],
+  });
   const key = "nc-ui.gallery.hidden";
   const prefixSpec = (spec, suffix) => {
     const mapControl = (control) => ({
       ...control,
       id: `${control.id}${suffix}`,
       controls: control.controls?.map(mapControl),
+      sends: control.sends?.map((item) => ({ ...item, id: `${item.id}${suffix}` })),
     });
     return {
       ...spec,
       id: `${spec.id}${suffix}`,
       controls: spec.controls?.map(mapControl),
+      sections: spec.sections?.map((section) => ({ ...section, controls: section.controls.map(mapControl) })),
     };
   };
   try {

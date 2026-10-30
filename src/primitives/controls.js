@@ -1,7 +1,9 @@
 import { readCssPx } from "../alias.js";
 import { surpriseColor, surpriseFillStyle, velocityFillStyle } from "../color.js";
 import { paintCanvas } from "./canvas.js";
+import { createFader, faderHandle } from "./fader.js";
 import { bindPadGesture } from "./gesture.js";
+import { createMeter, meterHandle } from "./meter.js";
 import { createSwitch } from "./switch.js";
 
 function probe() {
@@ -140,6 +142,10 @@ export function renderControl(control, lookup) {
       return renderCanvas(control);
     case "fx":
       return renderFx(control, lookup);
+    case "strip":
+      return renderStrip(control, lookup);
+    case "stripAdd":
+      return renderStripAdd(control, lookup);
     default:
       return renderNote({ type: "note", id: "unknown", text: "" });
   }
@@ -181,13 +187,21 @@ export function patchControl(node, control) {
     const knob = node.querySelector(".nc-knob");
     if (knob instanceof HTMLElement) paintKnob(knob, control);
     const readout = node.querySelector("[data-nc-readout]");
-    if (readout) readout.textContent = formatNumber(control.value);
+    if (readout) readout.textContent = control.valueText ?? formatNumber(control.value);
   } else if (control.type === "choice") patchChoice(node, control);
   else if (control.type === "slotRow") patchSlots(node, control);
   else if (control.type === "stepGrid") patchSteps(node, control);
   else if (control.type === "canvas" && node instanceof HTMLElement) {
     const canvas = node.querySelector("canvas");
     if (canvas instanceof HTMLCanvasElement) paintCanvas(canvas, control);
+  } else if (control.type === "strip") {
+    patchStrip(node, control);
+    for (const child of control.sends ?? []) {
+      const childNode = node.querySelector(`[data-nc-id="${cssEscape(child.id)}"]`);
+      if (childNode instanceof Element) patchControl(childNode, { ...child, type: "knob", compact: true });
+    }
+  } else if (control.type === "stripAdd") {
+    patchStripAdd(node, control);
   } else if (control.type === "fx") {
     patchFx(node, control);
     for (const child of [...control.controls, ...(control.more ?? [])]) {
@@ -353,6 +367,7 @@ function renderNote(control) {
 }
 
 function knobValueText(control) {
+  if (typeof control.valueText === "string") return control.valueText;
   const number = formatNumber(control.value);
   const unit = typeof control.unit === "string" ? control.unit : "";
   if (unit === "") return number;
@@ -375,7 +390,8 @@ function paintKnob(knob, control) {
   knob.setAttribute("aria-valuemax", String(control.max));
   knob.setAttribute("aria-valuenow", String(control.value));
   knob.setAttribute("aria-valuetext", knobValueText(control));
-  knob.setAttribute("aria-label", control.label);
+  knob.setAttribute("aria-label", control.ariaLabel ?? control.label);
+  knob.title = `${control.ariaLabel ?? control.label}: ${knobValueText(control)}`;
 }
 
 function nudgeKnob(live, event) {
@@ -393,6 +409,8 @@ function nudgeKnob(live, event) {
 
 function renderKnob(control, lookup) {
   const wrap = field(control.id, control.label);
+  // Compact (a strip's sends): the knob over its label, the value in the knob's title and aria-valuetext.
+  if (control.compact) wrap.dataset.ncCompact = "";
   const knob = document.createElement("button");
   knob.type = "button";
   knob.className = "nc-knob";
@@ -418,6 +436,10 @@ function renderKnob(control, lookup) {
       Math.max(live.min, startVal - ((event.clientY - startY) * span) / 120),
     );
     live.onChange(next);
+  });
+  knob.addEventListener("dblclick", () => {
+    const live = lookup(knob);
+    if (live?.type === "knob" && typeof live.defaultValue === "number") live.onChange(live.defaultValue);
   });
   knob.addEventListener("keydown", (event) => {
     const live = lookup(knob);
@@ -1314,6 +1336,270 @@ function renderCanvas(control) {
   canvas.dataset.ncPaint = control.paint;
   wrap.append(label, canvas, probe());
   return wrap;
+}
+
+
+/**
+ * A mixer channel strip (the Studio's Mix): name, M and S, the sends as compact knobs, the console fader with its
+ * meter right beside it on one dB scale (tick labels), and the level readout. Every strip lays out the same rows,
+ * so faders, meters and ticks line up across the console even when a strip (the master) has no M/S or sends.
+ */
+function renderStrip(control, lookup) {
+  const strip = document.createElement("div");
+  strip.className = "nc-strip";
+  strip.dataset.ncId = control.id;
+  strip.setAttribute("role", "group");
+  strip.setAttribute("aria-label", control.label);
+  if (control.master) strip.dataset.ncMaster = "";
+  const head = document.createElement("div");
+  head.className = "nc-strip-hd";
+  const name = document.createElement("span");
+  name.className = "nc-strip-name";
+  name.dataset.ncStripName = "";
+  head.append(name);
+  // Remove (an instance of an instrument): a quiet × after the name, as on ASTRID's hack cards. The host confirms.
+  if (control.onRemove) {
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "nc-strip-remove";
+    remove.dataset.ncStripRemove = "";
+    remove.textContent = "\u00d7";
+    remove.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") live.onRemove?.(remove);
+    });
+    head.append(remove);
+  }
+  const ms = document.createElement("div");
+  ms.className = "nc-strip-ms";
+  for (const kind of ["mute", "solo"]) {
+    const handler = kind === "mute" ? control.onMute : control.onSolo;
+    if (!handler) continue;
+    const pad = document.createElement("span");
+    pad.className = "nc-ms-wrap";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nc-ms";
+    button.dataset.ncMs = kind;
+    button.textContent = kind === "mute" ? "M" : "S";
+    pad.append(button, hitPad());
+    pad.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") (kind === "mute" ? live.onMute : live.onSolo)?.();
+    });
+    ms.append(pad);
+  }
+  const sends = document.createElement("div");
+  sends.className = "nc-strip-sends";
+  for (const send of control.sends ?? []) sends.append(renderControl({ ...send, type: "knob", compact: true }, lookup));
+  const body = document.createElement("div");
+  body.className = "nc-strip-body";
+  const scale = document.createElement("span");
+  scale.className = "nc-scale";
+  scale.setAttribute("aria-hidden", "true");
+  for (const tick of control.ticks ?? []) {
+    const mark = document.createElement("span");
+    mark.className = "nc-scale-tick";
+    mark.style.setProperty("--tick-pos", String(tick.value));
+    mark.textContent = tick.label;
+    scale.append(mark);
+  }
+  const fader = createFader({
+    label: `${control.label} level`,
+    value: control.value,
+    step: control.step,
+    valueText: control.valueText,
+    onChange: (value) => {
+      const live = lookup(strip);
+      if (live?.type === "strip") live.onChange(value);
+    },
+    onReset: () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") reset(live);
+    },
+  });
+  const meter = createMeter({
+    channels: control.channels === 2 ? 2 : 1,
+    label: control.label,
+    onClear: () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") live.onClipClear?.();
+    },
+  });
+  body.append(scale, fader.el, meter.el);
+  // The readout: mono; a double-click puts the fader back where the strip starts (unity, or the channel default), and
+  // with onTypeIn a single click (or Enter) opens it for a typed value, as ASTRID's type-in values: Enter commits,
+  // Escape or leaving cancels. The click waits out the double-click window, so a double-click never opens it.
+  const readout = document.createElement("button");
+  readout.type = "button";
+  readout.className = "nc-strip-db";
+  readout.dataset.ncReadout = "";
+  let opening = 0;
+  readout.addEventListener("click", (event) => {
+    const live = lookup(strip);
+    if (live?.type !== "strip" || !live.onTypeIn) return;
+    window.clearTimeout(opening);
+    if (event.detail === 0) openTypeIn(strip, readout, lookup);
+    else if (event.detail === 1)
+      opening = window.setTimeout(() => openTypeIn(strip, readout, lookup), TYPE_IN_DELAY_MS);
+  });
+  readout.addEventListener("dblclick", () => {
+    window.clearTimeout(opening);
+    const live = lookup(strip);
+    if (live?.type === "strip") reset(live);
+  });
+  strip.append(head, ms, sends, body, readout, probe());
+  patchStrip(strip, control);
+  return strip;
+}
+
+/** A single click on a readout opens the type-in after this, unless a second click makes it a double-click. */
+const TYPE_IN_DELAY_MS = 250;
+
+function openTypeIn(strip, readout, lookup) {
+  const live = lookup(strip);
+  if (live?.type !== "strip" || !live.onTypeIn || strip.querySelector(".nc-strip-db-input")) return;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "nc-strip-db-input";
+  input.inputMode = "decimal";
+  input.spellcheck = false;
+  input.autocomplete = "off";
+  input.value = live.valueText ?? formatNumber(live.value);
+  input.setAttribute("aria-label", `${live.label} level in dB: type a value, Enter to set, Escape to cancel`);
+  readout.hidden = true;
+  readout.after(input);
+  input.focus();
+  input.select?.();
+  let done = false;
+  const close = (commit) => {
+    if (done) return;
+    done = true;
+    const text = input.value;
+    input.remove();
+    readout.hidden = false;
+    if (commit) {
+      const current = lookup(strip);
+      if (current?.type === "strip") current.onTypeIn?.(text);
+    }
+    readout.focus?.();
+  };
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      close(true);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      close(false);
+    }
+  });
+  input.addEventListener("blur", () => close(false));
+}
+
+/**
+ * The console's add slot: a ghost strip at the end of the strips with "+ Add" over a select of what can be added
+ * (an option may be disabled, "Synth (soon)"). Picking one calls onAdd and puts the select back.
+ */
+function renderStripAdd(control, lookup) {
+  const wrap = document.createElement("div");
+  wrap.className = "nc-strip-add";
+  wrap.dataset.ncId = control.id;
+  const face = document.createElement("span");
+  face.className = "nc-strip-add-face";
+  face.setAttribute("aria-hidden", "true");
+  const plus = document.createElement("span");
+  plus.className = "nc-strip-add-plus";
+  plus.textContent = "+";
+  const label = document.createElement("span");
+  label.className = "nc-strip-add-label";
+  face.append(plus, label);
+  const select = document.createElement("select");
+  select.className = "nc-strip-add-select";
+  select.addEventListener("change", () => {
+    const live = lookup(wrap);
+    const value = select.value;
+    rewind(select);
+    if (live?.type === "stripAdd" && value) live.onAdd(value);
+  });
+  wrap.append(face, select, probe());
+  patchStripAdd(wrap, control);
+  return wrap;
+}
+
+function patchStripAdd(node, control) {
+  const label = node.querySelector(".nc-strip-add-label");
+  if (label) label.textContent = control.label;
+  const select = node.querySelector("select");
+  if (!(select instanceof HTMLSelectElement)) return;
+  select.setAttribute("aria-label", control.ariaLabel ?? control.label);
+  const want = [{ value: "", label: control.ariaLabel ?? control.label, disabled: true }, ...control.options];
+  const have = [...select.options].map((o) => `${o.value}|${o.textContent}|${o.disabled}`).join(",");
+  const next = want.map((o) => `${o.value}|${o.label}|${o.disabled === true}`).join(",");
+  if (have === next) return;
+  select.replaceChildren(
+    ...want.map((o) => {
+      const option = document.createElement("option");
+      option.value = o.value;
+      option.textContent = o.label;
+      option.disabled = o.disabled === true;
+      return option;
+    }),
+  );
+  rewind(select);
+}
+
+/** Back to the add select's first line ("Add instrument"). */
+function rewind(select) {
+  const first = select.options[0];
+  if (first) first.selected = true;
+}
+
+function reset(live) {
+  if (live.onReset) live.onReset();
+  else if (typeof live.defaultValue === "number") live.onChange(live.defaultValue);
+}
+
+function patchStrip(node, control) {
+  const name = node.querySelector("[data-nc-strip-name]");
+  if (name && name.textContent !== control.label) name.textContent = control.label;
+  const remove = node.querySelector("[data-nc-strip-remove]");
+  if (remove) {
+    remove.setAttribute("aria-label", `Remove ${control.label}`);
+    remove.title = `Remove ${control.label}`;
+  }
+  node.setAttribute("aria-label", control.label);
+  const faderEl = node.querySelector(".nc-fader");
+  const fader = faderEl ? faderHandle(faderEl) : undefined;
+  if (fader) {
+    fader.configure({ step: control.step });
+    fader.set(control.value);
+    fader.setText(control.valueText);
+    fader.setLabel(`${control.label} level`);
+  }
+  meterHandle(node.querySelector(".nc-meter") ?? undefined)?.setLabel(control.label);
+  const readout = node.querySelector(".nc-strip-db");
+  if (readout instanceof HTMLElement) {
+    const text = control.valueText ?? formatNumber(control.value);
+    if (readout.textContent !== text) readout.textContent = text;
+    readout.setAttribute("aria-label", `${control.label} level ${text}`);
+    const reset = control.resetText ? `Double-click: back to ${control.resetText}` : "Double-click to reset";
+    readout.title = control.onTypeIn ? `Click to type a value. ${reset}` : reset;
+  }
+  for (const ms of node.querySelectorAll("[data-nc-ms]")) {
+    const kind = ms.getAttribute("data-nc-ms");
+    const on = kind === "mute" ? control.mute === true : control.solo === true;
+    ms.setAttribute("aria-pressed", on ? "true" : "false");
+    ms.setAttribute("aria-label", `${kind === "mute" ? "Mute" : "Solo"} ${control.label}`);
+  }
+  if (control.silent) node.dataset.silent = "true";
+  else delete node.dataset.silent;
+  delete node.dataset.ncIdentity;
+}
+
+/** The meter handle of a strip control (for the host's per-frame update), from the module or strip element. */
+export function stripMeter(root, id) {
+  const strip = root?.querySelector?.(`.nc-strip[data-nc-id="${cssEscape(id)}"]`);
+  return meterHandle(strip?.querySelector(".nc-meter") ?? undefined);
 }
 
 function renderFx(control, lookup) {

@@ -13,7 +13,7 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const LIT = /#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)|okl(?:ch|ab)\([^)]*\)/g;
-const NAMED = /\b(green|lime|limegreen|lawngreen|chartreuse|olive|olivedrab|darkolivegreen|yellowgreen|greenyellow|forestgreen|seagreen|darkseagreen|lightseagreen|mediumseagreen|springgreen|mediumspringgreen|palegreen|lightgreen|darkgreen|teal|darkcyan|aquamarine|mediumaquamarine|honeydew|mintcream)\b/gi;
+const NAMED = /(?<![\w-])(green|lime|limegreen|lawngreen|chartreuse|olive|olivedrab|darkolivegreen|yellowgreen|greenyellow|forestgreen|seagreen|darkseagreen|lightseagreen|mediumseagreen|springgreen|mediumspringgreen|palegreen|lightgreen|darkgreen|teal|darkcyan|aquamarine|mediumaquamarine|honeydew|mintcream)(?![\w-])/gi;
 const SHADOW = /^rgba?\(0[ ,]+0[ ,]+0[ ,/]/;
 
 const hex = (h) => {
@@ -78,6 +78,13 @@ export function isGreen([r, g, b]) {
   return h >= 60 && h <= 180;
 }
 
+/**
+ * Identity colours (Peter, 2026-10-29): each instrument's name colour. OLIVE's is olive (#9CA536), which the green
+ * rule would flag. It is allowed as that one literal, for the instrument's name only (`instrument-olive`), never
+ * for state, controls or fills, which stay non-green.
+ */
+export const IDENTITY_COLOURS = new Set(["#9ca536"]);
+
 const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 
 /** Green colour literals and CSS green names (as values) in `text`. */
@@ -85,7 +92,7 @@ export function findGreen(text) {
   const out = [];
   for (const m of text.matchAll(LIT)) {
     const rgb = rgbOf(m[0]);
-    if (rgb && isGreen(rgb)) out.push({ rule: "green", line: lineOf(text, m.index), match: m[0] });
+    if (rgb && isGreen(rgb) && !IDENTITY_COLOURS.has(m[0].toLowerCase())) out.push({ rule: "green", line: lineOf(text, m.index), match: m[0] });
   }
   for (const m of text.matchAll(NAMED)) {
     const before = text.slice(Math.max(0, m.index - 80), m.index);
