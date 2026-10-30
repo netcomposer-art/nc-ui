@@ -1,0 +1,143 @@
+{
+  "$description": "0.1.0 (pre-release): roles moved from the generic semantic tier to component domains. Old names were never published.",
+  "renames": [
+    {
+      "old": "--nc-ui-key-white",
+      "new": "--nc-synth-key-white",
+      "js_old": "semantic['key-white']",
+      "js_new": "component.synth['key-white']"
+    },
+    {
+      "old": "--nc-ui-key-black",
+      "new": "--nc-synth-key-black",
+      "js_old": "semantic['key-black']",
+      "js_new": "component.synth['key-black']"
+    },
+    {
+      "old": "--nc-ui-key-hint-on-dark",
+      "new": "--nc-synth-key-hint-on-dark",
+      "js_old": "semantic['key-hint-on-dark']",
+      "js_new": "component.synth['key-hint-on-dark']"
+    },
+    {
+      "old": "--nc-ui-key-held-base",
+      "new": "--nc-synth-key-held-base",
+      "js_old": "semantic['key-held-base']",
+      "js_new": "component.synth['key-held-base']"
+    },
+    {
+      "old": "--nc-ui-keybed-height",
+      "new": "--nc-synth-keybed-height",
+      "js_old": "semantic['keybed-height']",
+      "js_new": "component.synth['keybed-height']"
+    },
+    {
+      "old": "--nc-ui-font-curve-label",
+      "new": "--nc-synth-curve-label-font",
+      "js_old": "semantic['font-curve-label']",
+      "js_new": "component.synth['curve-label-font']"
+    },
+    {
+      "old": "--nc-ui-curve-label-size",
+      "new": "--nc-synth-curve-label-size",
+      "js_old": "semantic['curve-label-size']",
+      "js_new": "component.synth['curve-label-size']"
+    },
+    {
+      "old": "--nc-ui-slim-curve-width",
+      "new": "--nc-synth-slim-curve-width",
+      "js_old": "semantic['slim-curve-width']",
+      "js_new": "component.synth['slim-curve-width']"
+    },
+    {
+      "old": "--nc-ui-meaning-area-1",
+      "new": "--nc-meaning-area-1",
+      "js_old": "semantic['meaning-area-1']",
+      "js_new": "component.meaning['area-1']"
+    },
+    {
+      "old": "--nc-ui-meaning-area-2",
+      "new": "--nc-meaning-area-2",
+      "js_old": "semantic['meaning-area-2']",
+      "js_new": "component.meaning['area-2']"
+    },
+    {
+      "old": "--nc-ui-meaning-area-3",
+      "new": "--nc-meaning-area-3",
+      "js_old": "semantic['meaning-area-3']",
+      "js_new": "component.meaning['area-3']"
+    },
+    {
+      "old": "--nc-ui-meaning-area-4",
+      "new": "--nc-meaning-area-4",
+      "js_old": "semantic['meaning-area-4']",
+      "js_new": "component.meaning['area-4']"
+    },
+    {
+      "old": "--nc-ui-meaning-intimacy",
+      "new": "--nc-meaning-intimacy",
+      "js_old": "semantic['meaning-intimacy']",
+      "js_new": "component.meaning['intimacy']"
+    },
+    {
+      "old": "--nc-ui-meaning-energy",
+      "new": "--nc-meaning-energy",
+      "js_old": "semantic['meaning-energy']",
+      "js_new": "component.meaning['energy']"
+    },
+    {
+      "old": "--nc-ui-meaning-tension",
+      "new": "--nc-meaning-tension",
+      "js_old": "semantic['meaning-tension']",
+      "js_new": "component.meaning['tension']"
+    },
+    {
+      "old": "--nc-ui-meaning-ambiguity",
+      "new": "--nc-meaning-ambiguity",
+      "js_old": "semantic['meaning-ambiguity']",
+      "js_new": "component.meaning['ambiguity']"
+    },
+    {
+      "old": "--nc-ui-meaning-movement",
+      "new": "--nc-meaning-movement",
+      "js_old": "semantic['meaning-movement']",
+      "js_new": "component.meaning['movement']"
+    },
+    {
+      "old": "--nc-ui-meaning-highlight",
+      "new": "--nc-meaning-highlight",
+      "js_old": "semantic['meaning-highlight']",
+      "js_new": "component.meaning['highlight']"
+    },
+    {
+      "old": "--nc-ui-drawer-bg",
+      "new": "--nc-situation-drawer-bg",
+      "js_old": "semantic['drawer-bg']",
+      "js_new": "component.situation['drawer-bg']"
+    },
+    {
+      "old": "--nc-ui-drawer-width",
+      "new": "--nc-situation-drawer-width",
+      "js_old": "semantic['drawer-width']",
+      "js_new": "component.situation['drawer-width']"
+    },
+    {
+      "old": "--nc-ui-map-marker-off",
+      "new": "--nc-situation-map-marker-off",
+      "js_old": "semantic['map-marker-off']",
+      "js_new": "component.situation['map-marker-off']"
+    },
+    {
+      "old": "--nc-ui-chart-tick-size",
+      "new": "--nc-situation-chart-tick-size",
+      "js_old": "semantic['chart-tick-size']",
+      "js_new": "component.situation['chart-tick-size']"
+    },
+    {
+      "old": "--nc-ui-chart-tooltip-size",
+      "new": "--nc-situation-chart-tooltip-size",
+      "js_old": "semantic['chart-tooltip-size']",
+      "js_new": "component.situation['chart-tooltip-size']"
+    }
+  ]
+}
