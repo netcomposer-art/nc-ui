@@ -178,3 +178,14 @@ test("the page header is its own layer above the modules, so a header menu opens
   assert.match(rule(".nc-page-hd"), /position: relative;[\s\S]*z-index: var\(--nc-ui-page-head-layer\)/);
   assert.doesNotMatch(rule(".nc-page-hd"), /isolation: isolate/);
 });
+
+test("a minimized full-width (compact) module is one slim bar at every width", () => {
+  assert.match(css, /\.nc-module\[data-nc-compact\]\[data-nc-slim\] \{\s*display: flex !important;\s*flex-direction: row;/);
+  assert.match(css, /\.nc-module\[data-nc-compact\]\[data-nc-slim\] \.nc-slim-lines \{\s*white-space: nowrap !important;/);
+});
+
+test("hosted (inside the Studio): no title block or band, the header keeps its controls on one row", () => {
+  assert.match(css, /html\[data-nc-hosted\] \.nc-page-hd > :first-child \{ display: none; \}/);
+  assert.match(css, /html\[data-nc-hosted\] \.nc-page-hd::before \{ display: none; \}/);
+  assert.match(css, /html\[data-nc-hosted\] \.nc-page \{ padding-top: var\(--nc-ui-module-gap\); min-height: 0; \}/);
+});

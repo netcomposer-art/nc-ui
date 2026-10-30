@@ -2155,6 +2155,45 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   .nc-page-hd { flex-direction: row; align-items: flex-end; justify-content: space-between; padding-bottom: var(--nc-ui-page-head-gap-md); }
   .nc-page-hd::before { top: calc(var(--nc-ui-page-pad-y-md) * -1); left: calc(var(--nc-ui-page-pad-x-md) * -1); right: calc(var(--nc-ui-page-pad-x-md) * -1); }
 }
+/* A minimized full-width module (compact, e.g. the Studio's Mix): one slim bar at every width, title, then the summary
+   on one line (cut with an ellipsis), then the index. Overrides the column-wise slim of side-by-side modules. */
+.nc-module[data-nc-compact][data-nc-slim] {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--nc-ui-header-gap);
+  padding-inline: var(--nc-ui-module-pad);
+}
+.nc-module[data-nc-compact][data-nc-slim] .nc-module-hd { display: contents !important; }
+/* A full-width module's row is its own: minimized it keeps the whole width, not the slim side column. */
+.nc-stack:has(> .nc-module[data-nc-compact]) { grid-template-columns: minmax(0, 1fr) !important; }
+.nc-module[data-nc-compact][data-nc-slim] .nc-title { flex: none; }
+.nc-module[data-nc-compact][data-nc-slim] .nc-slim {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 0 !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start;
+  text-align: left;
+}
+.nc-module[data-nc-compact][data-nc-slim] .nc-slim-lines {
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Hosted (an instrument inside the Studio, html[data-nc-hosted]): the Studio already names it on its tab, so the
+   title block and its band go; the header keeps only its controls (Master, Save, Load...) on one short row. */
+html[data-nc-hosted] .nc-page { padding-top: var(--nc-ui-module-gap); min-height: 0; }
+html[data-nc-hosted] .nc-page-hd {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: var(--nc-ui-module-gap);
+}
+html[data-nc-hosted] .nc-page-hd::before { display: none; }
+html[data-nc-hosted] .nc-page-hd > :first-child { display: none; }
+html[data-nc-hosted] .nc-page-body { padding-top: var(--nc-ui-module-gap); }
 /* Tablets (769-1023 px): the same 2 x 5 slot grid as phones and desktop; one row of 10 drew 14 px slots here. */
 @media (min-width: 769px) and (max-width: 1023px) {
   .nc-slot-line { flex-wrap: wrap; }
