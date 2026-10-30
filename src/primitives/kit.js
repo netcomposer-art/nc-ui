@@ -1437,6 +1437,9 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   color: ${v("strip-hacks-text")};
   font-size: ${v("label-size")};
   font-weight: ${v("label-weight")};
+  /* Stated, not left out: an older bundled copy of the kit (an app's fallback layer) set uppercase and tracking. */
+  letter-spacing: normal;
+  text-transform: none;
   cursor: pointer;
   transition: none;
 }
