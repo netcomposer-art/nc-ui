@@ -1814,6 +1814,11 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   scrollbar-width: thin;
   padding-inline: var(--nc-ui-module-pad) var(--nc-ui-control-gap);
   padding-bottom: var(--nc-ui-module-pad);
+  /* The channel strips sit on the master's shade (Peter, 2026-10-30): the lightest step of the stack. */
+  background: var(--nc-ui-module-bg-stack-1);
+  --nc-ui-text-sub: var(--nc-ui-module-sub-stack-1);
+  --nc-ui-divider: var(--nc-ui-module-div-stack-1);
+  --nc-ui-slider-track: var(--nc-ui-module-div-stack-1);
 }
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
   grid-area: fx;
