@@ -179,3 +179,81 @@ test("console CSS: tokens only; strips scroll on phones with the master pinned; 
   assert.match(css, /@media \(max-width: 1023px\) \{\s*\.nc-module-body\[data-nc-layout="console"\] \{[^}]*"strips master" "fx fx"/);
   assert.match(css, /\[data-nc-area="strips"\] \{[^}]*overflow-x: auto/);
 });
+
+test("strip: remove × and the typed readout (click opens, Enter commits, Escape cancels)", () => {
+  const typed = [];
+  const removed = [];
+  const def = {
+    id: "mix-2",
+    title: "Mix",
+    compact: true,
+    layout: "console",
+    sections: [
+      {
+        id: "strips",
+        area: "strips",
+        controls: [
+          {
+            type: "strip",
+            id: "bass-2",
+            label: "Bass 2",
+            value: 0.8,
+            valueText: "−6.0",
+            onChange: () => {},
+            onRemove: (opener) => removed.push(opener.dataset.ncStripRemove),
+            onTypeIn: (text) => typed.push(text),
+          },
+          {
+            type: "stripAdd",
+            id: "add",
+            label: "Add",
+            ariaLabel: "Add instrument",
+            options: [
+              { value: "olive-bass", label: "Bass" },
+              { value: "synth", label: "Synth (soon)", disabled: true },
+            ],
+            onAdd: (v) => typed.push(`add:${v}`),
+          },
+        ],
+      },
+    ],
+  };
+  const mod = defineModule(def, "nc-ui.test.console2");
+  document.body.append(mod.el);
+  assert.ok(mod.el.hasAttribute("data-nc-compact"), "compact header");
+  assert.match(css, /\.nc-module\[data-nc-compact\]\[data-nc-open="true"\] \.nc-module-hd \{ margin-bottom: var\(--nc-ui-head-margin-compact\); \}/);
+  const remove = mod.el.querySelector(".nc-strip-remove");
+  assert.equal(remove.getAttribute("aria-label"), "Remove Bass 2");
+  click(remove);
+  assert.equal(removed.length, 1);
+
+  const readout = mod.el.querySelector(".nc-strip-db");
+  const open = () => {
+    const e = new Event("click", { bubbles: true });
+    Object.defineProperty(e, "detail", { value: 0 });
+    readout.dispatchEvent(e);
+    return mod.el.querySelector(".nc-strip-db-input");
+  };
+  let input = open();
+  assert.ok(input, "a keyboard click opens the type-in at once");
+  assert.equal(input.value, "−6.0");
+  assert.equal(readout.hidden, true);
+  input.value = "-3.5";
+  key(input, "Enter");
+  assert.deepEqual(typed, ["-3.5"]);
+  assert.equal(mod.el.querySelector(".nc-strip-db-input"), null);
+  assert.equal(readout.hidden, false);
+  input = open();
+  input.value = "-60";
+  key(input, "Escape");
+  assert.deepEqual(typed, ["-3.5"], "Escape cancels");
+
+  const select = mod.el.querySelector(".nc-strip-add select");
+  assert.equal(select.getAttribute("aria-label"), "Add instrument");
+  assert.deepEqual([...select.options].map((o) => [o.value, o.disabled]), [["", true], ["olive-bass", false], ["synth", true]]);
+  // linkedom's select.value is read-only: pick the option the way the test DOM reads it.
+  Object.defineProperty(select, "value", { configurable: true, get: () => "olive-bass" });
+  select.dispatchEvent(new Event("change"));
+  assert.deepEqual(typed, ["-3.5", "add:olive-bass"]);
+  mod.el.remove();
+});

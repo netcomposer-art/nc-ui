@@ -307,6 +307,24 @@ export interface StripControl {
   onSolo?: () => void;
   /** The clip light was clicked (it clears itself). */
   onClipClear?: () => void;
+  /** Adds a remove × after the name (an instrument instance). `opener` is the button, for the confirm's focus. */
+  onRemove?: (opener: HTMLElement) => void;
+  /**
+   * A single click (or Enter) on the readout opens it for typing (ASTRID's type-in values): Enter calls this with
+   * the text, Escape or leaving cancels. The host parses and clamps. A double-click still resets.
+   */
+  onTypeIn?: (text: string) => void;
+}
+/** The console's add slot: a ghost strip after the strips, "+ Add" over a select of what can be added. */
+export interface StripAddControl {
+  type: "stripAdd";
+  id: string;
+  /** On the slot ("Add"). */
+  label: string;
+  /** The select's accessible name and first line ("Add instrument"). */
+  ariaLabel?: string;
+  options: { value: string; label: string; disabled?: boolean }[];
+  onAdd: (value: string) => void;
 }
 export type Control =
   | SliderControl
@@ -322,7 +340,8 @@ export type Control =
   | StepGridControl
   | CanvasControl
   | FxControl
-  | StripControl;
+  | StripControl
+  | StripAddControl;
 
 export interface ModuleSection {
   id: string;
@@ -350,6 +369,8 @@ export interface ModuleDef {
   lead?: boolean;
   controls?: Control[];
   sections?: ModuleSection[];
+  /** A compact header: the title at the slim size and the index on one slim line, a small gap under it. */
+  compact?: boolean;
   /** "console": the sections sit on one row by `area` (strips, fx, master), full bleed (the Studio's Mix). */
   layout?: "console";
   /** Show a header switch (role="switch", named by the title). Off dims the body by colour. */

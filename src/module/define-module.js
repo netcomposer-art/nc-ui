@@ -79,7 +79,7 @@ function signature(def) {
       if (control.type === "select")
         return `select:${control.id}:${control.options.map((option) => option.value).join(",")}`;
       if (control.type === "strip")
-        return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
+        return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}${control.onRemove ? "x" : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
       if (control.type === "fx")
         return `fx:${control.id}:${control.depth}:${control.on === undefined ? "" : "sw"}:${control.controls.map((child) => child.id).join(",")}/${(control.more ?? []).map((child) => child.id).join(",")}`;
       return `${control.type}:${control.id}`;
@@ -191,6 +191,8 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
   el.dataset.ncPlace = "adjacent";
   el.dataset.ncShade = "1";
   if (def.lead) el.dataset.ncLead = "";
+  // A compact header: the title and index on one slim line (the Studio's Mix, which sits over the instruments).
+  if (def.compact) el.dataset.ncCompact = "";
   const hidden = readHidden(safeStorage(), storageKey).has(def.id);
   const head = document.createElement("header");
   head.className = "nc-module-hd";
@@ -264,6 +266,8 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
     el,
     update(next) {
       defs.set(el, next);
+      if (next.compact) el.dataset.ncCompact = "";
+      else delete el.dataset.ncCompact;
       title.textContent = next.title;
       status.textContent = next.status ?? "";
       if (next.status !== undefined) status.setAttribute("aria-live", "polite");

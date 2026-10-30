@@ -84,6 +84,8 @@
   --spacing-nc-fader-cap-height: var(--nc-ui-fader-cap-height);
   --spacing-nc-strip-width: var(--nc-ui-strip-width);
   --spacing-nc-strip-width-master: var(--nc-ui-strip-width-master);
+  --spacing-nc-fx-card-width: var(--nc-ui-fx-card-width);
+  --spacing-nc-head-margin-compact: var(--nc-ui-head-margin-compact);
   --spacing-nc-tab-pad-y: var(--nc-ui-tab-pad-y);
   --spacing-nc-tab-mark: var(--nc-ui-tab-mark);
   --spacing-nc-select-pad-end: var(--nc-ui-select-pad-end);

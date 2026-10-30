@@ -306,16 +306,18 @@
   --nc-ui-meter-hold-mark: var(--nc-ui-color-accent);
   --nc-ui-meter-clip: var(--nc-ui-color-red);
   --nc-ui-meter-track: var(--nc-ui-color-div-0);
-  --nc-ui-meter-width: var(--nc-ui-space-6);
+  --nc-ui-meter-width: var(--nc-ui-space-8);
   --nc-ui-clip-size: var(--nc-ui-space-6);
-  --nc-ui-fader-height: 160px;
-  --nc-ui-fader-cap-width: var(--nc-ui-space-24);
-  --nc-ui-fader-cap-height: var(--nc-ui-space-12);
+  --nc-ui-fader-height: 220px;
+  --nc-ui-fader-cap-width: var(--nc-ui-space-28);
+  --nc-ui-fader-cap-height: var(--nc-ui-space-14);
   --nc-ui-fader-cap: var(--nc-ui-color-ink);
   --nc-ui-fader-cap-line: var(--nc-ui-color-paper);
   --nc-ui-fader-track: color-mix(in srgb, var(--nc-ui-color-ink) 25%, transparent);
-  --nc-ui-strip-width: 68px;
-  --nc-ui-strip-width-master: 92px;
+  --nc-ui-strip-width: 88px;
+  --nc-ui-strip-width-master: 112px;
+  --nc-ui-fx-card-width: 232px;
+  --nc-ui-head-margin-compact: var(--nc-ui-space-12);
   --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);
   --nc-ui-focus-width-strong: var(--nc-ui-border-thick);
@@ -569,6 +571,12 @@ button, input, select { font: inherit; color: inherit; }
   min-width: 0;
 }
 .nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: var(--nc-ui-head-margin); }
+/* A compact header (defineModule compact): the title at the slim size and the index on one slim line, a small gap
+   under it. For a module that sits over others (the Studio's Mix). */
+.nc-module[data-nc-compact] .nc-title { font-size: var(--nc-ui-title-size-slim); }
+.nc-module[data-nc-compact][data-nc-open="true"] .nc-module-hd { margin-bottom: var(--nc-ui-head-margin-compact); }
+.nc-module[data-nc-compact]:not([data-nc-slim]) { padding-top: var(--nc-ui-module-gap); }
+.nc-module[data-nc-compact][data-nc-slim] { padding-block: var(--nc-ui-module-gap); }
 .nc-title {
   margin: 0;
   min-width: 0;
@@ -1760,7 +1768,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
    darker each, and the master darkest (stack-1), so the row reads as the signal path ending on the right. */
 .nc-module-body[data-nc-layout="console"] {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   grid-template-areas: "strips fx master";
   align-items: stretch;
   gap: 0;
@@ -1782,7 +1790,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
   grid-area: fx;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, var(--nc-ui-fx-card-width));
   align-items: stretch;
   padding-top: 0;
 }
@@ -1824,7 +1832,27 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 }
 .nc-strip + .nc-strip { border-inline-start: var(--nc-ui-hairline) solid var(--nc-ui-divider); }
 .nc-strip[data-nc-master] { width: var(--nc-ui-strip-width-master); }
+/* Name row: the name, and the remove × when the strip can be removed. */
+.nc-strip-hd { display: flex; align-items: baseline; justify-content: center; gap: var(--nc-ui-control-gap); max-width: 100%; min-width: 0; }
+.nc-strip-remove {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--nc-ui-text-sub);
+  font-family: var(--nc-ui-font-readout);
+  font-size: var(--nc-ui-label-size);
+  line-height: 1;
+  cursor: pointer;
+  transition-property: color;
+  transition-duration: var(--nc-ui-transition-feedback);
+}
+.nc-strip-remove::before { content: ""; position: absolute; inset: calc(var(--nc-ui-control-gap) * -1); }
+.nc-strip-remove:hover { color: var(--nc-ui-danger); }
+.nc-strip-remove:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 .nc-strip-name {
+  min-width: 0;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1989,6 +2017,65 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   cursor: default;
   transition: none;
 }
+.nc-strip-db:not(:disabled) { cursor: text; }
+.nc-strip-db:hover { text-decoration: underline; text-decoration-color: var(--nc-ui-divider); text-underline-offset: var(--nc-ui-control-gap); }
+/* The type-in: the readout opened as a field, the same size and font, an accent hairline under it. */
+.nc-strip-db-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: var(--nc-ui-hairline) solid var(--nc-ui-accent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--nc-ui-text);
+  font-family: var(--nc-ui-font-readout);
+  font-size: var(--nc-ui-readout-size);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.nc-strip-db-input:focus-visible { outline: none; }
+/* The add slot: a ghost strip after the last channel, "+ Add" over a select of what can be added. */
+.nc-strip-add {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: var(--nc-ui-strip-width);
+  margin-inline-start: var(--nc-ui-module-gap);
+  border: var(--nc-ui-hairline) dashed var(--nc-ui-divider);
+  color: var(--nc-ui-text-sub);
+  transition-property: color, border-color;
+  transition-duration: var(--nc-ui-transition-feedback);
+}
+.nc-strip-add:hover, .nc-strip-add:focus-within { color: var(--nc-ui-text); border-color: var(--nc-ui-text-sub); }
+.nc-strip-add-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nc-ui-control-gap);
+  pointer-events: none;
+}
+.nc-strip-add-plus { font-family: var(--nc-ui-font-readout); font-size: var(--nc-ui-title-size-slim); line-height: 1; }
+.nc-strip-add-label {
+  font-size: var(--nc-ui-label-size);
+  font-weight: var(--nc-ui-label-weight);
+  letter-spacing: var(--nc-ui-label-tracking);
+  text-transform: uppercase;
+}
+/* The select covers the slot (fully transparent, not dimmed), so a click anywhere on it opens the list. */
+.nc-strip-add-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: var(--nc-ui-body-size);
+}
+.nc-strip-add:has(.nc-strip-add-select:focus-visible) { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 .nc-strip-db:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 /* Phones and tablets: the strips scroll in their row with the master pinned at the right; the FX cards go under them
    (three across on tablets, stacked on phones). */
@@ -1997,6 +2084,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: "strips master" "fx fx";
   }
+}
+@media (max-width: 1023px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 768px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }

@@ -89,6 +89,8 @@ const theme = {
     "nc-fader-cap-height": "var(--nc-ui-fader-cap-height)",
     "nc-strip-width": "var(--nc-ui-strip-width)",
     "nc-strip-width-master": "var(--nc-ui-strip-width-master)",
+    "nc-fx-card-width": "var(--nc-ui-fx-card-width)",
+    "nc-head-margin-compact": "var(--nc-ui-head-margin-compact)",
     "nc-tab-pad-y": "var(--nc-ui-tab-pad-y)",
     "nc-tab-mark": "var(--nc-ui-tab-mark)",
     "nc-select-pad-end": "var(--nc-ui-select-pad-end)",

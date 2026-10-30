@@ -106,6 +106,12 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
   min-width: 0;
 }
 .nc-module[data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin")}; }
+/* A compact header (defineModule compact): the title at the slim size and the index on one slim line, a small gap
+   under it. For a module that sits over others (the Studio's Mix). */
+.nc-module[data-nc-compact] .nc-title { font-size: ${v("title-size-slim")}; }
+.nc-module[data-nc-compact][data-nc-open="true"] .nc-module-hd { margin-bottom: ${v("head-margin-compact")}; }
+.nc-module[data-nc-compact]:not([data-nc-slim]) { padding-top: ${v("module-gap")}; }
+.nc-module[data-nc-compact][data-nc-slim] { padding-block: ${v("module-gap")}; }
 .nc-title {
   margin: 0;
   min-width: 0;
@@ -1297,7 +1303,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
    darker each, and the master darkest (stack-1), so the row reads as the signal path ending on the right. */
 .nc-module-body[data-nc-layout="console"] {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   grid-template-areas: "strips fx master";
   align-items: stretch;
   gap: 0;
@@ -1319,7 +1325,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
   grid-area: fx;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, ${v("fx-card-width")});
   align-items: stretch;
   padding-top: 0;
 }
@@ -1361,7 +1367,27 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
 .nc-strip[data-nc-master] { width: ${v("strip-width-master")}; }
+/* Name row: the name, and the remove × when the strip can be removed. */
+.nc-strip-hd { display: flex; align-items: baseline; justify-content: center; gap: ${v("control-gap")}; max-width: 100%; min-width: 0; }
+.nc-strip-remove {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("label-size")};
+  line-height: 1;
+  cursor: pointer;
+  transition-property: color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-strip-remove::before { content: ""; position: absolute; inset: calc(${v("control-gap")} * -1); }
+.nc-strip-remove:hover { color: ${v("danger")}; }
+.nc-strip-remove:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 .nc-strip-name {
+  min-width: 0;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1526,6 +1552,65 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   cursor: default;
   transition: none;
 }
+.nc-strip-db:not(:disabled) { cursor: text; }
+.nc-strip-db:hover { text-decoration: underline; text-decoration-color: ${v("divider")}; text-underline-offset: ${v("control-gap")}; }
+/* The type-in: the readout opened as a field, the same size and font, an accent hairline under it. */
+.nc-strip-db-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-bottom: ${v("hairline")} solid ${v("accent")};
+  border-radius: 0;
+  background: transparent;
+  color: ${v("text")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size")};
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.nc-strip-db-input:focus-visible { outline: none; }
+/* The add slot: a ghost strip after the last channel, "+ Add" over a select of what can be added. */
+.nc-strip-add {
+  position: relative;
+  flex: none;
+  align-self: stretch;
+  width: ${v("strip-width")};
+  margin-inline-start: ${v("module-gap")};
+  border: ${v("hairline")} dashed ${v("divider")};
+  color: ${v("text-sub")};
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-strip-add:hover, .nc-strip-add:focus-within { color: ${v("text")}; border-color: ${v("text-sub")}; }
+.nc-strip-add-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: ${v("control-gap")};
+  pointer-events: none;
+}
+.nc-strip-add-plus { font-family: ${v("font-readout")}; font-size: ${v("title-size-slim")}; line-height: 1; }
+.nc-strip-add-label {
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+}
+/* The select covers the slot (fully transparent, not dimmed), so a click anywhere on it opens the list. */
+.nc-strip-add-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: ${v("body-size")};
+}
+.nc-strip-add:has(.nc-strip-add-select:focus-visible) { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 .nc-strip-db:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 /* Phones and tablets: the strips scroll in their row with the master pinned at the right; the FX cards go under them
    (three across on tablets, stacked on phones). */
@@ -1534,6 +1619,9 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: "strips master" "fx fx";
   }
+}
+@media (max-width: 1023px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 768px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }

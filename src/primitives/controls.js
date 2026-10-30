@@ -144,6 +144,8 @@ export function renderControl(control, lookup) {
       return renderFx(control, lookup);
     case "strip":
       return renderStrip(control, lookup);
+    case "stripAdd":
+      return renderStripAdd(control, lookup);
     default:
       return renderNote({ type: "note", id: "unknown", text: "" });
   }
@@ -198,6 +200,8 @@ export function patchControl(node, control) {
       const childNode = node.querySelector(`[data-nc-id="${cssEscape(child.id)}"]`);
       if (childNode instanceof Element) patchControl(childNode, { ...child, type: "knob", compact: true });
     }
+  } else if (control.type === "stripAdd") {
+    patchStripAdd(node, control);
   } else if (control.type === "fx") {
     patchFx(node, control);
     for (const child of [...control.controls, ...(control.more ?? [])]) {
@@ -1347,9 +1351,25 @@ function renderStrip(control, lookup) {
   strip.setAttribute("role", "group");
   strip.setAttribute("aria-label", control.label);
   if (control.master) strip.dataset.ncMaster = "";
+  const head = document.createElement("div");
+  head.className = "nc-strip-hd";
   const name = document.createElement("span");
   name.className = "nc-strip-name";
   name.dataset.ncStripName = "";
+  head.append(name);
+  // Remove (an instance of an instrument): a quiet × after the name, as on ASTRID's hack cards. The host confirms.
+  if (control.onRemove) {
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "nc-strip-remove";
+    remove.dataset.ncStripRemove = "";
+    remove.textContent = "\u00d7";
+    remove.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") live.onRemove?.(remove);
+    });
+    head.append(remove);
+  }
   const ms = document.createElement("div");
   ms.className = "nc-strip-ms";
   for (const kind of ["mute", "solo"]) {
@@ -1407,18 +1427,131 @@ function renderStrip(control, lookup) {
     },
   });
   body.append(scale, fader.el, meter.el);
-  // The readout: mono; a double-click puts the fader back where the strip starts (unity, or the channel default).
+  // The readout: mono; a double-click puts the fader back where the strip starts (unity, or the channel default), and
+  // with onTypeIn a single click (or Enter) opens it for a typed value, as ASTRID's type-in values: Enter commits,
+  // Escape or leaving cancels. The click waits out the double-click window, so a double-click never opens it.
   const readout = document.createElement("button");
   readout.type = "button";
   readout.className = "nc-strip-db";
   readout.dataset.ncReadout = "";
+  let opening = 0;
+  readout.addEventListener("click", (event) => {
+    const live = lookup(strip);
+    if (live?.type !== "strip" || !live.onTypeIn) return;
+    window.clearTimeout(opening);
+    if (event.detail === 0) openTypeIn(strip, readout, lookup);
+    else if (event.detail === 1)
+      opening = window.setTimeout(() => openTypeIn(strip, readout, lookup), TYPE_IN_DELAY_MS);
+  });
   readout.addEventListener("dblclick", () => {
+    window.clearTimeout(opening);
     const live = lookup(strip);
     if (live?.type === "strip") reset(live);
   });
-  strip.append(name, ms, sends, body, readout, probe());
+  strip.append(head, ms, sends, body, readout, probe());
   patchStrip(strip, control);
   return strip;
+}
+
+/** A single click on a readout opens the type-in after this, unless a second click makes it a double-click. */
+const TYPE_IN_DELAY_MS = 250;
+
+function openTypeIn(strip, readout, lookup) {
+  const live = lookup(strip);
+  if (live?.type !== "strip" || !live.onTypeIn || strip.querySelector(".nc-strip-db-input")) return;
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "nc-strip-db-input";
+  input.inputMode = "decimal";
+  input.spellcheck = false;
+  input.autocomplete = "off";
+  input.value = live.valueText ?? formatNumber(live.value);
+  input.setAttribute("aria-label", `${live.label} level in dB: type a value, Enter to set, Escape to cancel`);
+  readout.hidden = true;
+  readout.after(input);
+  input.focus();
+  input.select?.();
+  let done = false;
+  const close = (commit) => {
+    if (done) return;
+    done = true;
+    const text = input.value;
+    input.remove();
+    readout.hidden = false;
+    if (commit) {
+      const current = lookup(strip);
+      if (current?.type === "strip") current.onTypeIn?.(text);
+    }
+    readout.focus?.();
+  };
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      close(true);
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      close(false);
+    }
+  });
+  input.addEventListener("blur", () => close(false));
+}
+
+/**
+ * The console's add slot: a ghost strip at the end of the strips with "+ Add" over a select of what can be added
+ * (an option may be disabled, "Synth (soon)"). Picking one calls onAdd and puts the select back.
+ */
+function renderStripAdd(control, lookup) {
+  const wrap = document.createElement("div");
+  wrap.className = "nc-strip-add";
+  wrap.dataset.ncId = control.id;
+  const face = document.createElement("span");
+  face.className = "nc-strip-add-face";
+  face.setAttribute("aria-hidden", "true");
+  const plus = document.createElement("span");
+  plus.className = "nc-strip-add-plus";
+  plus.textContent = "+";
+  const label = document.createElement("span");
+  label.className = "nc-strip-add-label";
+  face.append(plus, label);
+  const select = document.createElement("select");
+  select.className = "nc-strip-add-select";
+  select.addEventListener("change", () => {
+    const live = lookup(wrap);
+    const value = select.value;
+    rewind(select);
+    if (live?.type === "stripAdd" && value) live.onAdd(value);
+  });
+  wrap.append(face, select, probe());
+  patchStripAdd(wrap, control);
+  return wrap;
+}
+
+function patchStripAdd(node, control) {
+  const label = node.querySelector(".nc-strip-add-label");
+  if (label) label.textContent = control.label;
+  const select = node.querySelector("select");
+  if (!(select instanceof HTMLSelectElement)) return;
+  select.setAttribute("aria-label", control.ariaLabel ?? control.label);
+  const want = [{ value: "", label: control.ariaLabel ?? control.label, disabled: true }, ...control.options];
+  const have = [...select.options].map((o) => `${o.value}|${o.textContent}|${o.disabled}`).join(",");
+  const next = want.map((o) => `${o.value}|${o.label}|${o.disabled === true}`).join(",");
+  if (have === next) return;
+  select.replaceChildren(
+    ...want.map((o) => {
+      const option = document.createElement("option");
+      option.value = o.value;
+      option.textContent = o.label;
+      option.disabled = o.disabled === true;
+      return option;
+    }),
+  );
+  rewind(select);
+}
+
+/** Back to the add select's first line ("Add instrument"). */
+function rewind(select) {
+  const first = select.options[0];
+  if (first) first.selected = true;
 }
 
 function reset(live) {
@@ -1429,6 +1562,11 @@ function reset(live) {
 function patchStrip(node, control) {
   const name = node.querySelector("[data-nc-strip-name]");
   if (name && name.textContent !== control.label) name.textContent = control.label;
+  const remove = node.querySelector("[data-nc-strip-remove]");
+  if (remove) {
+    remove.setAttribute("aria-label", `Remove ${control.label}`);
+    remove.title = `Remove ${control.label}`;
+  }
   node.setAttribute("aria-label", control.label);
   const faderEl = node.querySelector(".nc-fader");
   const fader = faderEl ? faderHandle(faderEl) : undefined;
@@ -1444,7 +1582,8 @@ function patchStrip(node, control) {
     const text = control.valueText ?? formatNumber(control.value);
     if (readout.textContent !== text) readout.textContent = text;
     readout.setAttribute("aria-label", `${control.label} level ${text}`);
-    readout.title = control.resetText ? `Double-click: back to ${control.resetText}` : "Double-click to reset";
+    const reset = control.resetText ? `Double-click: back to ${control.resetText}` : "Double-click to reset";
+    readout.title = control.onTypeIn ? `Click to type a value. ${reset}` : reset;
   }
   for (const ms of node.querySelectorAll("[data-nc-ms]")) {
     const kind = ms.getAttribute("data-nc-ms");
