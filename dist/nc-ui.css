@@ -16,6 +16,7 @@
   --nc-ui-color-astrid-orange: #EB512E;
   --nc-ui-color-petra-blue: #5AC4F7;
   --nc-ui-color-olive-green: #9CA536;
+  --nc-ui-color-hacks-grey: #8C8C8C;
   --nc-ui-color-lucy-purple: #9B30FF;
   --nc-ui-color-paper-bright: #FCFCFC;
   --nc-ui-color-accent-pad: #1A6193;
@@ -318,6 +319,7 @@
   --nc-ui-fader-cap: var(--nc-ui-color-ink);
   --nc-ui-fader-cap-line: var(--nc-ui-color-paper);
   --nc-ui-fader-cap-master: var(--nc-ui-color-accent);
+  --nc-ui-strip-hacks-text: var(--nc-ui-color-hacks-grey);
   --nc-ui-fader-track: color-mix(in srgb, var(--nc-ui-color-ink) 25%, transparent);
   --nc-ui-strip-width: 88px;
   --nc-ui-strip-width-master: 112px;
@@ -1898,7 +1900,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: var(--nc-ui-text-sub); }
 .nc-strip-ms { display: flex; gap: var(--nc-ui-control-gap); height: var(--nc-ui-slider-pitch); }
-/* Hacks: a full-width toggle above M and S; pressed while the console's fx area shows this strip's stack. */
+/* Hacks: a full-width toggle above M and S, in mixed case and a lighter grey (Peter); pressed while the console's fx area shows this strip's stack. */
 .nc-strip-hacks { display: flex; width: 100%; height: var(--nc-ui-slider-pitch); }
 .nc-hacks-wrap { position: relative; flex: 1 1 auto; height: var(--nc-ui-slider-pitch); }
 .nc-hacks {
@@ -1910,11 +1912,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   border: var(--nc-ui-hairline) solid var(--nc-ui-divider);
   border-radius: var(--nc-ui-slot-radius);
   background: transparent;
-  color: var(--nc-ui-text-sub);
+  color: var(--nc-ui-strip-hacks-text);
   font-size: var(--nc-ui-label-size);
   font-weight: var(--nc-ui-label-weight);
-  letter-spacing: var(--nc-ui-label-tracking);
-  text-transform: uppercase;
   cursor: pointer;
   transition: none;
 }

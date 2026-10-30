@@ -52,6 +52,7 @@
   --color-nc-instrument-olive: var(--nc-ui-instrument-olive);
   --color-nc-instrument-lucy: var(--nc-ui-instrument-lucy);
   --color-nc-fader-cap-master: var(--nc-ui-fader-cap-master);
+  --color-nc-strip-hacks-text: var(--nc-ui-strip-hacks-text);
   --color-nc-filter-lowpass: var(--nc-ui-filter-lowpass);
   --color-nc-filter-highpass: var(--nc-ui-filter-highpass);
   --color-nc-filter-bandpass: var(--nc-ui-filter-bandpass);

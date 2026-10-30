@@ -1422,7 +1422,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
 .nc-strip-ms { display: flex; gap: ${v("control-gap")}; height: ${v("slider-pitch")}; }
-/* Hacks: a full-width toggle above M and S; pressed while the console's fx area shows this strip's stack. */
+/* Hacks: a full-width toggle above M and S, in mixed case and a lighter grey (Peter); pressed while the console's fx area shows this strip's stack. */
 .nc-strip-hacks { display: flex; width: 100%; height: ${v("slider-pitch")}; }
 .nc-hacks-wrap { position: relative; flex: 1 1 auto; height: ${v("slider-pitch")}; }
 .nc-hacks {
@@ -1434,11 +1434,9 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   border: ${v("hairline")} solid ${v("divider")};
   border-radius: ${v("slot-radius")};
   background: transparent;
-  color: ${v("text-sub")};
+  color: ${v("strip-hacks-text")};
   font-size: ${v("label-size")};
   font-weight: ${v("label-weight")};
-  letter-spacing: ${v("label-tracking")};
-  text-transform: uppercase;
   cursor: pointer;
   transition: none;
 }
