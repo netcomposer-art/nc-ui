@@ -13,7 +13,7 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const LIT = /#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|hsla?\([^)]*\)|okl(?:ch|ab)\([^)]*\)/g;
-const NAMED = /\b(green|lime|limegreen|lawngreen|chartreuse|olive|olivedrab|darkolivegreen|yellowgreen|greenyellow|forestgreen|seagreen|darkseagreen|lightseagreen|mediumseagreen|springgreen|mediumspringgreen|palegreen|lightgreen|darkgreen|teal|darkcyan|aquamarine|mediumaquamarine|honeydew|mintcream)\b/gi;
+const NAMED = /(?<![\w-])(green|lime|limegreen|lawngreen|chartreuse|olive|olivedrab|darkolivegreen|yellowgreen|greenyellow|forestgreen|seagreen|darkseagreen|lightseagreen|mediumseagreen|springgreen|mediumspringgreen|palegreen|lightgreen|darkgreen|teal|darkcyan|aquamarine|mediumaquamarine|honeydew|mintcream)(?![\w-])/gi;
 const SHADOW = /^rgba?\(0[ ,]+0[ ,]+0[ ,/]/;
 
 const hex = (h) => {

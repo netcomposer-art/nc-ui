@@ -65,3 +65,9 @@ test("lintText picks the checks by kind", () => {
   assert.deepEqual(lintText(css, "tokens").map((f) => f.rule), ["green"]);
   assert.deepEqual(lintText(css, "build").map((f) => f.rule).sort(), ["green", "opacity-dim"]);
 });
+
+test("a green colour name inside an identifier (instrument-olive, --nc-x-teal) is not a colour", async () => {
+  const { findGreen } = await import("../scripts/lint-ui.mjs");
+  assert.equal(findGreen("color: var(--nc-ui-instrument-olive);").length, 0);
+  assert.equal(findGreen("color: olive;").length, 1);
+});
