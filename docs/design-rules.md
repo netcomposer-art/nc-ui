@@ -66,7 +66,7 @@ Rules:
 
 ### Module shading: what -1..4 means
 
-The number is the **stack depth**: **1 is the top or first module, 4 is the deepest**. Anything deeper than 4 reuses 4. Every step is −5 per RGB channel darker than the one before it, so a deeper module is always a little darker than the one it sits under or next to.
+The number is the **stack depth**: **1 is the top or first module, 4 is the deepest**. Anything deeper than 4 reuses 4. Adjacent modules step −5 per RGB channel (ASTRID's VCO → VCF → VCA). The stack ramp is steeper and starts near white (Peter, 2026-10-29): the panel at #FAFAFA, then −13 per channel per card (#EDEDED, #E0E0E0, #D3D3D3), so an FX stack reads clearly from top to bottom.
 
 | token | the number counts | 1 | 2 | 3 | 4 |
 |---|---|---|---|---|---|
