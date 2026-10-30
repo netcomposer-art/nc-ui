@@ -136,6 +136,14 @@ export interface KnobControl {
   value: number;
   /** Set only while an LFO or another external source is driving this value. */
   modulated?: boolean;
+  /** The value as read out (title and aria-valuetext), instead of the number and unit. */
+  valueText?: string;
+  /** Accessible name when it differs from the label ("Rhythm send A" for a knob labelled "A"). */
+  ariaLabel?: string;
+  /** Double-click returns the knob here. */
+  defaultValue?: number;
+  /** The knob over its label, the value in its title only (a strip's sends). */
+  compact?: boolean;
   onChange: (value: number) => void;
 }
 export interface ChoiceControl {
@@ -248,6 +256,58 @@ export interface FxControl {
   more?: Control[];
   moreLabel?: string;
 }
+/** A strip's send: a compact knob (0..1) under the strip's M and S. */
+export interface StripSend {
+  id: string;
+  label: string;
+  ariaLabel?: string;
+  min: number;
+  max: number;
+  step?: number;
+  value: number;
+  valueText?: string;
+  defaultValue?: number;
+  onChange: (value: number) => void;
+}
+/**
+ * A mixer channel strip: name, M and S, sends, the console fader (a flat cap, 0..1 position) with its meter beside it
+ * on one scale, and the readout. The host owns the law: `ticks` and every meter level are positions on it, so the
+ * labels line up with both. Update the meter every frame with `stripMeter(moduleEl, id).update(levels, dt)`.
+ */
+export interface StripControl {
+  type: "strip";
+  id: string;
+  label: string;
+  /** Fader position 0..1 (bottom to top). */
+  value: number;
+  /** The readout and aria-valuetext ("−6.0"). */
+  valueText?: string;
+  /** Arrow-key step in positions (default 0.005); Page Up/Down are ten, Shift a quarter. */
+  step?: number;
+  /** Where a double-click (fader or readout) returns, when there is no onReset. */
+  defaultValue?: number;
+  /** Shown in the readout's title: "Double-click: back to −6.0 dB". */
+  resetText?: string;
+  /** Tick labels on the scale between fader and meter: `value` is a position. */
+  ticks?: { value: number; label: string }[];
+  /** 2: a stereo (two-sided) meter. */
+  channels?: 1 | 2;
+  /** The master strip: wider. */
+  master?: boolean;
+  mute?: boolean;
+  solo?: boolean;
+  /** Muted, or silenced by another strip's solo: the name and readout dim by colour. */
+  silent?: boolean;
+  sends?: StripSend[];
+  onChange: (value: number) => void;
+  onReset?: () => void;
+  /** Adds the M button. */
+  onMute?: () => void;
+  /** Adds the S button. */
+  onSolo?: () => void;
+  /** The clip light was clicked (it clears itself). */
+  onClipClear?: () => void;
+}
 export type Control =
   | SliderControl
   | SelectControl
@@ -261,7 +321,8 @@ export type Control =
   | SlotRowControl
   | StepGridControl
   | CanvasControl
-  | FxControl;
+  | FxControl
+  | StripControl;
 
 export interface ModuleSection {
   id: string;
@@ -273,6 +334,10 @@ export interface ModuleSection {
   panel?: boolean;
   subject?: string;
   lane?: 1 | 2 | 3 | 4;
+  /** In a console module: where this section sits ("strips" scroll on phones, "fx" cards, the "master" strip). */
+  area?: "strips" | "fx" | "master";
+  /** Accessible group name for the section. */
+  label?: string;
   controls: Control[];
 }
 export interface ModuleDef {
@@ -285,6 +350,8 @@ export interface ModuleDef {
   lead?: boolean;
   controls?: Control[];
   sections?: ModuleSection[];
+  /** "console": the sections sit on one row by `area` (strips, fx, master), full bleed (the Studio's Mix). */
+  layout?: "console";
   /** Show a header switch (role="switch", named by the title). Off dims the body by colour. */
   on?: boolean;
   onToggle?: (on: boolean) => void;
@@ -314,3 +381,51 @@ export function placeModules(
 ): void;
 export function syncAdjacentColumns(host: HTMLElement | null): void;
 export function renderGallery(host: HTMLElement): ModuleHandle[];
+
+export interface FaderHandle {
+  readonly el: HTMLElement;
+  readonly value: number;
+  readonly dragging: boolean;
+  /** Move the cap without onChange; ignored while a hand holds it. */
+  set(value: number): void;
+  setText(text: string | undefined): void;
+  setLabel(text: string): void;
+  configure(next: { step?: number; onChange?: (value: number) => void; onReset?: () => void }): void;
+}
+export function createFader(options: {
+  label: string;
+  value?: number;
+  step?: number;
+  valueText?: string;
+  onChange?: (value: number) => void;
+  onReset?: () => void;
+  doc?: Document;
+}): FaderHandle;
+export function faderHandle(el: Element): FaderHandle | undefined;
+
+/** One meter channel for one frame: 0..1 positions on the host's scale; `over` lights the clip light. */
+export interface MeterLevel {
+  peak: number;
+  rms: number;
+  over?: boolean;
+}
+export interface MeterHandle {
+  readonly el: HTMLElement;
+  readonly clipped: boolean;
+  update(levels: readonly MeterLevel[], dt: number): void;
+  clip(): void;
+  clear(): void;
+  reset(): void;
+  setLabel(text: string): void;
+  configure(next: { onClear?: () => void }): void;
+}
+export function createMeter(options: {
+  channels?: 1 | 2;
+  label: string;
+  onClear?: () => void;
+  doc?: Document;
+}): MeterHandle;
+export function meterHandle(el: Element | null | undefined): MeterHandle | undefined;
+export function cssSeconds(text: string | null | undefined, fallback: number): number;
+/** The meter of the strip control `id` inside `root` (a module element). */
+export function stripMeter(root: ParentNode | null | undefined, id: string): MeterHandle | undefined;

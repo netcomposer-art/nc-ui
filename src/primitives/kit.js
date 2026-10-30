@@ -1292,6 +1292,270 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   pointer-events: none;
   white-space: nowrap;
 }
+/* Console (the Studio's Mix): channel strips, the FX cards, then the master strip, on one row. The body bleeds to the
+   module's sides and bottom so each area is a shade block: strips on the module, the FX cards one adjacent shade
+   darker each, and the master darkest (stack-1), so the row reads as the signal path ending on the right. */
+.nc-module-body[data-nc-layout="console"] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "strips fx master";
+  align-items: stretch;
+  gap: 0;
+  margin-inline: calc(${v("module-pad")} * -1);
+  margin-bottom: calc(${v("module-pad")} * -1);
+  border-top: ${v("hairline")} solid ${v("divider")};
+}
+.nc-module-body[data-nc-layout="console"] > .nc-section { gap: 0; padding-top: ${v("stack-card-pad-y")}; }
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] {
+  grid-area: strips;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  padding-inline: ${v("module-pad")} ${v("control-gap")};
+  padding-bottom: ${v("module-pad")};
+}
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
+  grid-area: fx;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  padding-top: 0;
+}
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] {
+  grid-area: master;
+  align-items: center;
+  padding-inline: ${v("control-gap")} ${v("module-pad")};
+  padding-bottom: ${v("module-pad")};
+  background: ${v("module-bg-stack-1")};
+  ${prop("text-sub")}: ${v("module-sub-stack-1")};
+  ${prop("divider")}: ${v("module-div-stack-1")};
+  ${prop("slider-track")}: ${v("module-div-stack-1")};
+}
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx {
+  margin: 0;
+  padding: ${v("stack-card-pad-y")} ${v("module-pad")} ${v("module-pad")};
+  ${prop("text-sub")}: inherit;
+  ${prop("divider")}: inherit;
+  ${prop("slider-track")}: inherit;
+}
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="1"] { background: ${v("module-bg-adjacent-2")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="2"] { background: ${v("module-bg-adjacent-3")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="3"] { background: ${v("module-bg-adjacent-4")}; }
+/* In the console a card is a column: a select row gets the same space under it as a slider row. */
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx { display: flex; flex-direction: column; gap: ${v("module-gap")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx > .nc-field:not([data-nc-slider]) { padding-bottom: ${v("module-gap")}; }
+/* One channel strip: name, M and S, sends, then the fader with its scale and meter, then the readout. Every strip
+   (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up. */
+.nc-strip {
+  position: relative;
+  flex: none;
+  width: ${v("strip-width")};
+  display: grid;
+  grid-template-rows: auto ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+  justify-items: center;
+  row-gap: ${v("module-gap")};
+  min-width: 0;
+  padding-inline: ${v("control-gap")};
+}
+.nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
+.nc-strip[data-nc-master] { width: ${v("strip-width-master")}; }
+.nc-strip-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  color: ${v("text")};
+}
+.nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
+.nc-strip-ms { display: flex; gap: ${v("control-gap")}; height: ${v("slider-pitch")}; }
+.nc-strip-sends { display: flex; align-items: flex-start; gap: ${v("module-gap")}; }
+.nc-field[data-nc-compact] {
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: ${v("control-gap")};
+}
+.nc-field[data-nc-compact] .nc-label { min-width: 0; line-height: ${v("label-leading")}; }
+.nc-field[data-nc-compact] .nc-readout { display: none; }
+/* A compact knob draws its amount: a ring over its 270° travel, filled in the meter blue up to the value. */
+.nc-field[data-nc-compact] .nc-knob {
+  border: 0;
+  background:
+    radial-gradient(closest-side, ${v("surface-page")} 70%, transparent 72%),
+    conic-gradient(from 225deg, ${v("meter-fill")} calc(var(--knob-turn, 0) * 1deg), ${v("meter-track")} 0 270deg, transparent 0);
+}
+/* Its mark starts at the bottom of the travel (7:30) and turns 270° to 4:30, along the ring. */
+.nc-field[data-nc-compact] .nc-knob-mark { transform: rotate(calc((var(--knob-turn, 0) - 135) * 1deg)); }
+.nc-strip-body {
+  display: grid;
+  grid-template-columns: ${v("fader-cap-width")} auto auto;
+  grid-template-rows: ${v("clip-size")} ${v("fader-height")};
+  justify-content: center;
+  column-gap: ${v("control-gap")};
+  row-gap: ${v("control-gap")};
+  padding-block: calc(${v("fader-cap-height")} / 2);
+}
+.nc-strip-body > .nc-fader { grid-column: 1; grid-row: 2; }
+.nc-strip-body > .nc-scale { grid-column: 2; grid-row: 2; }
+.nc-strip-body > .nc-meter { grid-column: 3; grid-row: 1 / span 2; }
+/* The dB scale between fader and meter: faint mono labels, each centred on its level. */
+.nc-scale {
+  position: relative;
+  width: 3ch;
+  font-family: ${v("font-readout")};
+  font-size: ${v("scale-size")};
+  font-variant-numeric: tabular-nums;
+  color: ${v("text-sub")};
+}
+.nc-scale-tick {
+  position: absolute;
+  right: 0;
+  top: calc((1 - var(--tick-pos, 0)) * 100%);
+  transform: translateY(-50%);
+  line-height: 1;
+  white-space: nowrap;
+}
+/* The console fader: a slot and a flat cap with a line across its centre. The cap follows the hand: no transition. */
+.nc-fader {
+  position: relative;
+  width: ${v("fader-cap-width")};
+  height: 100%;
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: none;
+}
+.nc-fader-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: ${v("rule-strong")};
+  transform: translateX(-50%);
+  background: ${v("fader-track")};
+}
+.nc-fader-cap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: ${v("fader-cap-height")};
+  top: calc((1 - var(--fader-pos, 0)) * 100%);
+  transform: translateY(-50%);
+  background: ${v("fader-cap")};
+  transition: none;
+}
+.nc-fader-cap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: ${v("hairline")};
+  transform: translateY(-50%);
+  background: ${v("fader-cap-line")};
+}
+.nc-fader[data-dragging="true"] .nc-fader-cap { background: ${v("accent")}; }
+.nc-fader:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
+/* The level meter: peak over RMS in the lighter Prussian blue, a hold line, a clip light on top. It follows the audio
+   every frame (transforms written by the meter's own ballistics), so nothing here transitions. */
+.nc-meter {
+  display: grid;
+  grid-template-rows: subgrid;
+  row-gap: ${v("control-gap")};
+  justify-items: stretch;
+}
+.nc-meter-clip {
+  position: relative;
+  display: block;
+  height: ${v("clip-size")};
+  padding: 0;
+  border: 0;
+  background: ${v("meter-track")};
+  cursor: pointer;
+  transition: none;
+}
+.nc-meter-clip::before {
+  content: "";
+  position: absolute;
+  inset: calc(${v("control-gap")} * -1);
+}
+.nc-meter-clip[data-lit="true"] { background: ${v("meter-clip")}; }
+.nc-meter-clip:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-meter-bars { display: flex; gap: ${v("hairline")}; height: 100%; }
+.nc-meter-bar {
+  position: relative;
+  width: ${v("meter-width")};
+  height: 100%;
+  overflow: hidden;
+  background: ${v("meter-track")};
+}
+.nc-meter-peak, .nc-meter-rms {
+  position: absolute;
+  inset: 0;
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition: none;
+}
+.nc-meter-peak { background: ${v("meter-peak")}; }
+.nc-meter-rms { background: ${v("meter-fill")}; }
+.nc-meter-hold {
+  position: absolute;
+  inset: 0;
+  border-top: ${v("rule-strong")} solid ${v("meter-hold-mark")};
+  transform: translateY(100%);
+  transition: none;
+}
+.nc-meter-hold[data-off="true"] { visibility: hidden; }
+.nc-strip-db {
+  min-width: 0;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size")};
+  font-variant-numeric: tabular-nums;
+  color: ${v("text")};
+  white-space: nowrap;
+  cursor: default;
+  transition: none;
+}
+.nc-strip-db:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+/* Phones and tablets: the strips scroll in their row with the master pinned at the right; the FX cards go under them
+   (three across on tablets, stacked on phones). */
+@media (max-width: 1023px) {
+  .nc-module-body[data-nc-layout="console"] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "strips master" "fx fx";
+  }
+}
+@media (max-width: 768px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }
+}
+@media (min-width: 1024px) {
+  .nc-module-body[data-nc-layout="console"] {
+    margin-inline: calc(${v("module-pad-x-desktop")} * -1);
+    margin-bottom: calc(${v("module-pad-y-desktop")} * -1);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] {
+    padding-inline-start: ${v("module-pad-x-desktop")};
+    padding-bottom: ${v("module-pad-y-desktop")};
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] {
+    padding-inline-end: ${v("module-pad-x-desktop")};
+    padding-bottom: ${v("module-pad-y-desktop")};
+  }
+  .nc-module-body[data-nc-layout="console"] .nc-ui-fx {
+    margin: 0;
+    padding: ${v("stack-card-pad-y")} ${v("module-pad-x-desktop")} ${v("module-pad-y-desktop")};
+  }
+}
 /* Pinned to its containing block's corner at zero size, so wherever it sits in a control (after a long label or
    note, in an unpositioned box) it can never reach past the page edge. It is empty and never shown; it only carries
    the accent and the UI font for token reads. */
@@ -1456,7 +1720,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
   .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
-  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"] {
+  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip {
     transition: none;
     animation: none;
   }
