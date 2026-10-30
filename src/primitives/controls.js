@@ -1370,6 +1370,24 @@ function renderStrip(control, lookup) {
     });
     head.append(remove);
   }
+  // Hacks: above M and S, opens this strip's effects stack in the console's fx area (the host shows it). Every strip
+  // keeps the row, empty without onHacks, so the faders still line up.
+  const hacks = document.createElement("div");
+  hacks.className = "nc-strip-hacks";
+  if (control.onHacks) {
+    const pad = document.createElement("span");
+    pad.className = "nc-hacks-wrap";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nc-hacks";
+    button.dataset.ncHacks = "";
+    pad.append(button, hitPad());
+    pad.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") live.onHacks?.();
+    });
+    hacks.append(pad);
+  }
   const ms = document.createElement("div");
   ms.className = "nc-strip-ms";
   for (const kind of ["mute", "solo"]) {
@@ -1448,7 +1466,7 @@ function renderStrip(control, lookup) {
     const live = lookup(strip);
     if (live?.type === "strip") reset(live);
   });
-  strip.append(head, ms, sends, body, readout, probe());
+  strip.append(head, hacks, ms, sends, body, readout, probe());
   patchStrip(strip, control);
   return strip;
 }
@@ -1590,6 +1608,13 @@ function patchStrip(node, control) {
     const on = kind === "mute" ? control.mute === true : control.solo === true;
     ms.setAttribute("aria-pressed", on ? "true" : "false");
     ms.setAttribute("aria-label", `${kind === "mute" ? "Mute" : "Solo"} ${control.label}`);
+  }
+  const hacks = node.querySelector("[data-nc-hacks]");
+  if (hacks) {
+    const text = control.hacksLabel ?? "Hacks";
+    if (hacks.textContent !== text) hacks.textContent = text;
+    hacks.setAttribute("aria-pressed", control.hacks === true ? "true" : "false");
+    hacks.setAttribute("aria-label", `${text}: ${control.label}`);
   }
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;

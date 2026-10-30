@@ -301,6 +301,12 @@ export interface StripControl {
   sends?: StripSend[];
   onChange: (value: number) => void;
   onReset?: () => void;
+  /** Adds the Hacks button above M and S: the host shows this strip's effects stack (the console's fx area). */
+  onHacks?: () => void;
+  /** The Hacks button is pressed (this strip's stack is the one shown). */
+  hacks?: boolean;
+  /** The Hacks button's text (default "Hacks"). */
+  hacksLabel?: string;
   /** Adds the M button. */
   onMute?: () => void;
   /** Adds the S button. */

@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Console strips: `onHacks` / `hacks` / `hacksLabel` add a Hacks toggle above M and S (pressed in the master accent, `fader-cap-master`). Every strip keeps the row, so faders still line up.
 - `createSwitch` / `.nc-ui-switch`: ASTRID's text on/off (the word, an accent hairline when on). Same API; the track and knob are gone, and so are the `switch-track-width`, `switch-track-height`, `switch-knob`, `switch-knob-inset` and `switch-gap` tokens.
 - `.nc-seg`: ASTRID's underline tabs (hairline row, accent `tab-mark` under the chosen tab), replacing the filled black segmented bar. Radio semantics unchanged.
 - Controls drawn at ASTRID's sizes; the 44 px target is an invisible pad on a coarse pointer (`target-min`). Toggles and on/off are regular weight (`control-weight`).
