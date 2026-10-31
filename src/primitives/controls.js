@@ -1272,6 +1272,11 @@ function patchSteps(node, control) {
         const name = line.querySelector(".nc-name");
         if (name instanceof HTMLElement) {
           name.setAttribute("aria-pressed", control.selectedRow === row.id ? "true" : "false");
+          // A renamed lane (NYX: a pad's name is its lane's) shows its new name.
+          if (name.textContent !== row.label) {
+            name.textContent = row.label;
+            name.setAttribute("aria-label", `Select ${row.label}`);
+          }
         }
         const silent = row.mute || (soloed && !row.solo);
         if (silent) line.dataset.silent = "true";

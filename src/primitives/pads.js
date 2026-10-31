@@ -73,6 +73,12 @@ function renderPad(wrap, index, lookup) {
   wave.append(path);
   pad.append(bar, name, hint, wave);
   bindPadPress(wrap, pad, index, lookup);
+  // Double-click a filled pad to rename it (when the host takes names).
+  pad.addEventListener("dblclick", () => {
+    const live = lookup(wrap);
+    if (live?.type === "padGrid" && live.onRename && pad.dataset.empty !== "true")
+      startRename(wrap, pad, index, lookup);
+  });
   // Drag and drop: a file onto a pad loads it there; a pad onto another pad moves its sound there (the two swap),
   // or copies it with Option / Alt held.
   pad.addEventListener("dragstart", (event) => {
@@ -190,7 +196,10 @@ function openMenu(wrap, pad, index, lookup) {
     button.addEventListener("click", () => {
       closeMenu(wrap);
       const now = lookup(wrap);
-      if (now?.type === "padGrid") now.onMenu?.(index, item.id);
+      if (now?.type !== "padGrid") return;
+      // "rename" is the grid's own when the host takes names: the name is edited in place on the pad.
+      if (item.id === "rename" && now.onRename) startRename(wrap, pad, index, lookup);
+      else now.onMenu?.(index, item.id);
     });
     menu.append(button);
   }
@@ -201,6 +210,48 @@ function openMenu(wrap, pad, index, lookup) {
   menu.style.top = `${at.bottom - box.top}px`;
   menu.querySelector("button")?.focus();
   return true;
+}
+
+/**
+ * Edit a pad's name in place: a text field over the pad (a field cannot sit inside the pad's button). Enter or
+ * leaving the field keeps the name; Escape keeps the old one.
+ */
+function startRename(wrap, pad, index, lookup) {
+  wrap.querySelector(":scope > .nc-padgrid-rename")?.remove();
+  const live = lookup(wrap);
+  if (live?.type !== "padGrid") return;
+  const field = document.createElement("input");
+  field.type = "text";
+  field.className = "nc-padgrid-rename";
+  field.maxLength = live.nameMax ?? 24;
+  field.value = live.pads[index]?.label ?? "";
+  field.setAttribute("aria-label", `Name of pad ${index + 1}`);
+  const box = wrap.getBoundingClientRect();
+  const at = pad.getBoundingClientRect();
+  field.style.left = `${at.left - box.left}px`;
+  field.style.top = `${at.top - box.top}px`;
+  field.style.width = `${at.width}px`;
+  let done = false;
+  const finish = (keep) => {
+    if (done) return;
+    done = true;
+    const name = field.value.trim();
+    field.remove();
+    pad.focus();
+    const now = lookup(wrap);
+    if (keep && name && now?.type === "padGrid") now.onRename?.(index, name);
+  };
+  field.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+    if (event.key === "Enter") finish(true);
+    else if (event.key === "Escape") finish(false);
+  });
+  field.addEventListener("blur", () => finish(true));
+  for (const type of ["pointerdown", "click", "dblclick"])
+    field.addEventListener(type, (event) => event.stopPropagation());
+  wrap.append(field);
+  field.focus();
+  field.select();
 }
 
 function closeMenu(wrap) {
