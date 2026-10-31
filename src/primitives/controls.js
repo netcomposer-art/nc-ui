@@ -1213,6 +1213,10 @@ function paintVelocity(el, velocity) {
 
 function patchSteps(node, control) {
   const soloed = control.rows.some((row) => row.solo);
+  // Clear's words can change (NYX: Undo until the next edit).
+  const clear = node.querySelector("[data-nc-clear]");
+  if (clear && clear.textContent !== (control.clearLabel ?? "Clear"))
+    clear.textContent = control.clearLabel ?? "Clear";
   const pads = node.querySelector(".nc-pads");
   const current = control.rows.find((row) => row.id === control.selectedRow) ?? control.rows[0];
   const laneName = node.querySelector(".nc-pads-label");
