@@ -4,6 +4,7 @@ import { paintCanvas } from "./canvas.js";
 import { createFader, faderHandle } from "./fader.js";
 import { bindPadGesture } from "./gesture.js";
 import { createMeter, meterHandle } from "./meter.js";
+import { patchGroup, renderGroup } from "./group.js";
 import { patchPadGrid, renderPadGrid } from "./pads.js";
 import { createSwitch } from "./switch.js";
 
@@ -143,6 +144,8 @@ export function renderControl(control, lookup) {
       return renderCanvas(control);
     case "fx":
       return renderFx(control, lookup);
+    case "group":
+      return renderGroup(control, lookup, renderControl);
     case "strip":
       return renderStrip(control, lookup);
     case "stripAdd":
@@ -209,6 +212,12 @@ export function patchControl(node, control) {
     }
   } else if (control.type === "stripAdd") {
     patchStripAdd(node, control);
+  } else if (control.type === "group") {
+    patchGroup(node, control);
+    for (const child of control.controls) {
+      const childNode = node.querySelector(`[data-nc-id="${cssEscape(child.id)}"]`);
+      if (childNode instanceof Element) patchControl(childNode, child);
+    }
   } else if (control.type === "fx") {
     patchFx(node, control);
     for (const child of [...control.controls, ...(control.more ?? [])]) {

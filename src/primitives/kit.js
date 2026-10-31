@@ -994,6 +994,47 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-ui-more > summary:hover { color: ${v("text")}; }
 .nc-ui-more > summary:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+/* Group (group.js): a collapsible run of a module's controls. Its header is the More toggle's look (label style,
+   text-sub, hover to text) as a real button with a -/+ mark; while closed a quiet summary sits beside the title.
+   Open or closed at once: no motion. Open, its controls space as the module's own do. */
+.nc-group { display: flex; flex-direction: column; gap: ${v("module-pad")}; min-width: 0; }
+.nc-group-toggle {
+  display: flex;
+  align-items: baseline;
+  gap: ${v("module-gap")};
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: ${v("control-gap")} 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: ${v("font-ui")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  text-align: start;
+  color: ${v("text-sub")};
+}
+.nc-group-toggle:hover { color: ${v("text")}; }
+.nc-group-toggle:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+.nc-group-title { flex: none; }
+.nc-group-summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size-small")};
+  letter-spacing: normal;
+  text-transform: none;
+}
+.nc-group-mark { flex: none; margin-inline-start: auto; font-family: ${v("font-readout")}; }
+.nc-group[data-nc-open="true"] .nc-group-summary { display: none; }
+.nc-group-body { display: flex; flex-direction: column; gap: ${v("module-pad")}; min-width: 0; }
+.nc-group-body[hidden] { display: none; }
 /* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
    text with an accent hairline under it; hover takes the word and the line to text. Both words share one grid cell,
    so the control never changes width when it flips. */
@@ -1025,8 +1066,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
    centred on it. A select cannot carry a pad, so it grows itself. */
 @media (pointer: coarse) {
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action) { position: relative; }
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-page-action)::before {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action)::before {
     content: "";
     position: absolute;
     left: 50%;
