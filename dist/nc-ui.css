@@ -1750,7 +1750,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   width: var(--nc-ui-focus-width);
   background: currentColor;
 }
-.nc-padgrid-pad-name { font-weight: var(--nc-ui-control-weight); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nc-padgrid-pad-name { justify-self: start; align-self: flex-start; max-width: 100%; font-weight: var(--nc-ui-control-weight); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nc-padgrid-pad-hint { display: none; color: var(--nc-ui-text-sub); font-size: var(--nc-ui-readout-size-small); }
 .nc-padgrid-pad-badge {
   position: absolute;
