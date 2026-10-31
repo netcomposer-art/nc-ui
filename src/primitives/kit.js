@@ -842,6 +842,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-row-dice { flex: none; margin-inline: 0; }
 .nc-pads-dice svg { width: calc(${v("target-min")} / 3); height: calc(${v("target-min")} / 3); display: block; margin: auto; }
 .nc-fill { padding-inline: ${v("module-gap")}; touch-action: none; user-select: none; -webkit-user-select: none; }
+/* Clear is a tap, not a hold: phones still scroll over it. */
+.nc-clear { touch-action: manipulation; }
 .nc-fill[aria-pressed="true"] { background: ${v("text")}; border-color: ${v("text")}; color: ${v("surface-page")}; }
 .nc-pads-step, .nc-pads-play, .nc-fill {
   flex: none;
