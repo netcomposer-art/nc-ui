@@ -318,6 +318,7 @@
   --nc-ui-fader-cap: var(--nc-ui-color-ink);
   --nc-ui-fader-cap-line: var(--nc-ui-color-paper);
   --nc-ui-fader-cap-master: var(--nc-ui-color-accent);
+  --nc-ui-strip-alt-bg: var(--nc-ui-color-shade-1);
   --nc-ui-strip-hacks-text: var(--nc-ui-color-hacks-grey);
   --nc-ui-fader-track: color-mix(in srgb, var(--nc-ui-color-ink) 25%, transparent);
   --nc-ui-strip-width: 88px;
