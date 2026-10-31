@@ -995,13 +995,16 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-more > summary:hover { color: ${v("text")}; }
 .nc-ui-more > summary:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
 /* Group (group.js): a collapsible run of a module's controls. Its header is the More toggle's look (label style,
-   text-sub, hover to text) as a real button with a -/+ mark; while closed a quiet summary sits beside the title.
+   text-sub, hover to text) as a real button: the title with the -/+ mark at the end of its line, and while closed a
+   quiet summary on its own line under them, wrapping rather than cut (a narrow column still shows all of it).
    Open or closed at once: no motion. Open, its controls space as the module's own do. */
 .nc-group { display: flex; flex-direction: column; gap: ${v("module-pad")}; min-width: 0; }
 .nc-group-toggle {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
-  gap: ${v("module-gap")};
+  column-gap: ${v("module-gap")};
+  row-gap: ${v("control-gap")};
   width: 100%;
   min-width: 0;
   margin: 0;
@@ -1019,20 +1022,18 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-group-toggle:hover { color: ${v("text")}; }
 .nc-group-toggle:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
-.nc-group-title { flex: none; }
+.nc-group-title { grid-area: 1 / 1; min-width: 0; }
 .nc-group-summary {
-  flex: 1 1 auto;
+  grid-area: 2 / 1 / 3 / -1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font-family: ${v("font-readout")};
   font-size: ${v("readout-size-small")};
   letter-spacing: normal;
   text-transform: none;
 }
-.nc-group-mark { flex: none; margin-inline-start: auto; font-family: ${v("font-readout")}; }
-.nc-group[data-nc-open="true"] .nc-group-summary { display: none; }
+.nc-group-mark { grid-area: 1 / 2; font-family: ${v("font-readout")}; }
+.nc-group-summary:empty, .nc-group[data-nc-open="true"] .nc-group-summary { display: none; }
 .nc-group-body { display: flex; flex-direction: column; gap: ${v("module-pad")}; min-width: 0; }
 .nc-group-body[hidden] { display: none; }
 /* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
