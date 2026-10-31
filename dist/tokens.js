@@ -329,7 +329,7 @@ export const semantic = {
   "meter-track": "#DDDDDD",
   "meter-width": "8px",
   "clip-size": "6px",
-  "fader-height": "124px",
+  "fader-height": "148px",
   "fader-cap-width": "28px",
   "fader-cap-height": "14px",
   "fader-cap": "#242424",
