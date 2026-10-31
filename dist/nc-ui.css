@@ -1923,6 +1923,12 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   pointer-events: none;
 }
 .nc-ui-help[hidden] { display: none; }
+/* A slider row's input reaches up over its label (the target-min hit band), so with a mouse most of the label was the
+   slider's and its description never opened (found in LUCY). With a fine pointer a described label sits above the
+   band; touch keeps the full band and has no hover. Nothing moves. */
+@media (hover: hover) and (pointer: fine) {
+  .nc-field[data-nc-slider] > .nc-label[data-nc-help] { position: relative; z-index: 1; }
+}
 .nc-ui-toast-message { overflow: hidden; text-overflow: ellipsis; }
 .nc-ui-toast-action {
   min-width: var(--nc-ui-toast-target);

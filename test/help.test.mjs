@@ -57,4 +57,5 @@ test('the kit styles the bubble from toast tokens and never lets it take the poi
   assert.match(rule, /pointer-events: none/);
   assert.match(rule, /background: var\(--nc-ui-toast-bg/);
   assert.match(css, /\[data-nc-help\] \{ cursor: help; \}/);
+  assert.match(css, /\.nc-field\[data-nc-slider\] > \.nc-label\[data-nc-help\] \{ position: relative; z-index: 1; \}/, 'slider labels sit above the hit band for a mouse');
 });
