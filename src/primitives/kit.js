@@ -904,6 +904,26 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   outline: ${v("focus-width")} solid ${v("focus-ring")};
   outline-offset: ${v("hairline")};
 }
+/* Fill and Clear are text actions, like the page's Save and Load (Peter, 2026-10-31: the buttons took too much
+   height). Fill held reads as pressed: ink with an ink underline. On a coarse pointer an invisible pad keeps each a
+   full target (below). */
+.nc-step-tools .nc-fill {
+  min-width: 0;
+  min-height: 0;
+  align-self: center;
+  border: 0;
+  border-bottom: ${v("hairline")} solid transparent;
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 ${v("control-gap")};
+  color: ${v("text-sub")};
+  font-weight: ${v("control-weight")};
+  transition-property: color, border-color;
+  transition-duration: ${v("transition-feedback")};
+}
+.nc-step-tools .nc-fill:hover,
+.nc-step-tools .nc-fill[aria-pressed="true"] { background: transparent; color: ${v("text")}; border-bottom-color: ${v("text")}; }
+.nc-step-tools .nc-fill:focus-visible { outline-offset: ${v("control-gap")}; }
 .nc-pad {
   position: relative;
   overflow: hidden;
@@ -1067,8 +1087,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
    centred on it. A select cannot carry a pad, so it grows itself. */
 @media (pointer: coarse) {
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action) { position: relative; }
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action)::before {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action, .nc-step-tools .nc-fill) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action, .nc-step-tools .nc-fill)::before {
     content: "";
     position: absolute;
     left: 50%;
@@ -1743,6 +1763,9 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   transform: translateY(-50%);
   background: ${v("fader-cap-line")};
 }
+/* A host can colour a channel's fader cap with --nc-strip-cap (Peter, 2026-10-31: the Studio uses each instrument's
+   own colour, muted). The kit names no instrument colours. Unset, the cap stays ink; the master stays accent. */
+.nc-strip .nc-fader-cap { background: var(--nc-strip-cap, ${v("fader-cap")}); }
 .nc-fader[data-dragging="true"] .nc-fader-cap { background: ${v("accent")}; }
 /* The master's cap in Prussian blue (Peter, 2026-10-30): the master reads apart from the channels at a glance. */
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] .nc-fader-cap { background: ${v("fader-cap-master")}; }

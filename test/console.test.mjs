@@ -181,6 +181,8 @@ test("console CSS: tokens only; strips scroll on phones with the master pinned; 
   assert.match(css, /\[data-nc-area="strips"\] \{[^}]*overflow-x: auto/);
   // Identity colours belong to each instrument's own title only (Peter): never on a strip.
   assert.doesNotMatch(css, /nc-strip[^{]*identity|instrument-(astrid|petra|olive)\)[^;]*;[^}]*\}[^{]*nc-strip/);
+  // The host may colour a channel's cap (the Studio: each instrument's colour, muted); unset it stays ink.
+  assert.match(css, /\.nc-strip \.nc-fader-cap \{ background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap/);
   assert.match(css, /@media \(max-width: 768px\) \{[^@]*\.nc-strip\[data-nc-master\] \{ width: var\(--nc-ui-strip-width\); \}/);
 });
 

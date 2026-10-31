@@ -145,7 +145,7 @@ test("group CSS: the More toggle's look and touch target, tokens only, no motion
   assert.match(toggle, /text-transform: uppercase/);
   assert.doesNotMatch(css.slice(css.indexOf(".nc-group {"), css.indexOf(".nc-group-body[hidden]")), /transition|animation|\d+px|#[0-9a-f]{3,6}\b/i);
   // The coarse-pointer hit pad (target-min) covers it, as it does More.
-  assert.match(css, /\.nc-ui-more > summary, \.nc-group-toggle, \.nc-page-action\)::before/);
+  assert.match(css, /\.nc-ui-more > summary, \.nc-group-toggle, \.nc-page-action(, [^)]*)?\)::before/);
   // The summary: its own line under the title, wrapping (never cut), gone while open or empty.
   assert.match(css, /\.nc-group-summary:empty, \.nc-group\[data-nc-open="true"\] \.nc-group-summary \{ display: none; \}/);
   const summary = block(".nc-group-summary");
