@@ -683,7 +683,7 @@ ${MODULATED_SELECTOR} { transition: none; }
 .nc-row[data-picked="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
 .nc-row[data-picked="true"] .nc-ms:not([aria-pressed="true"]) { background: ${v("rhythm.step-cell-off")}; }
 /* Moves (renderMoves): a label column, then quiet square icon buttons that darken on hover (Bass's look). */
-.nc-moves { display: flex; flex-direction: column; gap: ${v("move-row-gap")}; }
+.nc-moves { display: flex; flex-direction: column; gap: ${v("move-row-gap")}; margin-top: ${v("page-body-gap")}; }
 .nc-moves-row { display: flex; align-items: center; gap: ${v("module-gap")}; }
 .nc-moves-label {
   flex: none;

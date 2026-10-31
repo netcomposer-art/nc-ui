@@ -1171,7 +1171,7 @@ button, input, select { font: inherit; color: inherit; }
 .nc-row[data-picked="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
 .nc-row[data-picked="true"] .nc-ms:not([aria-pressed="true"]) { background: var(--nc-rhythm-step-cell-off); }
 /* Moves (renderMoves): a label column, then quiet square icon buttons that darken on hover (Bass's look). */
-.nc-moves { display: flex; flex-direction: column; gap: var(--nc-ui-move-row-gap); }
+.nc-moves { display: flex; flex-direction: column; gap: var(--nc-ui-move-row-gap); margin-top: var(--nc-ui-page-body-gap); }
 .nc-moves-row { display: flex; align-items: center; gap: var(--nc-ui-module-gap); }
 .nc-moves-label {
   flex: none;
