@@ -1409,7 +1409,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
   padding-inline: ${v("module-pad")} ${v("control-gap")};
-  padding-bottom: ${v("module-pad")};
+  /* The strips run the full height (their own padding): no band above or below them. */
+  padding-block: 0;
   /* The channel strips sit on the master's shade (Peter, 2026-10-30): the lightest step of the stack. */
   background: ${v("module-bg-stack-1")};
   ${prop("text-sub")}: ${v("module-sub-stack-1")};
@@ -1460,8 +1461,15 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   padding-inline: ${v("control-gap")};
 }
 .nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
-/* Every other channel strip is shaded, so a row of identical strips reads apart (the master keeps the module's). */
+/* Channel strips alternate light and dark grey, full height, so a row of identical strips reads apart (Peter,
+   2026-10-30); the master keeps the module's shade. */
+.nc-strip:not([data-nc-master]) { background: ${v("strip-bg")}; }
 .nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: ${v("strip-alt-bg")}; }
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] > .nc-strip {
+  align-self: stretch;
+  padding-block: ${v("stack-card-pad-y")} ${v("module-pad")};
+}
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] > .nc-strip-add { margin-block: ${v("stack-card-pad-y")} ${v("module-pad")}; }
 .nc-strip[data-nc-master] { width: ${v("strip-width-master")}; }
 /* Name row: the name, and the remove × when the strip can be removed. */
 .nc-strip-hd { display: flex; align-items: baseline; justify-content: center; gap: ${v("control-gap")}; max-width: 100%; min-width: 0; }
