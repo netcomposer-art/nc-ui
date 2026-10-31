@@ -9,6 +9,8 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Step grid: Fill and Clear are text actions like Save and Load (held Fill: ink underline); coarse pointers keep a target-min pad.
+- Console strips: `--nc-strip-cap` on a strip colours its fader cap (the Studio: each instrument's colour, muted). Unset, the cap stays ink.
 - Group: the `group` control folds a run of a module's controls under one header (the More toggle's look and touch target, `aria-expanded` / `aria-controls`, no motion), closed by default, with a summary while closed; open state is a browser-wide preference (`GROUP_OPEN_KEY`, `readGroups`, `writeGroup`; docs/group.md). First user: NYX's "Tune & shape".
 - Group: the closed summary sits on its own line under the title and wraps instead of being cut with an ellipsis (NYX's narrow Params column showed only "+3 st · …").
 - Help: `installHelpTips()` and `data-nc-help` show a label's description when the pointer rests on it, in a small toast-styled bubble (`.nc-ui-help`; docs/help.md). Every instrument uses it.
