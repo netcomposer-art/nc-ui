@@ -252,7 +252,7 @@ export interface PadGridControl {
   selected?: number;
   /** 2 (default) or 4. */
   columns?: 2 | 4;
-  /** An empty pad's words. Defaults "Load" and "tap or drop a file". */
+  /** An empty pad's words. Defaults "Load" and "tap or drop". */
   emptyLabel?: string;
   emptyHint?: string;
   /** Tap, Enter or Space on a pad. */

@@ -33,13 +33,13 @@ export function padWavePath(peaks) {
 
 export function renderPadGrid(control, lookup) {
   const wrap = document.createElement("div");
-  wrap.className = "nc-pad-grid";
+  wrap.className = "nc-padgrid";
   wrap.dataset.ncId = control.id;
   wrap.dataset.ncRow = "";
   wrap.setAttribute("role", "group");
   wrap.setAttribute("aria-label", control.label ?? "Pads");
   const grid = document.createElement("div");
-  grid.className = "nc-pads";
+  grid.className = "nc-padgrid-pads";
   grid.dataset.ncColumns = String(control.columns ?? 2);
   control.pads.forEach((_, index) => grid.append(renderPad(wrap, index, lookup)));
   wrap.append(grid);
@@ -53,17 +53,17 @@ export function renderPadGrid(control, lookup) {
 function renderPad(wrap, index, lookup) {
   const pad = document.createElement("button");
   pad.type = "button";
-  pad.className = "nc-pad";
+  pad.className = "nc-padgrid-pad";
   pad.dataset.ncPad = String(index);
   const bar = document.createElement("span");
-  bar.className = "nc-pad-bar";
+  bar.className = "nc-padgrid-pad-bar";
   bar.setAttribute("aria-hidden", "true");
   const name = document.createElement("span");
-  name.className = "nc-pad-name";
+  name.className = "nc-padgrid-pad-name";
   const hint = document.createElement("span");
-  hint.className = "nc-pad-hint";
+  hint.className = "nc-padgrid-pad-hint";
   const wave = document.createElementNS(SVG, "svg");
-  wave.setAttribute("class", "nc-pad-wave");
+  wave.setAttribute("class", "nc-padgrid-pad-wave");
   wave.setAttribute("viewBox", "0 0 100 20");
   wave.setAttribute("preserveAspectRatio", "none");
   wave.setAttribute("aria-hidden", "true");
@@ -152,7 +152,7 @@ function openMenu(wrap, pad, index, lookup) {
   });
   scrim.addEventListener("click", (event) => event.stopPropagation());
   const menu = document.createElement("div");
-  menu.className = "nc-slot-menu nc-pad-menu";
+  menu.className = "nc-slot-menu nc-padgrid-pad-menu";
   menu.setAttribute("role", "menu");
   menu.setAttribute("aria-label", pad.getAttribute("aria-label") ?? "Pad");
   for (const item of items) {
@@ -179,21 +179,21 @@ function openMenu(wrap, pad, index, lookup) {
 }
 
 function closeMenu(wrap) {
-  for (const el of wrap.querySelectorAll(":scope > .nc-slot-scrim, :scope > .nc-pad-menu")) el.remove();
+  for (const el of wrap.querySelectorAll(":scope > .nc-slot-scrim, :scope > .nc-padgrid-pad-menu")) el.remove();
 }
 
 export function patchPadGrid(node, control) {
-  const pads = node.querySelectorAll(".nc-pad");
+  const pads = node.querySelectorAll(".nc-padgrid-pad");
   control.pads.forEach((cell, index) => {
     const pad = pads[index];
     if (!(pad instanceof HTMLButtonElement)) return;
-    const name = pad.querySelector(".nc-pad-name");
-    const hint = pad.querySelector(".nc-pad-hint");
-    const path = pad.querySelector(".nc-pad-wave path");
+    const name = pad.querySelector(".nc-padgrid-pad-name");
+    const hint = pad.querySelector(".nc-padgrid-pad-hint");
+    const path = pad.querySelector(".nc-padgrid-pad-wave path");
     if (cell.empty) {
       pad.dataset.empty = "true";
       if (name) name.textContent = control.emptyLabel ?? "Load";
-      if (hint) hint.textContent = control.emptyHint ?? "tap or drop a file";
+      if (hint) hint.textContent = control.emptyHint ?? "tap or drop";
       path?.setAttribute("d", "");
     } else {
       delete pad.dataset.empty;
