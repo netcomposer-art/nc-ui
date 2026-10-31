@@ -1162,6 +1162,16 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-padgrid-pad-name { font-weight: ${v("control-weight")}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nc-padgrid-pad-hint { display: none; color: ${v("text-sub")}; font-size: ${v("readout-size-small")}; }
+.nc-padgrid-pad-badge {
+  position: absolute;
+  inset-block-start: ${v("control-gap")};
+  inset-inline-end: ${v("control-gap")};
+  color: ${v("text-sub")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size-small")};
+  line-height: 1;
+}
+.nc-padgrid-pad-badge:empty { display: none; }
 .nc-padgrid-pad-wave { width: 100%; height: ${v("slider-pitch")}; align-self: end; }
 .nc-padgrid-pad-wave path { fill: currentColor; fill-opacity: 0.35; stroke: currentColor; stroke-width: 0.6; vector-effect: non-scaling-stroke; }
 .nc-padgrid-pad[data-nc-lane="1"] :is(.nc-padgrid-pad-bar, .nc-padgrid-pad-wave) { color: ${v("rhythm.lane-1")}; }

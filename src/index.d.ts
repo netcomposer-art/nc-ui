@@ -241,6 +241,9 @@ export interface PadCell {
   lane?: number;
   /** Sounding now (a brighter waveform). */
   playing?: boolean;
+  /** A short tag in the pad's corner (NYX: its choke group, "A"); `badgeLabel` is what a screen reader says. */
+  badge?: string;
+  badgeLabel?: string;
 }
 export interface PadGridControl {
   type: "padGrid";
