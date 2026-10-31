@@ -29,6 +29,7 @@ export {
   pickToastPlacement,
   toastAnnouncement,
 } from "./primitives/toast.js";
+export { HELP_ATTR, HELP_DELAY, installHelpTips, placeHelp } from "./primitives/help.js";
 export {
   HIDDEN_STORAGE_KEY,
   RHYTHM_HIDDEN_KEY,

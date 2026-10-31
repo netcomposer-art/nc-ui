@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Help: `installHelpTips()` and `data-nc-help` show a label's description when the pointer rests on it, in a small toast-styled bubble (`.nc-ui-help`; docs/help.md). Every instrument uses it.
 - Canvas: `paint: "waveform"` draws a sample from `peaks` (min/max pairs), tints the played `region`, marks its start, end and slice `markers`, and a playhead `position` (NYX sampler).
 - Console strips: the Hacks button's outline is `strip-hacks-text` (#8C8C8C), darker than the divider (Peter).
 - Console strips: the Hacks label is mixed case ("Hacks") in a lighter grey, the new `strip-hacks-text` (`color.hacks-grey`, #8C8C8C, 3.2:1 on the strips); hover and pressed are unchanged.

@@ -49,6 +49,7 @@ export {
   pickToastPlacement,
   toastAnnouncement,
 } from "./primitives/toast.js";
+export { HELP_ATTR, HELP_DELAY, type HelpTips, installHelpTips, placeHelp } from "./primitives/help.js";
 
 export const HIDDEN_STORAGE_KEY: "netcomposer.hidden.v1";
 export const RHYTHM_HIDDEN_KEY: "netcomposer.rhythm.hidden.v1";
