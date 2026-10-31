@@ -57,6 +57,10 @@ export function installHelpTips({ document: doc = globalThis.document, delay = H
       bubble.className = "nc-ui-help";
       bubble.setAttribute("role", "tooltip");
       bubble.dataset.testid = "nc-help";
+      // The kit styles it; these keep it out of the page's flow even before the kit's CSS has arrived.
+      bubble.style.position = "fixed";
+      bubble.style.pointerEvents = "none";
+      bubble.style.zIndex = "6";
       doc.body.appendChild(bubble);
     }
     bubble.textContent = text;
