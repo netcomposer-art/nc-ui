@@ -351,6 +351,11 @@
   --nc-ui-toast-offset: var(--nc-ui-space-16);
   --nc-ui-toast-anchor-gap: var(--nc-ui-space-8);
   --nc-ui-toast-target: var(--nc-ui-space-44);
+  --nc-ui-move-size: var(--nc-ui-space-32);
+  --nc-ui-move-icon: var(--nc-ui-space-16);
+  --nc-ui-move-gap: var(--nc-ui-space-4);
+  --nc-ui-move-row-gap: var(--nc-ui-space-8);
+  --nc-ui-move-label-width: var(--nc-ui-space-64);
   --nc-ui-on-danger: var(--nc-ui-color-paper);
   --nc-ui-dialog-scrim: color-mix(in srgb, var(--nc-ui-color-ink) 35%, transparent);
   --nc-ui-dialog-width: 320px;

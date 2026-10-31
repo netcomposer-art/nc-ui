@@ -149,6 +149,8 @@ export function renderControl(control, lookup) {
       return renderStripAdd(control, lookup);
     case "padGrid":
       return renderPadGrid(control, lookup);
+    case "moves":
+      return renderMoves(control, lookup);
     default:
       return renderNote({ type: "note", id: "unknown", text: "" });
   }
@@ -195,6 +197,7 @@ export function patchControl(node, control) {
   else if (control.type === "slotRow") patchSlots(node, control);
   else if (control.type === "stepGrid") patchSteps(node, control);
   else if (control.type === "padGrid") patchPadGrid(node, control);
+  else if (control.type === "moves") patchMoves(node, control);
   else if (control.type === "canvas" && node instanceof HTMLElement) {
     const canvas = node.querySelector("canvas");
     if (canvas instanceof HTMLCanvasElement) paintCanvas(canvas, control);
@@ -348,6 +351,88 @@ function renderReadout(control) {
   wrap.append(probe());
   patchControl(wrap, control);
   return wrap;
+}
+
+/** A held name on touch adds its lane to the selection (stepGrid selectedRows). */
+const NAME_PICK_MS = 450;
+
+/**
+ * Moves (Bass's pattern moves, as a kit control): labelled rows of icon buttons, the hint in each title. A press
+ * calls onMove with the move's id; a disabled move does nothing.
+ */
+function renderMoves(control, lookup) {
+  const wrap = document.createElement("div");
+  wrap.className = "nc-moves";
+  wrap.dataset.ncId = control.id;
+  wrap.dataset.ncRow = "";
+  wrap.setAttribute("role", "group");
+  wrap.setAttribute("aria-label", control.label ?? "Moves");
+  for (const group of control.groups) {
+    const row = document.createElement("div");
+    row.className = "nc-moves-row";
+    row.setAttribute("role", "group");
+    row.setAttribute("aria-label", group.label);
+    if (group.title) row.title = group.title;
+    const label = document.createElement("span");
+    label.className = "nc-moves-label";
+    label.setAttribute("aria-hidden", "true");
+    label.textContent = group.label;
+    const buttons = document.createElement("div");
+    buttons.className = "nc-moves-btns";
+    for (const move of group.moves) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "nc-moves-btn";
+      button.dataset.ncMove = move.id;
+      button.title = move.title ?? move.text;
+      button.setAttribute("aria-label", `${group.label} ${move.text}`);
+      button.append(moveIcon(move.icon));
+      button.addEventListener("click", () => {
+        const live = lookup(wrap);
+        if (live?.type !== "moves") return;
+        live.onMove(move.id);
+      });
+      buttons.append(button);
+    }
+    row.append(label, buttons);
+    wrap.append(row);
+  }
+  patchMoves(wrap, control);
+  return wrap;
+}
+
+function patchMoves(node, control) {
+  for (const group of control.groups)
+    for (const move of group.moves) {
+      const button = node.querySelector(`[data-nc-move="${cssEscape(move.id)}"]`);
+      if (button instanceof HTMLButtonElement) button.disabled = move.disabled === true;
+    }
+}
+
+/** A Move's 16-unit icon: round-capped strokes and an optional filled part. */
+function moveIcon(icon) {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("class", "nc-moves-icon");
+  if (icon?.stroke) {
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("d", icon.stroke);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "currentColor");
+    path.setAttribute("stroke-width", "1.5");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    svg.append(path);
+  }
+  if (icon?.fill) {
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("d", icon.fill);
+    path.setAttribute("fill", "currentColor");
+    svg.append(path);
+  }
+  return svg;
 }
 
 function renderLabel(control) {
@@ -882,11 +967,35 @@ function renderSteps(control, lookup) {
     name.textContent = row.label;
     name.setAttribute("aria-label", `Select ${row.label}`);
     if (row.lane) name.dataset.ncLane = String(((row.lane - 1) % 4) + 1);
-    name.addEventListener("click", () => {
+    // Shift-, Cmd- or Ctrl-click a name (long-press on touch) adds it to the selection or takes it out, when the host
+    // keeps several (selectedRows); a plain tap selects that lane alone.
+    let picked = false;
+    let pickTimer = 0;
+    name.addEventListener("pointerdown", (event) => {
+      picked = false;
+      if (event.pointerType === "mouse" || event.button !== 0) return;
+      pickTimer = window.setTimeout(() => {
+        const live = lookup(wrap);
+        if (live?.type !== "stepGrid" || !live.selectedRows) return;
+        picked = true;
+        live.onSelectRow?.(live.rows.findIndex((item) => item.id === row.id), true);
+      }, NAME_PICK_MS);
+    });
+    for (const type of ["pointerup", "pointercancel", "pointerleave"])
+      name.addEventListener(type, () => window.clearTimeout(pickTimer));
+    name.addEventListener("contextmenu", (event) => {
+      if (picked) event.preventDefault();
+    });
+    name.addEventListener("click", (event) => {
       const live = lookup(wrap);
       if (live?.type !== "stepGrid") return;
+      if (picked) {
+        picked = false;
+        return;
+      }
       const rowIndex = live.rows.findIndex((item) => item.id === row.id);
-      live.onSelectRow?.(rowIndex);
+      const extend = Boolean(live.selectedRows) && (event.shiftKey || event.metaKey || event.ctrlKey);
+      live.onSelectRow?.(rowIndex, extend);
     });
     name.addEventListener("keydown", (event) => moveLane(wrap, name, event));
     // M/S at the lane start, only when the host wires them (one tap, no Voice-card detour).
@@ -1287,9 +1396,13 @@ function patchSteps(node, control) {
       if (line instanceof HTMLElement) {
         if (control.selectedRow === row.id) line.dataset.selected = "true";
         else delete line.dataset.selected;
+        // Also selected (multi-select): tinted like the selected lane, without its marker.
+        const also = control.selectedRow !== row.id && (control.selectedRows ?? []).includes(row.id);
+        if (also) line.dataset.picked = "true";
+        else delete line.dataset.picked;
         const name = line.querySelector(".nc-name");
         if (name instanceof HTMLElement) {
-          name.setAttribute("aria-pressed", control.selectedRow === row.id ? "true" : "false");
+          name.setAttribute("aria-pressed", control.selectedRow === row.id || also ? "true" : "false");
           // A renamed lane (NYX: a pad's name is its lane's) shows its new name.
           if (name.textContent !== row.label) {
             name.textContent = row.label;

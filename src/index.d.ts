@@ -200,8 +200,14 @@ export interface StepGridControl {
   playhead: number;
   /** Row id painted as the selected track. */
   selectedRow?: string;
+  /**
+   * Multi-select: every selected row id (selectedRow among them). Set it to let people pick several lanes:
+   * Shift-, Cmd- or Ctrl-click a name, or long-press it on touch, calls onSelectRow(row, true).
+   */
+  selectedRows?: string[];
   onToggle: (row: number, step: number, accent: boolean) => void;
-  onSelectRow?: (row: number) => void;
+  /** `extend`: add the row to the selection or take it out (multi-select), instead of selecting it alone. */
+  onSelectRow?: (row: number, extend?: boolean) => void;
   /** Swipe-to-paint sets one field explicitly (on/off follows the first step touched). Falls back to onToggle. */
   onSet?: (row: number, step: number, field: "on" | "accent", value: boolean) => void;
   /** Long press on a step (row grid or phone pad); `anchor` is the pressed element. */
@@ -396,7 +402,25 @@ export interface StripAddControl {
   options: { value: string; label: string; disabled?: boolean }[];
   onAdd: (value: string) => void;
 }
+/** One Move: an icon button (16-unit paths), its words for screen readers and its hint. */
+export interface MoveItem {
+  id: string;
+  text: string;
+  title?: string;
+  icon?: { stroke?: string; fill?: string };
+  disabled?: boolean;
+}
+/** Moves (Bass's pattern moves as a kit control): labelled rows of icon buttons. */
+export interface MovesControl {
+  type: "moves";
+  id: string;
+  /** Accessible group name. Default "Moves". */
+  label?: string;
+  groups: { id: string; label: string; title?: string; moves: MoveItem[] }[];
+  onMove: (id: string) => void;
+}
 export type Control =
+  | MovesControl
   | SliderControl
   | SelectControl
   | ToggleControl

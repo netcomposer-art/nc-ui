@@ -666,6 +666,9 @@ ${MODULATED_SELECTOR} { transition: none; }
   background: ${v("accent-tint")};
   box-shadow: inset ${v("marker-width")} 0 0 ${v("accent")};
 }
+/* Also selected (multi-select): the same tint, no marker; the name underlined. */
+.nc-row[data-picked="true"] { background: ${v("accent-tint")}; }
+.nc-row[data-picked="true"] .nc-name,
 .nc-row[data-selected="true"] .nc-name {
   color: ${v("text")};
   text-decoration: underline;
@@ -676,7 +679,41 @@ ${MODULATED_SELECTOR} { transition: none; }
 /* On the tint, off steps and unlit M/S are paper squares (step-cell-off), as in the mockup, so their outlines stay
    crisp instead of melting into the tint. */
 .nc-row[data-selected="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
-.nc-row[data-selected="true"] .nc-ms:not([aria-pressed="true"]) { background: ${v("rhythm.step-cell-off")}; }
+.nc-row[data-selected="true"] .nc-ms:not([aria-pressed="true"]),
+.nc-row[data-picked="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
+.nc-row[data-picked="true"] .nc-ms:not([aria-pressed="true"]) { background: ${v("rhythm.step-cell-off")}; }
+/* Moves (renderMoves): a label column, then quiet square icon buttons that darken on hover (Bass's look). */
+.nc-moves { display: flex; flex-direction: column; gap: ${v("move-row-gap")}; }
+.nc-moves-row { display: flex; align-items: center; gap: ${v("module-gap")}; }
+.nc-moves-label {
+  flex: none;
+  width: ${v("move-label-width")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  color: ${v("text-sub")};
+}
+.nc-moves-btns { display: flex; flex-wrap: wrap; gap: ${v("move-gap")}; min-width: 0; }
+.nc-moves-btn {
+  display: grid;
+  place-items: center;
+  width: ${v("move-size")};
+  height: ${v("move-size")};
+  padding: 0;
+  border: ${v("hairline")} solid ${v("divider")};
+  border-radius: ${v("slot-radius")};
+  background: transparent;
+  color: ${v("text-sub")};
+  cursor: pointer;
+}
+.nc-moves-icon { width: ${v("move-icon")}; height: ${v("move-icon")}; }
+.nc-moves-btn:hover:not(:disabled) { color: ${v("text")}; border-color: ${v("text-sub")}; }
+.nc-moves-btn:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-moves-btn:disabled { color: ${v("divider")}; cursor: default; }
+@media (pointer: coarse) {
+  .nc-moves-btn { width: ${v("target-min")}; height: ${v("target-min")}; }
+}
 /* Muted, or silenced by another lane's solo: the lane's steps dim by colour, not just its button. On steps fill with
    text-sub (the velocity shade is set aside while silent), off steps keep only a divider outline. */
 .nc-row[data-silent="true"] .nc-step { border-color: ${v("divider")}; }
