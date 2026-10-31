@@ -857,6 +857,20 @@ function renderSteps(control, lookup) {
   toolbar.className = "nc-step-tools";
   toolbar.append(tools);
   if (control.onFill) toolbar.append(holdButton(wrap, lookup));
+  // Clear (Peter, 2026-10-30): every step off in one press; the host offers Undo.
+  if (control.onClear) {
+    const clear = document.createElement("button");
+    clear.type = "button";
+    clear.className = "nc-fill nc-clear";
+    clear.dataset.ncClear = "";
+    clear.textContent = control.clearLabel ?? "Clear";
+    clear.title = "Clear every step (Undo takes it back)";
+    clear.addEventListener("click", () => {
+      const live = lookup(wrap);
+      if (live?.type === "stepGrid") live.onClear?.();
+    });
+    toolbar.append(clear);
+  }
   wrap.append(toolbar);
   for (const row of control.rows) {
     const line = document.createElement("div");
