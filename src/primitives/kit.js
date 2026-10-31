@@ -1770,7 +1770,12 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] {
     padding-inline-start: ${v("module-pad-x-desktop")};
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] > .nc-strip {
     padding-bottom: ${v("module-pad-y-desktop")};
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] > .nc-strip-add {
+    margin-bottom: ${v("module-pad-y-desktop")};
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] {
     padding-inline-end: ${v("module-pad-x-desktop")};

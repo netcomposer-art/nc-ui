@@ -314,7 +314,7 @@
   --nc-ui-meter-track: var(--nc-ui-color-div-0);
   --nc-ui-meter-width: var(--nc-ui-space-8);
   --nc-ui-clip-size: var(--nc-ui-space-6);
-  --nc-ui-fader-height: 148px;
+  --nc-ui-fader-height: 124px;
   --nc-ui-fader-cap-width: var(--nc-ui-space-28);
   --nc-ui-fader-cap-height: var(--nc-ui-space-14);
   --nc-ui-fader-cap: var(--nc-ui-color-ink);

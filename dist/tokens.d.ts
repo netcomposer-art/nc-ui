@@ -327,7 +327,7 @@ export declare const semantic: {
   readonly "meter-track": "#DDDDDD";
   readonly "meter-width": "8px";
   readonly "clip-size": "6px";
-  readonly "fader-height": "148px";
+  readonly "fader-height": "124px";
   readonly "fader-cap-width": "28px";
   readonly "fader-cap-height": "14px";
   readonly "fader-cap": "#242424";
