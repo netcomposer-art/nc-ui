@@ -72,6 +72,8 @@ function signature(def) {
       if (control.type === "stepGrid") {
         return `stepGrid:${control.id}:${control.rows.map((row) => `${row.id}/${row.steps.length}`).join(",")}${control.onMute ? ":m" : ""}${control.onSolo ? ":s" : ""}`;
       }
+      if (control.type === "padGrid")
+        return `padGrid:${control.id}:${control.pads.length}:${control.columns ?? 2}`;
       if (control.type === "slotRow")
         return `slotRow:${control.id}:${control.slots.length}${control.onSparkle ? ":spark" : ""}`;
       if (control.type === "button")

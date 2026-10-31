@@ -230,6 +230,39 @@ export interface StepGridControl {
    */
   onLength?: (row: number, length: number) => void;
 }
+export interface PadCell {
+  /** The pad's name (shown when filled). */
+  label: string;
+  /** No sample: the pad says Load. */
+  empty: boolean;
+  /** Mini waveform: min/max pairs per column (−1..1), left to right. */
+  peaks?: number[];
+  /** 1–4: the bar and waveform in rhythm.lane-n. */
+  lane?: number;
+  /** Sounding now (a brighter waveform). */
+  playing?: boolean;
+}
+export interface PadGridControl {
+  type: "padGrid";
+  id: string;
+  /** Accessible group name. Default "Pads". */
+  label?: string;
+  pads: PadCell[];
+  /** The outlined pad's index. */
+  selected?: number;
+  /** 2 (default) or 4. */
+  columns?: 2 | 4;
+  /** An empty pad's words. Defaults "Load" and "tap or drop". */
+  emptyLabel?: string;
+  emptyHint?: string;
+  /** Tap, Enter or Space on a pad. */
+  onPress: (index: number) => void;
+  /** A file dropped on a pad. */
+  onFile?: (index: number, file: File) => void;
+  /** Long-press or right-click: the pad's menu items (none: no menu). */
+  menu?: (index: number) => { id: string; label: string }[];
+  onMenu?: (index: number, item: string) => void;
+}
 export interface CanvasControl {
   type: "canvas";
   id: string;
@@ -354,6 +387,7 @@ export type Control =
   | ChoiceControl
   | SlotRowControl
   | StepGridControl
+  | PadGridControl
   | CanvasControl
   | FxControl
   | StripControl
