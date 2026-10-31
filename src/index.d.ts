@@ -223,6 +223,10 @@ export interface StepGridControl {
   onDice?: (row: number) => void;
   /** Hold-for-Fill: true while held, false on release. The host plays a fill without storing it. */
   onFill?: (held: boolean) => void;
+  /** Adds a Clear button to the tools row: every step off. Pair it with an Undo. */
+  onClear?: () => void;
+  /** The Clear button's words. Default "Clear". */
+  clearLabel?: string;
   /**
    * Per-lane length, 1..steps.length. Adds an end handle after the selected row's last step (drag it, or arrow
    * keys), and makes the phone pad header's lane name a toggle: in length mode a tap or drag across the pads
