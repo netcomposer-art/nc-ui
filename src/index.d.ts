@@ -264,6 +264,13 @@ export interface PadGridControl {
   /** Long-press or right-click: the pad's menu items (none: no menu). */
   menu?: (index: number) => { id: string; label: string }[];
   onMenu?: (index: number, item: string) => void;
+  /**
+   * The pad's name edited in place (double-click a filled pad, or a menu item with id "rename"). Set it to let
+   * people name pads; the grid handles "rename" itself instead of calling onMenu.
+   */
+  onRename?: (index: number, name: string) => void;
+  /** Longest name the field takes. Default 24. */
+  nameMax?: number;
 }
 export interface CanvasControl {
   type: "canvas";

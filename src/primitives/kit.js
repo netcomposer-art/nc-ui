@@ -1182,6 +1182,20 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-padgrid-pad[data-empty="true"] :is(.nc-padgrid-pad-bar, .nc-padgrid-pad-wave) { display: none; }
 .nc-padgrid-pad:hover { border-color: ${v("text")}; }
 .nc-padgrid-pad[data-selected="true"] { border-color: ${v("accent")}; box-shadow: inset 0 0 0 ${v("hairline")} ${v("accent")}; }
+.nc-padgrid-rename {
+  position: absolute;
+  z-index: 3;
+  min-height: ${v("target-min")};
+  padding: 0 ${v("control-gap")};
+  border: ${v("hairline")} solid ${v("accent")};
+  border-radius: ${v("slot-radius")};
+  background: ${v("surface-page")};
+  color: ${v("text")};
+  font-family: ${v("font-ui")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("control-weight")};
+}
+.nc-padgrid-rename:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 .nc-padgrid-pad[data-dragging="true"] { border-style: dashed; color: ${v("text-sub")}; }
 .nc-padgrid-pad[data-drop="true"] { border-style: dashed; border-color: ${v("accent")}; }
 .nc-padgrid-pad[data-playing="true"] .nc-padgrid-pad-wave path { fill-opacity: 0.7; }

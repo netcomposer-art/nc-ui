@@ -1662,6 +1662,20 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-padgrid-pad[data-empty="true"] :is(.nc-padgrid-pad-bar, .nc-padgrid-pad-wave) { display: none; }
 .nc-padgrid-pad:hover { border-color: var(--nc-ui-text); }
 .nc-padgrid-pad[data-selected="true"] { border-color: var(--nc-ui-accent); box-shadow: inset 0 0 0 var(--nc-ui-hairline) var(--nc-ui-accent); }
+.nc-padgrid-rename {
+  position: absolute;
+  z-index: 3;
+  min-height: var(--nc-ui-target-min);
+  padding: 0 var(--nc-ui-control-gap);
+  border: var(--nc-ui-hairline) solid var(--nc-ui-accent);
+  border-radius: var(--nc-ui-slot-radius);
+  background: var(--nc-ui-surface-page);
+  color: var(--nc-ui-text);
+  font-family: var(--nc-ui-font-ui);
+  font-size: var(--nc-ui-label-size);
+  font-weight: var(--nc-ui-control-weight);
+}
+.nc-padgrid-rename:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 .nc-padgrid-pad[data-dragging="true"] { border-style: dashed; color: var(--nc-ui-text-sub); }
 .nc-padgrid-pad[data-drop="true"] { border-style: dashed; border-color: var(--nc-ui-accent); }
 .nc-padgrid-pad[data-playing="true"] .nc-padgrid-pad-wave path { fill-opacity: 0.7; }
