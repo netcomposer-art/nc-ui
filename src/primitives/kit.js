@@ -907,7 +907,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* Fill and Clear are text actions, like the page's Save and Load (Peter, 2026-10-31: the buttons took too much
    height). Fill held reads as pressed: ink with an ink underline. On a coarse pointer an invisible pad keeps each a
    full target (below). */
-.nc-step-tools .nc-fill {
+:is(.nc-step-tools .nc-fill, .nc-fill.nc-clear) {
   min-width: 0;
   min-height: 0;
   align-self: center;
@@ -921,9 +921,11 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   transition-property: color, border-color;
   transition-duration: ${v("transition-feedback")};
 }
-.nc-step-tools .nc-fill:hover,
-.nc-step-tools .nc-fill[aria-pressed="true"] { background: transparent; color: ${v("text")}; border-bottom-color: ${v("text")}; }
-.nc-step-tools .nc-fill:focus-visible { outline-offset: ${v("control-gap")}; }
+:is(.nc-step-tools .nc-fill, .nc-fill.nc-clear):hover,
+:is(.nc-step-tools .nc-fill, .nc-fill.nc-clear)[aria-pressed="true"] { background: transparent; color: ${v("text")}; border-bottom-color: ${v("text")}; }
+:is(.nc-step-tools .nc-fill, .nc-fill.nc-clear):focus-visible { outline-offset: ${v("control-gap")}; }
+/* Two text actions side by side (Fill, Clear) get the page actions' gap. */
+.nc-step-tools .nc-fill + .nc-fill { margin-left: ${v("page-action-gap")}; }
 .nc-pad {
   position: relative;
   overflow: hidden;
@@ -1087,8 +1089,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* Touch (ASTRID's coarse-pointer rule): text controls are drawn small and an invisible pad grows each to target-min,
    centred on it. A select cannot carry a pad, so it grows itself. */
 @media (pointer: coarse) {
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action, .nc-step-tools .nc-fill) { position: relative; }
-  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action, .nc-step-tools .nc-fill)::before {
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action, .nc-step-tools .nc-fill, .nc-fill.nc-clear) { position: relative; }
+  :is(.nc-hide, .nc-slim, .nc-toggle, .nc-ui-switch, .nc-seg > button, .nc-ui-more > summary, .nc-group-toggle, .nc-page-action, .nc-step-tools .nc-fill, .nc-fill.nc-clear)::before {
     content: "";
     position: absolute;
     left: 50%;
