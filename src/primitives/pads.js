@@ -4,6 +4,8 @@
 // the host lists them); a file dropped on a pad goes to that pad. The selected pad is outlined in the accent.
 
 const LONG_PRESS_MS = 450;
+/** What a pad carries while dragged onto another pad. */
+const PAD_TYPE = "application/x-nc-pad";
 const SVG = "http://www.w3.org/2000/svg";
 /** Columns drawn in a pad's mini waveform. */
 const WAVE_COLUMNS = 48;
@@ -71,22 +73,45 @@ function renderPad(wrap, index, lookup) {
   wave.append(path);
   pad.append(bar, name, hint, wave);
   bindPadPress(wrap, pad, index, lookup);
-  // Drop a file on this pad.
+  // Drag and drop: a file onto a pad loads it there; a pad onto another pad moves its sound there (the two swap),
+  // or copies it with Option / Alt held.
+  pad.addEventListener("dragstart", (event) => {
+    if (pad.dataset.empty === "true" || !event.dataTransfer) {
+      event.preventDefault();
+      return;
+    }
+    event.dataTransfer.setData(PAD_TYPE, String(index));
+    event.dataTransfer.effectAllowed = "copyMove";
+    pad.dataset.dragging = "true";
+  });
+  pad.addEventListener("dragend", () => delete pad.dataset.dragging);
   pad.addEventListener("dragover", (event) => {
-    if (!event.dataTransfer?.types.includes("Files")) return;
+    const types = event.dataTransfer?.types ?? [];
+    if (!types.includes("Files") && !types.includes(PAD_TYPE)) return;
     event.preventDefault();
     event.stopPropagation();
+    if (event.dataTransfer)
+      event.dataTransfer.dropEffect = types.includes(PAD_TYPE) && !event.altKey ? "move" : "copy";
     pad.dataset.drop = "true";
   });
   pad.addEventListener("dragleave", () => delete pad.dataset.drop);
   pad.addEventListener("drop", (event) => {
     delete pad.dataset.drop;
+    const live = lookup(wrap);
+    if (live?.type !== "padGrid") return;
+    const from = event.dataTransfer?.getData(PAD_TYPE);
+    if (from !== undefined && from !== "") {
+      event.preventDefault();
+      event.stopPropagation();
+      const source = Number(from);
+      if (source !== index) live.onMove?.(source, index, event.altKey);
+      return;
+    }
     const file = event.dataTransfer?.files?.[0];
     if (!file) return;
     event.preventDefault();
     event.stopPropagation();
-    const live = lookup(wrap);
-    if (live?.type === "padGrid") live.onFile?.(index, file);
+    live.onFile?.(index, file);
   });
   return pad;
 }
@@ -190,6 +215,7 @@ export function patchPadGrid(node, control) {
     const name = pad.querySelector(".nc-padgrid-pad-name");
     const hint = pad.querySelector(".nc-padgrid-pad-hint");
     const path = pad.querySelector(".nc-padgrid-pad-wave path");
+    pad.draggable = !cell.empty;
     if (cell.empty) {
       pad.dataset.empty = "true";
       if (name) name.textContent = control.emptyLabel ?? "Load";
