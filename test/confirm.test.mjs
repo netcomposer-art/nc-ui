@@ -49,6 +49,11 @@ test('confirm.css: every token has a var() fallback equal to its current value',
   const uses = varsOf(css);
   assert.ok(uses.length >= 30, `${uses.length} var() uses`);
   for (const { prop, fallback } of uses) {
+    // The Studio's visible band (not tokens): the whole frame when not hosted.
+    if (prop.startsWith('--nc-host-')) {
+      assert.equal(fallback, '0px', `${prop} fallback`);
+      continue;
+    }
     const name = prop.replace(/^--nc-ui-/, '');
     assert.ok(prop.startsWith('--nc-ui-') && semantic[name] != null, `${prop} is a semantic token`);
     assert.equal(fallback, semantic[name], `${prop} fallback`);
@@ -59,7 +64,7 @@ test('confirm.css: every token has a var() fallback equal to its current value',
 
 test('confirm.css styles the dialog from semantic tokens, 44 px on every pointer, no motion when reduced', () => {
   // Outside the var() fallbacks there are no literals.
-  const bare = css.replace(/var\((--nc-ui-[a-z0-9-]+),(?:[^()]|\([^()]*\))*\)/g, 'var($1)');
+  const bare = css.replace(/var\((--nc-(?:ui|host)-[a-z0-9-]+),(?:[^()]|\([^()]*\))*\)/g, 'var($1)');
   assert.doesNotMatch(bare, /--nc-rhythm-|\d+(?:px|rem|em)\b|#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i, 'semantic tokens only, no literals');
   assert.match(bare, /background: var\(--nc-ui-dialog-scrim\)/);
   assert.match(bare, /\[data-danger="true"\] \{[^}]*background: var\(--nc-ui-danger\);[^}]*color: var\(--nc-ui-on-danger\)/);

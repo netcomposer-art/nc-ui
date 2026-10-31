@@ -19,6 +19,12 @@
   touch-action: none;
   transition: opacity var(--nc-ui-motion-fade, .2s) var(--nc-ui-motion-fade-easing, ease);
 }
+/* In the Studio the instrument's frame is as tall as its page: the layer covers the part you can see (the Studio
+   writes it as --nc-host-top / --nc-host-bottom), so the question sits on screen, not mid-page. */
+html[data-nc-hosted] .nc-ui-confirm-layer {
+  top: var(--nc-host-top, 0px);
+  bottom: var(--nc-host-bottom, 0px);
+}
 .nc-ui-confirm-layer[data-state="open"] {
   opacity: 1;
 }

@@ -1364,6 +1364,11 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-ui-toast[data-placement="bottom"] { bottom: calc(${v("toast-offset")} + env(safe-area-inset-bottom)); }
 .nc-ui-toast[data-placement="top"] { top: calc(${v("toast-offset")} + env(safe-area-inset-top)); }
+/* In the Studio (html[data-nc-hosted]) the frame is as tall as its page: toasts and sheets keep to the part you can
+   see, which the Studio writes as --nc-host-top / --nc-host-bottom. */
+html[data-nc-hosted] .nc-ui-toast[data-placement="bottom"] { bottom: calc(var(--nc-host-bottom, 0px) + ${v("toast-offset")}); }
+html[data-nc-hosted] .nc-ui-toast[data-placement="top"] { top: calc(var(--nc-host-top, 0px) + ${v("toast-offset")}); }
+html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-host-bottom, 0px); }
 .nc-ui-toast[data-placement="anchor"] { position: absolute; transform: none; }
 .nc-ui-toast[data-state="open"] { opacity: 1; }
 .nc-ui-toast[data-state="closing"] {
