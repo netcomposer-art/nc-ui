@@ -264,6 +264,11 @@ export interface PadGridControl {
   emptyHint?: string;
   /** Tap, Enter or Space on a pad. */
   onPress: (index: number) => void;
+  /**
+   * The pointer going down on a pad, before the tap ends: play it here so a pad sounds on the hit and a hold plays
+   * it out. With onDown, a held mouse button doesn't open the menu (right-click does); touch still long-presses.
+   */
+  onDown?: (index: number) => void;
   /** A file dropped on a pad. */
   onFile?: (index: number, file: File) => void;
   /** A filled pad dragged onto another: move (the two swap), or copy with Option / Alt. Pads are draggable when set. */
