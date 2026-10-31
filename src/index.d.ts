@@ -259,6 +259,8 @@ export interface PadGridControl {
   onPress: (index: number) => void;
   /** A file dropped on a pad. */
   onFile?: (index: number, file: File) => void;
+  /** A filled pad dragged onto another: move (the two swap), or copy with Option / Alt. Pads are draggable when set. */
+  onMove?: (from: number, to: number, copy: boolean) => void;
   /** Long-press or right-click: the pad's menu items (none: no menu). */
   menu?: (index: number) => { id: string; label: string }[];
   onMenu?: (index: number, item: string) => void;
