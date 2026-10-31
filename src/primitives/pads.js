@@ -1,6 +1,7 @@
 // nc-ui pad grid: a sampler's pads as the way in (Peter, 2026-10-30; NYX's Pad module). Each pad is a button: an
 // empty pad says Load (tap it, or drop a file on it); a filled pad shows its name and a small waveform in its lane
-// colour. Tap presses it (select and play); long-press or right-click opens its menu (Replace, Rename, Clear…, as
+// colour. Tap presses it (select and play; with onDown the pad plays on the hit itself); long-press (touch and pen
+// when onDown is set) or right-click opens its menu (Replace, Rename, Clear…, as
 // the host lists them); a file dropped on a pad goes to that pad. The selected pad is outlined in the accent.
 
 const LONG_PRESS_MS = 450;
@@ -144,6 +145,13 @@ function bindPadPress(wrap, pad, index, lookup) {
     x0 = event.clientX;
     y0 = event.clientY;
     stop();
+    const live = lookup(wrap);
+    if (live?.type !== "padGrid") return;
+    // onDown: the pad sounds the moment it is hit, as a hardware pad does, and holding it plays the sample out.
+    live.onDown?.(index);
+    // A mouse has right-click for the menu, so with onDown a held mouse button only plays (Peter). Touch and pen
+    // long-press for the menu.
+    if (live.onDown && event.pointerType === "mouse") return;
     timer = window.setTimeout(() => {
       timer = 0;
       opened = openMenu(wrap, pad, index, lookup);
