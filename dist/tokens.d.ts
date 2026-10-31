@@ -17,6 +17,7 @@ export declare const base: {
     readonly "olive-green": "#9CA536";
     readonly "hacks-grey": "#8C8C8C";
     readonly "lucy-purple": "#9B30FF";
+    readonly "nyx-amber": "#FEAA02";
     readonly "paper-bright": "#FCFCFC";
     readonly "accent-pad": "#1A6193";
     readonly "accent-velocity-min": "#477399";
@@ -397,6 +398,7 @@ export declare const semantic: {
   readonly "instrument-petra": "#5AC4F7";
   readonly "instrument-olive": "#9CA536";
   readonly "instrument-lucy": "#9B30FF";
+  readonly "instrument-nyx": "#FEAA02";
   readonly "page-title-size": "15px";
   readonly "page-title-tracking": ".28em";
   readonly "page-sub-size": "14px";
@@ -789,6 +791,7 @@ export declare const vars: {
   readonly "instrument-petra": "var(--nc-ui-instrument-petra)";
   readonly "instrument-olive": "var(--nc-ui-instrument-olive)";
   readonly "instrument-lucy": "var(--nc-ui-instrument-lucy)";
+  readonly "instrument-nyx": "var(--nc-ui-instrument-nyx)";
   readonly "page-title-size": "var(--nc-ui-page-title-size)";
   readonly "page-title-tracking": "var(--nc-ui-page-title-tracking)";
   readonly "page-sub-size": "var(--nc-ui-page-sub-size)";
@@ -978,6 +981,7 @@ export declare const refs: {
   readonly "instrument-petra": "color.petra-blue";
   readonly "instrument-olive": "color.olive-green";
   readonly "instrument-lucy": "color.lucy-purple";
+  readonly "instrument-nyx": "color.nyx-amber";
   readonly "page-title-size": "font-size.xl";
   readonly "page-title-tracking": "tracking.8";
   readonly "page-sub-size": "font-size.lg";
