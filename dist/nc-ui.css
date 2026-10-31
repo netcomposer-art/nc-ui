@@ -1324,6 +1324,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-row-dice { flex: none; margin-inline: 0; }
 .nc-pads-dice svg { width: calc(var(--nc-ui-target-min) / 3); height: calc(var(--nc-ui-target-min) / 3); display: block; margin: auto; }
 .nc-fill { padding-inline: var(--nc-ui-module-gap); touch-action: none; user-select: none; -webkit-user-select: none; }
+/* Clear is a tap, not a hold: phones still scroll over it. */
+.nc-clear { touch-action: manipulation; }
 .nc-fill[aria-pressed="true"] { background: var(--nc-ui-text); border-color: var(--nc-ui-text); color: var(--nc-ui-surface-page); }
 .nc-pads-step, .nc-pads-play, .nc-fill {
   flex: none;
