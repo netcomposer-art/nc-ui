@@ -4,6 +4,7 @@ import { paintCanvas } from "./canvas.js";
 import { createFader, faderHandle } from "./fader.js";
 import { bindPadGesture } from "./gesture.js";
 import { createMeter, meterHandle } from "./meter.js";
+import { patchPadGrid, renderPadGrid } from "./pads.js";
 import { createSwitch } from "./switch.js";
 
 function probe() {
@@ -146,6 +147,8 @@ export function renderControl(control, lookup) {
       return renderStrip(control, lookup);
     case "stripAdd":
       return renderStripAdd(control, lookup);
+    case "padGrid":
+      return renderPadGrid(control, lookup);
     default:
       return renderNote({ type: "note", id: "unknown", text: "" });
   }
@@ -191,6 +194,7 @@ export function patchControl(node, control) {
   } else if (control.type === "choice") patchChoice(node, control);
   else if (control.type === "slotRow") patchSlots(node, control);
   else if (control.type === "stepGrid") patchSteps(node, control);
+  else if (control.type === "padGrid") patchPadGrid(node, control);
   else if (control.type === "canvas" && node instanceof HTMLElement) {
     const canvas = node.querySelector("canvas");
     if (canvas instanceof HTMLCanvasElement) paintCanvas(canvas, control);

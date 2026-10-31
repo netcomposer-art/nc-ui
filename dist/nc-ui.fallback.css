@@ -1608,6 +1608,63 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring);
   outline-offset: var(--nc-ui-hairline);
 }
+/* Pad grid (NYX): pads as the way in. Empty pads are shaded and say Load; filled pads carry a lane-coloured bar and
+   a mini waveform; the selected pad is outlined in the accent. */
+.nc-pad-grid { position: relative; }
+.nc-pads { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nc-ui-control-gap); }
+.nc-pads[data-nc-columns="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.nc-pad {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  min-width: 0;
+  min-height: calc(var(--nc-ui-target-min) * 1.5);
+  padding: var(--nc-ui-control-gap) var(--nc-ui-control-gap) var(--nc-ui-control-gap) calc(var(--nc-ui-control-gap) * 2);
+  border: var(--nc-ui-hairline) solid var(--nc-ui-text-sub);
+  border-radius: var(--nc-ui-slot-radius);
+  background: transparent;
+  color: var(--nc-ui-text);
+  font-family: var(--nc-ui-font-ui);
+  font-size: var(--nc-ui-label-size);
+  text-align: left;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+.nc-pad-bar {
+  position: absolute;
+  inset-block: var(--nc-ui-control-gap);
+  inset-inline-start: var(--nc-ui-hairline);
+  width: var(--nc-ui-focus-width);
+  background: currentColor;
+}
+.nc-pad-name { font-weight: var(--nc-ui-control-weight); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nc-pad-hint { display: none; color: var(--nc-ui-text-sub); font-size: var(--nc-ui-readout-size-small); }
+.nc-pad-wave { width: 100%; height: var(--nc-ui-slider-pitch); align-self: end; }
+.nc-pad-wave path { fill: currentColor; fill-opacity: 0.35; stroke: currentColor; stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+.nc-pad[data-nc-lane="1"] :is(.nc-pad-bar, .nc-pad-wave) { color: var(--nc-rhythm-lane-1); }
+.nc-pad[data-nc-lane="2"] :is(.nc-pad-bar, .nc-pad-wave) { color: var(--nc-rhythm-lane-2); }
+.nc-pad[data-nc-lane="3"] :is(.nc-pad-bar, .nc-pad-wave) { color: var(--nc-rhythm-lane-3); }
+.nc-pad[data-nc-lane="4"] :is(.nc-pad-bar, .nc-pad-wave) { color: var(--nc-rhythm-lane-4); }
+.nc-pad[data-empty="true"] {
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  padding-inline-start: var(--nc-ui-control-gap);
+  border-color: var(--nc-ui-divider);
+  background: var(--nc-ui-divider);
+  color: var(--nc-ui-text-sub);
+}
+.nc-pad[data-empty="true"] .nc-pad-name { font-weight: inherit; font-size: var(--nc-ui-body-size); }
+.nc-pad[data-empty="true"] .nc-pad-hint { display: block; }
+.nc-pad[data-empty="true"] :is(.nc-pad-bar, .nc-pad-wave) { display: none; }
+.nc-pad:hover { border-color: var(--nc-ui-text); }
+.nc-pad[data-selected="true"] { border-color: var(--nc-ui-accent); box-shadow: inset 0 0 0 var(--nc-ui-hairline) var(--nc-ui-accent); }
+.nc-pad[data-drop="true"] { border-style: dashed; border-color: var(--nc-ui-accent); }
+.nc-pad[data-playing="true"] .nc-pad-wave path { fill-opacity: 0.7; }
+.nc-pad:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 .nc-slot-row { position: relative; }
 .nc-slot-menu {
   position: absolute;
