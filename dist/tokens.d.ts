@@ -17,6 +17,7 @@ export declare const base: {
     readonly "olive-green": "#9CA536";
     readonly "hacks-grey": "#8C8C8C";
     readonly "lucy-purple": "#9B30FF";
+    readonly "nyx-amber": "#FEAA02";
     readonly "paper-bright": "#FCFCFC";
     readonly "accent-pad": "#1A6193";
     readonly "accent-velocity-min": "#477399";
@@ -327,13 +328,14 @@ export declare const semantic: {
   readonly "meter-track": "#DDDDDD";
   readonly "meter-width": "8px";
   readonly "clip-size": "6px";
-  readonly "fader-height": "220px";
+  readonly "fader-height": "148px";
   readonly "fader-cap-width": "28px";
   readonly "fader-cap-height": "14px";
   readonly "fader-cap": "#242424";
   readonly "fader-cap-line": "#F5F5F5";
   readonly "fader-cap-master": "#003153";
-  readonly "strip-alt-bg": "#F3F3F3";
+  readonly "strip-bg": "#F3F3F3";
+  readonly "strip-alt-bg": "#EEEEEE";
   readonly "strip-hacks-text": "#8C8C8C";
   readonly "fader-track": "rgba(36,36,36,0.25)";
   readonly "strip-width": "88px";
@@ -396,6 +398,7 @@ export declare const semantic: {
   readonly "instrument-petra": "#5AC4F7";
   readonly "instrument-olive": "#9CA536";
   readonly "instrument-lucy": "#9B30FF";
+  readonly "instrument-nyx": "#FEAA02";
   readonly "page-title-size": "15px";
   readonly "page-title-tracking": ".28em";
   readonly "page-sub-size": "14px";
@@ -724,6 +727,7 @@ export declare const vars: {
   readonly "fader-cap": "var(--nc-ui-fader-cap)";
   readonly "fader-cap-line": "var(--nc-ui-fader-cap-line)";
   readonly "fader-cap-master": "var(--nc-ui-fader-cap-master)";
+  readonly "strip-bg": "var(--nc-ui-strip-bg)";
   readonly "strip-alt-bg": "var(--nc-ui-strip-alt-bg)";
   readonly "strip-hacks-text": "var(--nc-ui-strip-hacks-text)";
   readonly "fader-track": "var(--nc-ui-fader-track)";
@@ -787,6 +791,7 @@ export declare const vars: {
   readonly "instrument-petra": "var(--nc-ui-instrument-petra)";
   readonly "instrument-olive": "var(--nc-ui-instrument-olive)";
   readonly "instrument-lucy": "var(--nc-ui-instrument-lucy)";
+  readonly "instrument-nyx": "var(--nc-ui-instrument-nyx)";
   readonly "page-title-size": "var(--nc-ui-page-title-size)";
   readonly "page-title-tracking": "var(--nc-ui-page-title-tracking)";
   readonly "page-sub-size": "var(--nc-ui-page-sub-size)";
@@ -912,7 +917,8 @@ export declare const refs: {
   readonly "fader-cap": "color.ink";
   readonly "fader-cap-line": "color.paper";
   readonly "fader-cap-master": "color.accent";
-  readonly "strip-alt-bg": "color.shade-1";
+  readonly "strip-bg": "color.shade-1";
+  readonly "strip-alt-bg": "color.shade-2";
   readonly "strip-hacks-text": "color.hacks-grey";
   readonly "fader-track": null;
   readonly "strip-width": null;
@@ -975,6 +981,7 @@ export declare const refs: {
   readonly "instrument-petra": "color.petra-blue";
   readonly "instrument-olive": "color.olive-green";
   readonly "instrument-lucy": "color.lucy-purple";
+  readonly "instrument-nyx": "color.nyx-amber";
   readonly "page-title-size": "font-size.xl";
   readonly "page-title-tracking": "tracking.8";
   readonly "page-sub-size": "font-size.lg";
