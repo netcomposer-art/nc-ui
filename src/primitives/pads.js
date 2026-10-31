@@ -64,6 +64,8 @@ function renderPad(wrap, index, lookup) {
   name.className = "nc-padgrid-pad-name";
   const hint = document.createElement("span");
   hint.className = "nc-padgrid-pad-hint";
+  const badge = document.createElement("span");
+  badge.className = "nc-padgrid-pad-badge";
   const wave = document.createElementNS(SVG, "svg");
   wave.setAttribute("class", "nc-padgrid-pad-wave");
   wave.setAttribute("viewBox", "0 0 100 20");
@@ -71,7 +73,7 @@ function renderPad(wrap, index, lookup) {
   wave.setAttribute("aria-hidden", "true");
   const path = document.createElementNS(SVG, "path");
   wave.append(path);
-  pad.append(bar, name, hint, wave);
+  pad.append(bar, name, hint, badge, wave);
   bindPadPress(wrap, pad, index, lookup);
   // Double-click a filled pad to rename it (when the host takes names).
   pad.addEventListener("dblclick", () => {
@@ -266,6 +268,8 @@ export function patchPadGrid(node, control) {
     const name = pad.querySelector(".nc-padgrid-pad-name");
     const hint = pad.querySelector(".nc-padgrid-pad-hint");
     const path = pad.querySelector(".nc-padgrid-pad-wave path");
+    const badge = pad.querySelector(".nc-padgrid-pad-badge");
+    if (badge) badge.textContent = cell.empty ? "" : (cell.badge ?? "");
     pad.draggable = !cell.empty;
     if (cell.empty) {
       pad.dataset.empty = "true";
@@ -290,7 +294,7 @@ export function patchPadGrid(node, control) {
       "aria-label",
       cell.empty
         ? `Pad ${index + 1}, empty: load a sample`
-        : `Pad ${index + 1}, ${cell.label}${selected ? ", selected" : ""}`,
+        : `Pad ${index + 1}, ${cell.label}${cell.badgeLabel ? `, ${cell.badgeLabel}` : ""}${selected ? ", selected" : ""}`,
     );
   });
 }
