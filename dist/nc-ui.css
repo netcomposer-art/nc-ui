@@ -319,6 +319,7 @@
   --nc-ui-fader-cap: var(--nc-ui-color-ink);
   --nc-ui-fader-cap-line: var(--nc-ui-color-paper);
   --nc-ui-fader-cap-master: var(--nc-ui-color-accent);
+  --nc-ui-strip-alt-bg: var(--nc-ui-color-shade-1);
   --nc-ui-strip-hacks-text: var(--nc-ui-color-hacks-grey);
   --nc-ui-fader-track: color-mix(in srgb, var(--nc-ui-color-ink) 25%, transparent);
   --nc-ui-strip-width: 88px;
@@ -1866,6 +1867,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   padding-inline: var(--nc-ui-control-gap);
 }
 .nc-strip + .nc-strip { border-inline-start: var(--nc-ui-hairline) solid var(--nc-ui-divider); }
+/* Every other channel strip is shaded, so a row of identical strips reads apart (the master keeps the module's). */
+.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: var(--nc-ui-strip-alt-bg); }
 .nc-strip[data-nc-master] { width: var(--nc-ui-strip-width-master); }
 /* Name row: the name, and the remove × when the strip can be removed. */
 .nc-strip-hd { display: flex; align-items: baseline; justify-content: center; gap: var(--nc-ui-control-gap); max-width: 100%; min-width: 0; }

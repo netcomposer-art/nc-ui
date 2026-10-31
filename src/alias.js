@@ -151,6 +151,7 @@ const semanticKinds = {
   "instrument-lucy": "color",
   "fader-cap-master": "color",
   "strip-hacks-text": "color",
+  "strip-alt-bg": "color",
   "page-title-size": "length",
   "page-title-tracking": "other",
   "page-sub-size": "length",

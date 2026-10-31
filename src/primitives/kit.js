@@ -1388,6 +1388,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   padding-inline: ${v("control-gap")};
 }
 .nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
+/* Every other channel strip is shaded, so a row of identical strips reads apart (the master keeps the module's). */
+.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: ${v("strip-alt-bg")}; }
 .nc-strip[data-nc-master] { width: ${v("strip-width-master")}; }
 /* Name row: the name, and the remove × when the strip can be removed. */
 .nc-strip-hd { display: flex; align-items: baseline; justify-content: center; gap: ${v("control-gap")}; max-width: 100%; min-width: 0; }
