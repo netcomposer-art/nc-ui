@@ -366,6 +366,11 @@ export declare const semantic: {
   readonly "toast-offset": "16px";
   readonly "toast-anchor-gap": "8px";
   readonly "toast-target": "44px";
+  readonly "move-size": "32px";
+  readonly "move-icon": "16px";
+  readonly "move-gap": "4px";
+  readonly "move-row-gap": "8px";
+  readonly "move-label-width": "64px";
   readonly "on-danger": "#F5F5F5";
   readonly "dialog-scrim": "rgba(36,36,36,0.35)";
   readonly "dialog-width": "320px";
@@ -759,6 +764,11 @@ export declare const vars: {
   readonly "toast-offset": "var(--nc-ui-toast-offset)";
   readonly "toast-anchor-gap": "var(--nc-ui-toast-anchor-gap)";
   readonly "toast-target": "var(--nc-ui-toast-target)";
+  readonly "move-size": "var(--nc-ui-move-size)";
+  readonly "move-icon": "var(--nc-ui-move-icon)";
+  readonly "move-gap": "var(--nc-ui-move-gap)";
+  readonly "move-row-gap": "var(--nc-ui-move-row-gap)";
+  readonly "move-label-width": "var(--nc-ui-move-label-width)";
   readonly "on-danger": "var(--nc-ui-on-danger)";
   readonly "dialog-scrim": "var(--nc-ui-dialog-scrim)";
   readonly "dialog-width": "var(--nc-ui-dialog-width)";
@@ -949,6 +959,11 @@ export declare const refs: {
   readonly "toast-offset": "space.16";
   readonly "toast-anchor-gap": "space.8";
   readonly "toast-target": "space.44";
+  readonly "move-size": "space.32";
+  readonly "move-icon": "space.16";
+  readonly "move-gap": "space.4";
+  readonly "move-row-gap": "space.8";
+  readonly "move-label-width": "space.64";
   readonly "on-danger": "color.paper";
   readonly "dialog-scrim": null;
   readonly "dialog-width": null;

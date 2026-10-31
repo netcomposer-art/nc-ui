@@ -352,6 +352,11 @@
   --nc-ui-toast-offset: var(--nc-ui-space-16);
   --nc-ui-toast-anchor-gap: var(--nc-ui-space-8);
   --nc-ui-toast-target: var(--nc-ui-space-44);
+  --nc-ui-move-size: var(--nc-ui-space-32);
+  --nc-ui-move-icon: var(--nc-ui-space-16);
+  --nc-ui-move-gap: var(--nc-ui-space-4);
+  --nc-ui-move-row-gap: var(--nc-ui-space-8);
+  --nc-ui-move-label-width: var(--nc-ui-space-64);
   --nc-ui-on-danger: var(--nc-ui-color-paper);
   --nc-ui-dialog-scrim: color-mix(in srgb, var(--nc-ui-color-ink) 35%, transparent);
   --nc-ui-dialog-width: 320px;
@@ -1148,6 +1153,9 @@ button, input, select { font: inherit; color: inherit; }
   background: var(--nc-ui-accent-tint);
   box-shadow: inset var(--nc-ui-marker-width) 0 0 var(--nc-ui-accent);
 }
+/* Also selected (multi-select): the same tint, no marker; the name underlined. */
+.nc-row[data-picked="true"] { background: var(--nc-ui-accent-tint); }
+.nc-row[data-picked="true"] .nc-name,
 .nc-row[data-selected="true"] .nc-name {
   color: var(--nc-ui-text);
   text-decoration: underline;
@@ -1158,7 +1166,41 @@ button, input, select { font: inherit; color: inherit; }
 /* On the tint, off steps and unlit M/S are paper squares (step-cell-off), as in the mockup, so their outlines stay
    crisp instead of melting into the tint. */
 .nc-row[data-selected="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
-.nc-row[data-selected="true"] .nc-ms:not([aria-pressed="true"]) { background: var(--nc-rhythm-step-cell-off); }
+.nc-row[data-selected="true"] .nc-ms:not([aria-pressed="true"]),
+.nc-row[data-picked="true"] .nc-step:not([aria-pressed="true"]):not([data-accent="true"]):not([data-out="true"]),
+.nc-row[data-picked="true"] .nc-ms:not([aria-pressed="true"]) { background: var(--nc-rhythm-step-cell-off); }
+/* Moves (renderMoves): a label column, then quiet square icon buttons that darken on hover (Bass's look). */
+.nc-moves { display: flex; flex-direction: column; gap: var(--nc-ui-move-row-gap); margin-top: var(--nc-ui-page-body-gap); }
+.nc-moves-row { display: flex; align-items: center; gap: var(--nc-ui-module-gap); }
+.nc-moves-label {
+  flex: none;
+  width: var(--nc-ui-move-label-width);
+  font-size: var(--nc-ui-label-size);
+  font-weight: var(--nc-ui-label-weight);
+  letter-spacing: var(--nc-ui-label-tracking);
+  text-transform: uppercase;
+  color: var(--nc-ui-text-sub);
+}
+.nc-moves-btns { display: flex; flex-wrap: wrap; gap: var(--nc-ui-move-gap); min-width: 0; }
+.nc-moves-btn {
+  display: grid;
+  place-items: center;
+  width: var(--nc-ui-move-size);
+  height: var(--nc-ui-move-size);
+  padding: 0;
+  border: var(--nc-ui-hairline) solid var(--nc-ui-divider);
+  border-radius: var(--nc-ui-slot-radius);
+  background: transparent;
+  color: var(--nc-ui-text-sub);
+  cursor: pointer;
+}
+.nc-moves-icon { width: var(--nc-ui-move-icon); height: var(--nc-ui-move-icon); }
+.nc-moves-btn:hover:not(:disabled) { color: var(--nc-ui-text); border-color: var(--nc-ui-text-sub); }
+.nc-moves-btn:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
+.nc-moves-btn:disabled { color: var(--nc-ui-divider); cursor: default; }
+@media (pointer: coarse) {
+  .nc-moves-btn { width: var(--nc-ui-target-min); height: var(--nc-ui-target-min); }
+}
 /* Muted, or silenced by another lane's solo: the lane's steps dim by colour, not just its button. On steps fill with
    text-sub (the velocity shade is set aside while silent), off steps keep only a divider outline. */
 .nc-row[data-silent="true"] .nc-step { border-color: var(--nc-ui-divider); }

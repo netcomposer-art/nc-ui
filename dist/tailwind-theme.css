@@ -116,6 +116,10 @@
   --spacing-nc-toast-offset: var(--nc-ui-toast-offset);
   --spacing-nc-toast-anchor-gap: var(--nc-ui-toast-anchor-gap);
   --spacing-nc-toast-target: var(--nc-ui-toast-target);
+  --spacing-nc-move-icon: var(--nc-ui-move-icon);
+  --spacing-nc-move-gap: var(--nc-ui-move-gap);
+  --spacing-nc-move-row-gap: var(--nc-ui-move-row-gap);
+  --spacing-nc-move-label-width: var(--nc-ui-move-label-width);
   --spacing-nc-dialog-width: var(--nc-ui-dialog-width);
   --spacing-nc-dialog-pad: var(--nc-ui-dialog-pad);
   --spacing-nc-dialog-gap: var(--nc-ui-dialog-gap);
@@ -148,6 +152,7 @@
   --text-nc-page-title-size: var(--nc-ui-page-title-size);
   --text-nc-page-sub-size: var(--nc-ui-page-sub-size);
   --text-nc-toast-font-size: var(--nc-ui-toast-font-size);
+  --text-nc-move-size: var(--nc-ui-move-size);
   --text-nc-knob-size: var(--nc-ui-knob-size);
   --font-weight-nc-title-weight: var(--nc-ui-title-weight);
   --font-weight-nc-label-weight: var(--nc-ui-label-weight);

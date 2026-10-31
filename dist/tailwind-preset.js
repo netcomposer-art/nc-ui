@@ -121,6 +121,10 @@ const theme = {
     "nc-toast-offset": "var(--nc-ui-toast-offset)",
     "nc-toast-anchor-gap": "var(--nc-ui-toast-anchor-gap)",
     "nc-toast-target": "var(--nc-ui-toast-target)",
+    "nc-move-icon": "var(--nc-ui-move-icon)",
+    "nc-move-gap": "var(--nc-ui-move-gap)",
+    "nc-move-row-gap": "var(--nc-ui-move-row-gap)",
+    "nc-move-label-width": "var(--nc-ui-move-label-width)",
     "nc-dialog-width": "var(--nc-ui-dialog-width)",
     "nc-dialog-pad": "var(--nc-ui-dialog-pad)",
     "nc-dialog-gap": "var(--nc-ui-dialog-gap)",
@@ -157,6 +161,7 @@ const theme = {
     "nc-page-title-size": "var(--nc-ui-page-title-size)",
     "nc-page-sub-size": "var(--nc-ui-page-sub-size)",
     "nc-toast-font-size": "var(--nc-ui-toast-font-size)",
+    "nc-move-size": "var(--nc-ui-move-size)",
     "nc-knob-size": "var(--nc-ui-knob-size)"
   },
   "fontWeight": {
