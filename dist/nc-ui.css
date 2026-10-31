@@ -1900,6 +1900,29 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   pointer-events: none;
   transition: opacity var(--nc-ui-motion-fade-out) var(--nc-ui-motion-fade-out-easing);
 }
+/* nc-ui help (installHelpTips): a label's description, shown when the pointer rests on it. The toast's dark slab,
+   smaller and wrapping; it never takes the pointer, so it can't block the control under it. No motion. */
+[data-nc-help] { cursor: help; }
+[data-nc-help]:hover { text-decoration: underline dotted; text-underline-offset: 0.2em; }
+.nc-ui-help {
+  position: fixed;
+  z-index: 6;
+  max-width: 34ch;
+  padding: calc(var(--nc-ui-toast-pad-x) / 2) calc(var(--nc-ui-toast-pad-x) * 0.75);
+  border-radius: var(--nc-ui-toast-radius);
+  background: var(--nc-ui-toast-bg);
+  color: var(--nc-ui-toast-text);
+  font-family: var(--nc-ui-font-ui);
+  font-size: var(--nc-ui-toast-font-size);
+  font-weight: normal;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+}
+.nc-ui-help[hidden] { display: none; }
 .nc-ui-toast-message { overflow: hidden; text-overflow: ellipsis; }
 .nc-ui-toast-action {
   min-width: var(--nc-ui-toast-target);
