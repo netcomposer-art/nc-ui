@@ -26,7 +26,8 @@ callbacks run as anywhere else in the module.
   `role="group"` labelled by the button), Enter and Space. A `−` / `+` mark at the end shows the state.
 - It looks like the FX card's More toggle (`.nc-ui-more > summary`): label size, weight and tracking, uppercase,
   `text-sub`, hover to `text`, the focus ring; on a coarse pointer the same invisible `target-min` pad. The summary
-  is in the readout face at `readout-size-small`, cut with an ellipsis, and hidden while open.
+  is in the readout face at `readout-size-small`, on its own line under the title (wrapping, never cut, so a
+  narrow column still shows all of it), and hidden while open or empty.
 - It opens and closes at once: no transition or animation.
 - Open state is a browser-wide UI preference, kept like the modules' hide: `localStorage["netcomposer.groups.v1"]`
   (`GROUP_OPEN_KEY`), `{ "<group id>": true | false }`, written on every toggle. It is never part of an app's
