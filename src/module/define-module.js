@@ -49,8 +49,13 @@ function flatten(def) {
     ...(def.sections ?? []).flatMap((section) => section.controls),
   ];
   const out = [];
-  for (const control of lists) {
+  const add = (control) => {
     out.push(control);
+    // A group's controls are the module's too (found by id, patched in place); a group may hold a group.
+    if (control.type === "group") for (const child of control.controls) add(child);
+  };
+  for (const control of lists) {
+    add(control);
     if (control.type === "fx") out.push(...control.controls, ...(control.more ?? []));
     if (control.type === "strip")
       out.push(...(control.sends ?? []).map((send) => ({ ...send, type: "knob", compact: true })));
@@ -84,6 +89,8 @@ function signature(def) {
         return `select:${control.id}:${control.options.map((option) => option.value).join(",")}`;
       if (control.type === "strip")
         return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}${control.onRemove ? "x" : ""}${control.onHacks ? "h" : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
+      if (control.type === "group")
+        return `group:${control.id}:${control.controls.map((child) => child.id).join(",")}`;
       if (control.type === "fx")
         return `fx:${control.id}:${control.depth}:${control.on === undefined ? "" : "sw"}:${control.controls.map((child) => child.id).join(",")}/${(control.more ?? []).map((child) => child.id).join(",")}`;
       return `${control.type}:${control.id}`;

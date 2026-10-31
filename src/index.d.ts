@@ -327,6 +327,23 @@ export interface FxControl {
   more?: Control[];
   moreLabel?: string;
 }
+/**
+ * A collapsible run of controls (NYX's "Tune & shape"): a header button that opens and closes them, with the look
+ * and touch target of the FX card's More. Closed by default. Once toggled, this browser remembers it by `id`
+ * (GROUP_OPEN_KEY, a UI preference, never part of a document).
+ */
+export interface GroupControl {
+  type: "group";
+  id: string;
+  title: string;
+  /** Beside the title while closed: e.g. what differs from the defaults ("+3 st · decay 450 ms"). Empty: nothing. */
+  summary?: string;
+  /** Open before this browser has toggled it. Default false. */
+  open?: boolean;
+  /** After each toggle (the kit has already opened or closed it and remembered it). */
+  onToggle?: (open: boolean) => void;
+  controls: Control[];
+}
 /** A strip's send: a compact knob (0..1) under the strip's M and S. */
 export interface StripSend {
   id: string;
@@ -436,6 +453,7 @@ export type Control =
   | PadGridControl
   | CanvasControl
   | FxControl
+  | GroupControl
   | StripControl
   | StripAddControl;
 
@@ -490,6 +508,16 @@ export function writeHidden(
   key?: string,
 ): void;
 export function seedHidden(ids: readonly string[], key?: string): void;
+/** Where groups' open state is kept: `{ [group id]: open }`. */
+export const GROUP_OPEN_KEY: "netcomposer.groups.v1";
+/** The groups toggled in this browser: id → open. */
+export function readGroups(storage?: Pick<Storage, "getItem"> | null, key?: string): Map<string, boolean>;
+export function writeGroup(
+  storage: Pick<Storage, "getItem" | "setItem"> | null | undefined,
+  id: string,
+  open: boolean,
+  key?: string,
+): void;
 export function defineModule(def: ModuleDef, storageKey?: string): ModuleHandle;
 export function placeModules(
   host: HTMLElement,

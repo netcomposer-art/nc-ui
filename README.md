@@ -70,6 +70,7 @@ Components:
 - `createSwitch({ checked, onChange, labelledBy })`: the one on/off switch (fx-blocks' design). It's a `<button role="switch" aria-checked>` named by its title, showing the ON/OFF word and then a 28×16 track (`switch-*` tokens). Hover takes the text to `text`. The width never changes on toggle. It's at least `target-min` both ways, and transitions use `motion-press`.
 - `createSlider(spec)` / `sliderFactory`: fx-blocks' `SliderFactory` contract (`{ id, label, min, max, value, log?, format, onInput } → { el, set }`). It returns the kit's slider row (`.nc-field[data-nc-slider]`) with a `target-min` hit band on every pointer. Pass `sliderFactory` to fx-blocks' blocks.
 - The `fx` control renders the kit's FX card as `.nc-ui-fx` / `.nc-ui-fx-name`; it was `.nc-fx` before, which clashed with nc-fx's own panel. With `on` it gets fx-blocks' header row (name + switch), and with `more` a "More" disclosure.
+- The `group` control: a collapsible run of a module's controls under a header with the More toggle's look and touch target, `aria-expanded` / `aria-controls`, closed by default, a summary beside the title while closed, and its open state remembered per browser (`GROUP_OPEN_KEY`). See docs/group.md.
 - `.nc-label` / `.nc-readout`: the label style (`label-size`, `label-weight`, `label-tracking`, uppercase, `text-sub`) and the readout style.
 - `confirm()`, `createToast()`, `openStepEditor()`, as before.
 

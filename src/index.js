@@ -19,6 +19,7 @@ export { createSwitch } from "./primitives/switch.js";
 export { createFader, faderHandle } from "./primitives/fader.js";
 export { createMeter, cssSeconds, meterHandle } from "./primitives/meter.js";
 export { stripMeter } from "./primitives/controls.js";
+export { GROUP_OPEN_KEY, readGroups, writeGroup } from "./primitives/group.js";
 export { LOG_STEPS, createSlider, fromPosition, sliderFactory, toPosition } from "./primitives/slider.js";
 export { DEFAULT_GESTURE, PadGesture, bindPadGesture } from "./primitives/gesture.js";
 export { openStepEditor, percent } from "./primitives/step-editor.js";

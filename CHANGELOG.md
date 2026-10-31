@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Group: the `group` control folds a run of a module's controls under one header (the More toggle's look and touch target, `aria-expanded` / `aria-controls`, no motion), closed by default, with a summary while closed; open state is a browser-wide preference (`GROUP_OPEN_KEY`, `readGroups`, `writeGroup`; docs/group.md). First user: NYX's "Tune & shape".
 - Help: `installHelpTips()` and `data-nc-help` show a label's description when the pointer rests on it, in a small toast-styled bubble (`.nc-ui-help`; docs/help.md). Every instrument uses it.
 - Canvas: `paint: "waveform"` draws a sample from `peaks` (min/max pairs), tints the played `region`, marks its start, end and slice `markers`, and a playhead `position` (NYX sampler).
 - Console strips: the Hacks button's outline is `strip-hacks-text` (#8C8C8C), darker than the divider (Peter).
