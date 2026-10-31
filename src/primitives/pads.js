@@ -76,8 +76,9 @@ function renderPad(wrap, index, lookup) {
   wave.append(path);
   pad.append(bar, name, hint, badge, wave);
   bindPadPress(wrap, pad, index, lookup);
-  // Double-click a filled pad to rename it (when the host takes names).
-  pad.addEventListener("dblclick", () => {
+  // Double-click a filled pad's NAME to rename it (when the host takes names). Only the name: a double tap elsewhere
+  // on the pad is two hits, not a rename (Peter, 2026-10-31: the whole pad was too easy to set off).
+  name.addEventListener("dblclick", () => {
     const live = lookup(wrap);
     if (live?.type === "padGrid" && live.onRename && pad.dataset.empty !== "true")
       startRename(wrap, pad, index, lookup);

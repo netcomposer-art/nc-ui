@@ -1263,7 +1263,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   width: ${v("focus-width")};
   background: currentColor;
 }
-.nc-padgrid-pad-name { font-weight: ${v("control-weight")}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nc-padgrid-pad-name { justify-self: start; align-self: flex-start; max-width: 100%; font-weight: ${v("control-weight")}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nc-padgrid-pad-hint { display: none; color: ${v("text-sub")}; font-size: ${v("readout-size-small")}; }
 .nc-padgrid-pad-badge {
   position: absolute;
