@@ -1,6 +1,22 @@
 import { prop, v } from "../alias.js";
 import { MODULATED_SELECTOR } from "../modulated.js";
 
+/** A phone held sideways (the kit's landscape-phone media; the Studio mirrors it onto its frames as data-nc-landscape). */
+export const LANDSCAPE_PHONE = "(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)";
+
+/** The landscape-phone module grid, under `pre` (a root selector, or ""). */
+function landscapeStack(pre) {
+  const st = `${pre}.nc-stack[data-nc-layout="adjacent"]`;
+  return `  ${st} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(${v("module-slim-column")} * 2)), 1fr));
+    align-items: start;
+  }
+  ${st} > .nc-module { border-inline-end: ${v("hairline")} solid ${v("divider")}; }
+  /* Two rows tall as well, so the modules after it fill the column beside it before a new row starts. */
+  ${st} > .nc-module[data-nc-lead]:not([data-nc-slim]) { grid-column: span 2; grid-row: span 2; }`;
+}
+
 /** Class sheet for the kit. Lengths and colours come from the alias module. */
 export function kitCss() {
   const stack = (n) => `
@@ -2630,17 +2646,14 @@ html[data-nc-hosted] .nc-page-body { padding-top: ${v("module-gap")}; }
 }
 /* Phones in landscape (Peter, 2026-11-01: "these sections can be side by side in landscape mode"): a short, wide
    screen puts the modules side by side, as many columns as fit at two slim columns wide (two or three on a phone),
-   each module at its own height, in reading order; the lead (a step grid) takes two columns and two rows. Tablets and desktops
-   are unchanged. */
+   each module at its own height, in reading order; the lead (a step grid) takes two columns and two rows. Tablets and
+   desktops are unchanged. An instrument inside the Studio has a frame as tall as its page, so its own media never
+   reads as landscape: the Studio sets html[data-nc-landscape] on the frame when the Studio's screen is (LANDSCAPE_PHONE). */
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
-  .nc-stack[data-nc-layout="adjacent"] {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(${v("module-slim-column")} * 2)), 1fr));
-    align-items: start;
-  }
-  .nc-stack[data-nc-layout="adjacent"] > .nc-module { border-inline-end: ${v("hairline")} solid ${v("divider")}; }
-  /* Two rows tall as well, so the modules after it fill the column beside it before a new row starts. */
-  .nc-stack[data-nc-layout="adjacent"] > .nc-module[data-nc-lead]:not([data-nc-slim]) { grid-column: span 2; grid-row: span 2; }
+${landscapeStack("")}
+}
+@media (max-width: 1023px) {
+${landscapeStack("html[data-nc-landscape] ")}
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
