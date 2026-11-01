@@ -384,7 +384,8 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
 .nc-tap:active { background: ${v("text")}; border-color: ${v("text")}; color: ${v("surface-page")}; }
 .nc-tap:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 /* ASTRID row spacing: a 48 px row every 72 px (measured on ASTRID's VCA at 1280 and 390). */
-.nc-section:has(> .nc-field[data-nc-slider]) { row-gap: ${v("module-pad")}; }
+/* A flat phone-only group's sliders count as the section's own (group.js, collapse: "phone"). */
+.nc-section:is(:has(> .nc-field[data-nc-slider]), :has(> .nc-group[data-nc-collapse="phone"] > .nc-group-body > .nc-field[data-nc-slider])) { row-gap: ${v("module-pad")}; }
 .nc-section[data-nc-inset="true"] {
   margin-inline: calc(${v("module-pad")} * -1);
   margin-bottom: calc(${v("module-pad")} * -1);

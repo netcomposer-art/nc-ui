@@ -1023,7 +1023,8 @@ button, input, select { font: inherit; color: inherit; }
 .nc-tap:active { background: var(--nc-ui-text); border-color: var(--nc-ui-text); color: var(--nc-ui-surface-page); }
 .nc-tap:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 /* ASTRID row spacing: a 48 px row every 72 px (measured on ASTRID's VCA at 1280 and 390). */
-.nc-section:has(> .nc-field[data-nc-slider]) { row-gap: var(--nc-ui-module-pad); }
+/* A flat phone-only group's sliders count as the section's own (group.js, collapse: "phone"). */
+.nc-section:is(:has(> .nc-field[data-nc-slider]), :has(> .nc-group[data-nc-collapse="phone"] > .nc-group-body > .nc-field[data-nc-slider])) { row-gap: var(--nc-ui-module-pad); }
 .nc-section[data-nc-inset="true"] {
   margin-inline: calc(var(--nc-ui-module-pad) * -1);
   margin-bottom: calc(var(--nc-ui-module-pad) * -1);
