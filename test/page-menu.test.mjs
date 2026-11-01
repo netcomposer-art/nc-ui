@@ -130,3 +130,16 @@ test("kit sheet: phones in landscape put the adjacent modules side by side, the 
   assert.match(block, /align-items: start;/);
   assert.match(block, /\[data-nc-lead\]:not\(\[data-nc-slim\]\) \{ grid-column: span 2; grid-row: span 2; \}/);
 });
+
+test("kit sheet: a host's html[data-nc-landscape] (a Studio frame, as tall as its page) gets the same grid", async () => {
+  const css = kitCss();
+  const at = css.indexOf("@media (max-width: 1023px) {\n  html[data-nc-landscape] .nc-stack");
+  assert.ok(at > 0);
+  const block = css.slice(at, css.indexOf("\n}\n", at));
+  assert.match(block, /html\[data-nc-landscape\] \.nc-stack\[data-nc-layout="adjacent"\] \{\n    display: grid;/);
+  assert.match(block, /html\[data-nc-landscape\] \.nc-stack\[data-nc-layout="adjacent"\] > \.nc-module\[data-nc-lead\]/);
+  const { LANDSCAPE_PHONE } = await import("../src/index.js");
+  assert.equal(LANDSCAPE_PHONE, "(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)");
+  assert.ok(css.includes(`@media ${LANDSCAPE_PHONE} {`));
+});
+
