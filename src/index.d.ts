@@ -326,6 +326,17 @@ export interface FxControl {
   /** Rarely used rows, behind a "More" disclosure (fx-blocks' modulation rows). */
   more?: Control[];
   moreLabel?: string;
+  /**
+   * Give the card a −/+ fold toggle after its switch (the modules' .nc-hide). Folded, a card in a console row is a
+   * narrow column (fx-fold-width): one button with its name read bottom to top and its on/off word; a click, Enter or
+   * Space unfolds it. Elsewhere, and on phones, a folded card keeps only its header row. Folding never touches `on`.
+   * The host keeps the state (a UI preference) and passes it back as `folded`.
+   */
+  onFold?: (folded: boolean) => void;
+  /** Folded now (only with `onFold`). */
+  folded?: boolean;
+  /** Hover words (data-nc-help) for the fold toggle and the folded column. */
+  foldHelp?: string;
 }
 /**
  * A collapsible run of controls (NYX's "Tune & shape"): a header button that opens and closes them, with the look

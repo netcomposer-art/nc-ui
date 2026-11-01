@@ -328,6 +328,7 @@
   --nc-ui-strip-width: 88px;
   --nc-ui-strip-width-master: 112px;
   --nc-ui-fx-card-width: 232px;
+  --nc-ui-fx-fold-width: 120px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
   --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);

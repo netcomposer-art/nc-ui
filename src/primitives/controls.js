@@ -1785,23 +1785,31 @@ function renderFx(control, lookup) {
   name.className = "nc-ui-fx-name";
   name.id = `${control.id}-name`;
   name.textContent = control.title;
-  if (control.on === undefined) card.append(name);
+  const foldable = typeof control.onFold === "function";
+  if (control.on === undefined && !foldable) card.append(name);
   else {
     // fx-blocks' header: the name, then a real switch named by it. Off dims the card by colour.
     const head = document.createElement("div");
     head.className = "nc-ui-fx-hd";
-    const toggle = createSwitch({
-      checked: control.on,
-      labelledBy: name.id,
-      onChange: (on) => {
-        const live = lookup(toggle.el);
-        if (live?.type === "fx") live.onToggle?.(on);
-      },
-    });
-    toggle.el.dataset.ncFxSwitch = "";
-    head.append(name, toggle.el);
+    head.append(name);
+    if (control.on !== undefined) {
+      const toggle = createSwitch({
+        checked: control.on,
+        labelledBy: name.id,
+        onChange: (on) => {
+          const live = lookup(toggle.el);
+          if (live?.type === "fx") live.onToggle?.(on);
+        },
+      });
+      toggle.el.dataset.ncFxSwitch = "";
+      head.append(toggle.el);
+    }
+    if (foldable) head.append(fxHide(card, lookup));
     card.append(head);
   }
+  // Folded (onFold / folded): one button over the whole card, the name read bottom to top and the on/off word. In a
+  // console row it is a narrow column; elsewhere (and on phones) the card keeps only its header row.
+  if (foldable) card.prepend(fxFold(card, lookup));
   for (const child of control.controls) card.append(renderControl(child, lookup));
   if (control.more?.length) {
     const more = document.createElement("details");
@@ -1817,6 +1825,56 @@ function renderFx(control, lookup) {
   return card;
 }
 
+/** Is it drawn (not display: none, here or above)? */
+const drawn = (el) => (typeof el.getClientRects === "function" ? el.getClientRects().length > 0 : !el.hidden);
+
+/** After a fold or unfold, keep focus on whichever of the two fold buttons is drawn now. */
+function fxRefocus(card) {
+  const fold = card.querySelector(":scope > [data-nc-fx-fold]");
+  const hide = card.querySelector("[data-nc-fx-hide]");
+  const folded = card.dataset.ncFolded === "true";
+  const target = folded && fold && drawn(fold) ? fold : hide;
+  if (target instanceof HTMLElement && document.activeElement !== target) target.focus();
+}
+
+/** The card's −/+ (the modules' .nc-hide), at the end of its header, after the switch. */
+function fxHide(card, lookup) {
+  const hide = document.createElement("button");
+  hide.type = "button";
+  hide.className = "nc-hide";
+  hide.dataset.ncFxHide = "";
+  hide.addEventListener("click", () => {
+    const live = lookup(hide);
+    if (live?.type !== "fx") return;
+    live.onFold?.(live.folded !== true);
+    fxRefocus(card);
+  });
+  return hide;
+}
+
+/** The folded card: one button (aria-expanded="false"); a click, Enter or Space unfolds it. */
+function fxFold(card, lookup) {
+  const fold = document.createElement("button");
+  fold.type = "button";
+  fold.className = "nc-ui-fx-fold";
+  fold.dataset.ncFxFold = "";
+  fold.setAttribute("aria-expanded", "false");
+  const state = document.createElement("span");
+  state.className = "nc-ui-fx-fold-state";
+  state.dataset.ncFxFoldState = "";
+  const name = document.createElement("span");
+  name.className = "nc-ui-fx-fold-name";
+  name.dataset.ncFxFoldName = "";
+  fold.append(state, name);
+  fold.addEventListener("click", () => {
+    const live = lookup(fold);
+    if (live?.type !== "fx") return;
+    live.onFold?.(false);
+    fxRefocus(card);
+  });
+  return fold;
+}
+
 function patchFx(node, control) {
   const name = node.querySelector(".nc-ui-fx-name");
   if (name) name.textContent = control.title;
@@ -1824,6 +1882,37 @@ function patchFx(node, control) {
   if (toggle) toggle.setAttribute("aria-checked", control.on ? "true" : "false");
   if (control.on === false) node.dataset.ncDim = "true";
   else delete node.dataset.ncDim;
+  const folded = typeof control.onFold === "function" && control.folded === true;
+  if (folded) node.dataset.ncFolded = "true";
+  else delete node.dataset.ncFolded;
+  const hide = node.querySelector("[data-nc-fx-hide]");
+  if (hide instanceof HTMLElement) {
+    hide.textContent = folded ? "+" : "−";
+    hide.setAttribute("aria-expanded", folded ? "false" : "true");
+    hide.setAttribute("aria-label", `${folded ? "Show" : "Hide"} ${control.title}`);
+    hide.title = folded ? "Show" : "Hide";
+    setHelpWords(hide, control.foldHelp);
+  }
+  const fold = node.querySelector(":scope > [data-nc-fx-fold]");
+  if (fold instanceof HTMLElement) {
+    const state = control.on === undefined ? "" : control.on ? "On" : "Off";
+    fold.hidden = !folded;
+    fold.setAttribute("aria-label", `Show ${control.title}${state ? `, ${state.toLowerCase()}` : ""}`);
+    fold.dataset.on = control.on === true ? "true" : "false";
+    const word = fold.querySelector("[data-nc-fx-fold-state]");
+    if (word) {
+      word.textContent = state;
+      word.hidden = state === "";
+    }
+    const title = fold.querySelector("[data-nc-fx-fold-name]");
+    if (title) title.textContent = control.title;
+    setHelpWords(fold, control.foldHelp);
+  }
+}
+
+function setHelpWords(el, words) {
+  if (words) el.setAttribute("data-nc-help", words);
+  else el.removeAttribute("data-nc-help");
 }
 
 function cssEscape(value) {
