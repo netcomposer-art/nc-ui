@@ -60,6 +60,12 @@ html, body {
   font-weight: ${v("title-weight")};
   line-height: ${v("label-leading")};
 }
+/* Phones: a page never pans sideways. A guard only: whatever is wider than the screen is the bug, fixed where it is
+   (an iPhone sizes a Studio frame to its content, so one wide element pans the whole Studio: Peter, 2026-11-01).
+   clip, not hidden: no scroll container, so position: sticky still sticks. */
+@media (max-width: 768px) {
+  html, body { overflow-x: clip; }
+}
 button, input, select { font: inherit; color: inherit; }
 .nc [hidden] { display: none !important; }
 .nc-stack { display: flex; flex-direction: column; min-width: 0; }
