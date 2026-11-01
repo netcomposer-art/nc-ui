@@ -1,4 +1,4 @@
-import { TAPER_STEPS, isTapered, taperFromUnit, taperKeyPosition, taperPosition, taperToUnit, taperValue } from "./taper.js";
+import { TAPER_STEPS, isTapered, taperFromUnit, taperKeyValue, taperPosition, taperToUnit, taperValue } from "./taper.js";
 import { readCssPx } from "../alias.js";
 import { VELOCITY_RAMPS, surpriseColor, surpriseFillStyle, velocityFillStyle } from "../color.js";
 import { currentTheme, onThemeChange } from "../theme.js";
@@ -269,12 +269,15 @@ function renderSlider(control, lookup) {
   });
   if (tapered)
     input.addEventListener("keydown", (event) => {
-      const next = taperKeyPosition(input.value, event.key, event.shiftKey);
-      if (next === null || input.disabled) return;
+      const live = lookup(input);
+      if (live?.type !== "slider" || input.disabled) return;
+      const taper = live.taper ?? control.taper;
+      const next = taperKeyValue(taper, live.min, live.max, live.value, event.key, event.shiftKey, live.step);
+      if (next === null) return;
       event.preventDefault();
-      input.value = String(next);
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      input.dispatchEvent(new Event("change", { bubbles: true }));
+      input.value = String(taperPosition(taper, live.min, live.max, next));
+      live.onChange(next);
+      live.onCommit?.(next);
     });
   const readout = wrap.querySelector("[data-nc-readout]");
   wrap.insertBefore(input, readout);
@@ -542,11 +545,8 @@ function paintKnob(knob, control) {
 }
 
 function nudgeKnob(live, event) {
-  if (isTapered(live.taper, live.min, live.max)) {
-    const position = taperPosition(live.taper, live.min, live.max, live.value);
-    const next = taperKeyPosition(position, event.key, event.shiftKey);
-    return next === null ? null : taperValue(live.taper, live.min, live.max, next, live.step);
-  }
+  if (isTapered(live.taper, live.min, live.max))
+    return taperKeyValue(live.taper, live.min, live.max, live.value, event.key, event.shiftKey, live.step);
   const span = live.max - live.min || 1;
   const step = typeof live.step === "number" && live.step > 0 ? live.step : span / 100;
   const fine = event.shiftKey ? step / 10 : step;

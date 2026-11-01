@@ -43,6 +43,7 @@ export {
   taperCurve,
   taperFromUnit,
   taperKeyPosition,
+  taperKeyValue,
   taperPosition,
   taperToUnit,
   taperValue,

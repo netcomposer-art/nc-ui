@@ -86,6 +86,15 @@ test("snap to step without float dust; keyboard: 1% per arrow, 0.1% with Shift, 
   assert.equal(T.taperKeyPosition(500, "a"), null);
 });
 
+test("a key always moves the value, even where the step is coarse for the travel", () => {
+  // Compressor attack 1..100 ms in whole ms: 1% of travel from 1 ms is 1.05 ms, which rounds back to 1.
+  assert.equal(T.taperKeyValue("time", 1, 100, 1, "ArrowRight", false, 1), 2);
+  assert.equal(T.taperKeyValue("time", 1, 100, 2, "ArrowLeft", false, 1), 1);
+  assert.equal(T.taperKeyValue("time", 1, 100, 1, "ArrowLeft", false, 1), 1, "stops at the end");
+  assert.equal(T.taperKeyValue("time", 0, 5, 0.625, "ArrowRight", false, 0.001), T.taperValue("time", 0, 5, 510, 0.001));
+  assert.equal(T.taperKeyValue("time", 0, 5, 0.625, "x", false, 0.001), null);
+});
+
 test("dialTaper reads an nc-fx catalog dial", () => {
   assert.equal(T.dialTaper({ key: "attack_ms", unit: "ms", min: 1, max: 100 }), "time");
   assert.equal(T.dialTaper({ key: "release_ms", min: 10, max: 1000 }), "time");
@@ -108,6 +117,7 @@ test("createSlider with a taper: positions in, values out, step snapped, keys by
   assert.deepEqual(got, [0.625]);
   input.dispatchEvent(Object.assign(new Event("keydown"), { key: "ArrowRight" }));
   assert.equal(input.value, "510");
+  assert.equal(got.length, 2);
   assert.equal(got.at(-1), T.taperValue("time", 0, 5, 510, 0.001));
   // A linear slider is untouched (native range in its own units).
   const lin = createSlider({ id: "l", label: "L", min: 0, max: 100, step: 1, value: 40, format: String, onInput() {} });

@@ -3,7 +3,7 @@
 // label and value on one line, the range full width below with a target-min (44 px) touch band on every pointer,
 // and colour dimming when disabled. A tapered slider (spec.taper, see taper.js; `log: true` is the "freq" taper)
 // runs its range in 0..TAPER_STEPS positions.
-import { TAPER_STEPS, isTapered, taperKeyPosition, taperPosition, taperValue } from "./taper.js";
+import { TAPER_STEPS, isTapered, taperKeyValue, taperPosition, taperValue } from "./taper.js";
 
 export const LOG_STEPS = TAPER_STEPS;
 
@@ -76,11 +76,13 @@ export function createSlider(spec, options = {}) {
   });
   if (log)
     input.addEventListener("keydown", (event) => {
-      const next = taperKeyPosition(input.value, event.key, event.shiftKey);
+      const next = taperKeyValue(taper, spec.min, spec.max, value, event.key, event.shiftKey, spec.step);
       if (next === null || input.disabled) return;
       event.preventDefault();
-      input.value = String(next);
-      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.value = String(taperPosition(taper, spec.min, spec.max, next));
+      value = next;
+      show();
+      spec.onInput(value);
     });
   input.disabled = spec.disabled === true;
   set(spec.value);

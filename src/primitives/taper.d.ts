@@ -10,4 +10,5 @@ export function snapToStep(value: number, min: number, max: number, step?: numbe
 export function taperPosition(taper: Taper | undefined, min: number, max: number, value: number): number;
 export function taperValue(taper: Taper | undefined, min: number, max: number, position: number | string, step?: number): number;
 export function taperKeyPosition(position: number | string, key: string, shift?: boolean): number | null;
+export function taperKeyValue(taper: Taper | undefined, min: number, max: number, value: number, key: string, shift?: boolean, step?: number): number | null;
 export function dialTaper(dial: { key?: string; unit?: string | null; curve?: string; taper?: string; options?: unknown } | null | undefined): Taper;

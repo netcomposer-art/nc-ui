@@ -90,6 +90,25 @@ export function taperKeyPosition(position, key, shift = false) {
 }
 
 /**
+ * A key on a tapered control, from its value: the next value by travel (taperKeyPosition), snapped to `step`. When the
+ * step is coarse at that end of the travel (whole milliseconds near 1 ms), it keeps going until the value changes, so a
+ * key always moves. Returns the new value, or null for any other key.
+ */
+export function taperKeyValue(taper, min, max, value, key, shift = false, step) {
+  const from = taperPosition(taper, min, max, value);
+  let next = taperKeyPosition(from, key, shift);
+  if (next === null) return null;
+  let v = taperValue(taper, min, max, next, step);
+  const dir = Math.sign(next - from);
+  const current = snapToStep(Number(value), min, max, step);
+  while (dir !== 0 && v === current && next > 0 && next < TAPER_STEPS) {
+    next += dir;
+    v = taperValue(taper, min, max, next, step);
+  }
+  return v;
+}
+
+/**
  * The taper for an nc-fx catalog dial (its own `taper` if it has one): option dials none; `curve: "log"` a frequency;
  * a millisecond dial (unit "ms", or a key ending "_ms", or the plate's pre-delay) a time; everything else linear.
  * The catalog's frequency, Q, rate and ratio dials already run 0..100 through their own log laws, so they stay linear.
