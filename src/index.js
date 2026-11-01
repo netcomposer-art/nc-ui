@@ -16,6 +16,7 @@ export {
 export { installedCss, installTheme } from "./primitives/install.js";
 export { MODULATED_SELECTOR } from "./modulated.js";
 export { confirm, confirmCss } from "./primitives/confirm.js";
+export { ask } from "./primitives/ask.js";
 export { createSwitch } from "./primitives/switch.js";
 export { createFader, faderHandle } from "./primitives/fader.js";
 export { createMeter, cssSeconds, meterHandle } from "./primitives/meter.js";

@@ -29,7 +29,8 @@ export {
   openStepEditor,
   percent,
 } from "./primitives/step-editor.js";
-export { type ConfirmOptions, confirm, confirmCss } from "./primitives/confirm.js";
+export { type ConfirmOptions, type AskOptions, confirm, confirmCss } from "./primitives/confirm.js";
+export { ask } from "./primitives/ask.js";
 export { type SwitchHandle, type SwitchOptions, createSwitch } from "./primitives/switch.js";
 export {
   LOG_STEPS,
@@ -88,7 +89,11 @@ export interface SelectControl {
   id: string;
   label: string;
   value: string;
-  options: { value: string; label: string }[];
+  /**
+   * `group`: consecutive options with the same group sit under an <optgroup> of that label (the Studio's Add >
+   * Plugins). `disabled`: shown, not pickable.
+   */
+  options: { value: string; label: string; group?: string; disabled?: boolean }[];
   onChange: (value: string) => void;
 }
 export interface ToggleControl {
@@ -127,6 +132,8 @@ export interface NoteControl {
   type: "note";
   id: string;
   text: string;
+  /** "danger": a note that reports something stopped or missing, in the danger token. */
+  tone?: "danger";
 }
 export interface KnobControl {
   type: "knob";

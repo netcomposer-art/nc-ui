@@ -89,7 +89,7 @@ function signature(def) {
       if (control.type === "button")
         return `button:${control.id}${control.onSparkle ? ":spark" : ""}`;
       if (control.type === "select")
-        return `select:${control.id}:${control.options.map((option) => option.value).join(",")}`;
+        return `select:${control.id}:${control.options.map((option) => `${option.group ? `${option.group}/` : ""}${option.value}${option.disabled ? "!" : ""}`).join(",")}`;
       if (control.type === "strip")
         return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}${control.onRemove ? "x" : ""}${control.onHacks ? "h" : ""}${control.onFold ? "f" : ""}${control.pan ? `p=${control.pan.id}` : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
       if (control.type === "group")
