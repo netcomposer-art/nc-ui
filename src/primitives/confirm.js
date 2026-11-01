@@ -27,17 +27,16 @@ const styles = (doc) => {
 if (typeof document !== "undefined") styles(document);
 
 /** See confirm.d.ts and docs/confirm.md. @param {import('./confirm').ConfirmOptions} opts */
-export function confirm({
-  title,
-  body,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
-  danger = false,
-  root,
-  returnFocus,
-  signal,
-}) {
-  if (open || signal?.aborted) return Promise.resolve(false);
+export function confirm(opts) {
+  return dialog(opts).then((r) => !!r.ok);
+}
+
+// ask.js: field(make, ok) gives [row, input].
+export function dialog(
+  { title, body, confirmLabel = "Confirm", cancelLabel = "Cancel", danger = false, root, returnFocus, signal },
+  field,
+) {
+  if (open || signal?.aborted) return Promise.resolve({});
   const doc = root?.ownerDocument ?? document;
   const wait = styles(doc);
   const host = root ?? doc.body;
@@ -72,7 +71,9 @@ export function confirm({
   const ok = button(confirmLabel, "ok");
   if (danger) ok.dataset.danger = "true";
   row.append(cancel, ok);
-  box.append(head, line, row);
+  const [wrap, input] = field?.(make, ok) ?? [];
+  box.append(head, line, ...(wrap ? [wrap] : []), row);
+  const order = [input, cancel, ok].filter(Boolean);
   layer.append(box);
 
   const state = { layer };
@@ -88,7 +89,7 @@ export function confirm({
   const show = () => {
     if (open !== state) return;
     host.append(layer);
-    cancel.focus({ preventScroll: true });
+    (input ?? cancel).focus({ preventScroll: true });
     const raf = win.requestAnimationFrame?.bind(win) ?? ((f) => setTimeout(f, 16));
     raf(() =>
       raf(() => {
@@ -116,11 +117,13 @@ export function confirm({
       done(false);
     } else if (e.key === "Tab") {
       e.preventDefault();
-      (doc.activeElement === cancel ? ok : cancel).focus();
+      const live = order.filter((el) => !el.disabled);
+      const n = live.length;
+      live[(live.indexOf(doc.activeElement) + (e.shiftKey ? n - 1 : 1)) % n].focus();
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (doc.activeElement === ok) done(true);
-      else if (doc.activeElement === cancel) done(false);
+      if (doc.activeElement === cancel) done(false);
+      else if (!ok.disabled) done(true);
     }
   };
   const mute = (e) => e.stopImmediatePropagation();
@@ -153,7 +156,7 @@ export function confirm({
     const gone = () => layer.remove();
     layer.addEventListener("transitionend", (e) => e.target === layer && gone());
     setTimeout(gone, ms + 50); // reduced motion (no transition) or a missed transitionend
-    resolve(value);
+    resolve({ ok: value, value: input?.value.trim() });
   }
   return answer;
 }

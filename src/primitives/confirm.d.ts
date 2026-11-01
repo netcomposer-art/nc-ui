@@ -18,6 +18,15 @@ export interface ConfirmOptions {
    * resolves false and never opens. */
   signal?: AbortSignal;
 }
+export interface AskOptions extends ConfirmOptions {
+  /** The text field: its label (above it), a starting value, a placeholder, and the input type (default "text"). */
+  field?: { label?: string; value?: string; placeholder?: string; type?: "text" | "url" };
+}
+/**
+ * The confirm dialog with one text field (e.g. "Load plugin from URL"). Resolves the text, trimmed, on the action
+ * button or Enter in the field; null on Cancel, Escape, the backdrop or an aborted signal. The action is disabled
+ * while the field is empty. The field has focus when it opens; Tab moves field, Cancel, action.
+ */
 /**
  * An in-app confirm dialog (role=alertdialog), never window.confirm. Resolves true only on the confirm button.
  * Cancel, Escape, a backdrop tap, an aborted signal, and a second confirm() while one is open resolve false. One dialog
