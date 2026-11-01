@@ -145,6 +145,13 @@ export interface KnobControl {
   defaultValue?: number;
   /** The knob over its label, the value in its title only (a strip's sends). */
   compact?: boolean;
+  /**
+   * A centre-out control (a pan): the compact ring fills from its top (the middle of the travel) to the value, and
+   * the value text shows in place of the label while the knob is hovered, focused or dragged.
+   */
+  bipolar?: boolean;
+  /** Hover words (data-nc-help) on the knob's field (label and knob). */
+  help?: string;
   onChange: (value: number) => void;
 }
 export interface ChoiceControl {
@@ -422,6 +429,27 @@ export interface StripControl {
    * lines up with the open strips'. Folding never touches the level or the sound. The host keeps the state.
    */
   onFold?: (folded: boolean) => void;
+  /**
+   * A pan knob (not on the master): a compact bipolar knob, −1 (L) .. +1 (R), between the sends and the fader, labelled
+   * "L R" and read out as "C", "L 30", "R 45" (panText) on hover, focus or drag. Double-click centres it; arrows move
+   * it. Every strip keeps the row (empty without pan), so faders line up. Folded strips hide it and show a tiny pan
+   * mark (--nc-strip-pan).
+   */
+  pan?: {
+    id: string;
+    value: number;
+    onChange: (value: number) => void;
+    /** "L R" by default. */
+    label?: string;
+    /** "<strip label> pan" by default. */
+    ariaLabel?: string;
+    /** panText(value) by default. */
+    valueText?: string;
+    /** Arrow step (default 0.05); Shift is a tenth. */
+    step?: number;
+    /** Hover words for the pan knob. */
+    help?: string;
+  };
   /** Minimized now (only with `onFold`). */
   folded?: boolean;
   /** Hover words for the triangle (and the folded column, unless `foldedHelp`). */
@@ -603,5 +631,7 @@ export function stripMeter(root: ParentNode | null | undefined, id: string): Met
  * The horizontal-fold toggle (FX cards, console strips): a small solid triangle, ◀ while open, flipped to ▶ while
  * folded. −/+ (.nc-hide) stays the vertical hide. `setFoldToggle` sets aria-expanded and "Minimize/Expand <label>".
  */
+/** A pan as a mixer reads it: "C", "L 30", "R 45" (percent of the way to the side). */
+export function panText(value: number): string;
 export function foldToggle(): HTMLButtonElement;
 export function setFoldToggle(button: HTMLElement, folded: boolean, label: string): void;

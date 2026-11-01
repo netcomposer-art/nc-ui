@@ -192,6 +192,7 @@ export function patchControl(node, control) {
   } else if (control.type === "label" || control.type === "note") {
     setText(node, control.text);
   } else if (control.type === "knob") {
+    if (node instanceof HTMLElement) setHelpWords(node, control.help);
     const knob = node.querySelector(".nc-knob");
     if (knob instanceof HTMLElement) paintKnob(knob, control);
     const readout = node.querySelector("[data-nc-readout]");
@@ -482,7 +483,13 @@ function paintKnob(knob, control) {
   const span = control.max - control.min || 1;
   const t = (control.value - control.min) / span;
   markModulated(knob, control.modulated === true);
-  knob.style.setProperty("--knob-turn", String(Math.round(t * 270)));
+  const turn = Math.round(t * 270);
+  knob.style.setProperty("--knob-turn", String(turn));
+  // Bipolar (a pan): the ring fills from its top (the centre of the travel) to the value, either way.
+  if (control.bipolar) {
+    knob.style.setProperty("--knob-from", String(Math.min(turn, 135)));
+    knob.style.setProperty("--knob-to", String(Math.max(turn, 135)));
+  }
   knob.setAttribute("role", "slider");
   knob.setAttribute("aria-valuemin", String(control.min));
   knob.setAttribute("aria-valuemax", String(control.max));
@@ -509,6 +516,7 @@ function renderKnob(control, lookup) {
   const wrap = field(control.id, control.label);
   // Compact (a strip's sends): the knob over its label, the value in the knob's title and aria-valuetext.
   if (control.compact) wrap.dataset.ncCompact = "";
+  if (control.bipolar) wrap.dataset.ncBipolar = "";
   const knob = document.createElement("button");
   knob.type = "button";
   knob.className = "nc-knob";
@@ -523,7 +531,12 @@ function renderKnob(control, lookup) {
     const live = lookup(knob);
     startVal = live && "value" in live ? Number(live.value) : 0;
     knob.setPointerCapture?.(event.pointerId);
+    wrap.dataset.ncDragging = "true";
   });
+  const endDrag = () => delete wrap.dataset.ncDragging;
+  knob.addEventListener("pointerup", endDrag);
+  knob.addEventListener("pointercancel", endDrag);
+  knob.addEventListener("lostpointercapture", endDrag);
   knob.addEventListener("pointermove", (event) => {
     if (knob.hasPointerCapture && !knob.hasPointerCapture(event.pointerId)) return;
     const live = lookup(knob);
@@ -1574,6 +1587,11 @@ function renderStrip(control, lookup) {
   const sends = document.createElement("div");
   sends.className = "nc-strip-sends";
   for (const send of control.sends ?? []) sends.append(renderControl({ ...send, type: "knob", compact: true }, lookup));
+  // Pan (a channel's L/R): a compact bipolar knob between the sends and the fader. Every strip keeps the row, empty
+  // without pan (the master), so the faders still line up.
+  const pan = document.createElement("div");
+  pan.className = "nc-strip-pan";
+  if (control.pan) pan.append(renderControl(panKnob(control), lookup));
   const body = document.createElement("div");
   body.className = "nc-strip-body";
   const scale = document.createElement("span");
@@ -1623,7 +1641,11 @@ function renderStrip(control, lookup) {
     const label = document.createElement("span");
     label.className = "nc-ui-fx-fold-name";
     label.dataset.ncStripFoldName = "";
-    fold.append(cap, label);
+    const panMark = document.createElement("span");
+    panMark.className = "nc-strip-fold-pan";
+    panMark.setAttribute("aria-hidden", "true");
+    panMark.hidden = !control.pan;
+    fold.append(cap, panMark, label);
     fold.addEventListener("click", () => {
       const live = lookup(strip);
       if (live?.type !== "strip") return;
@@ -1655,9 +1677,36 @@ function renderStrip(control, lookup) {
     if (live?.type === "strip") reset(live);
   });
   if (hide) strip.append(hide);
-  strip.append(head, hacks, ms, sends, body, readout, probe());
+  strip.append(head, hacks, ms, sends, pan, body, readout, probe());
   patchStrip(strip, control);
   return strip;
+}
+
+/** A strip's pan as the kit knob: compact, bipolar, −1 (L) .. +1 (R), centre on a double-click. */
+export function panKnob(control) {
+  const pan = control.pan;
+  return {
+    type: "knob",
+    id: pan.id,
+    label: pan.label ?? "L R",
+    ariaLabel: pan.ariaLabel ?? `${control.label} pan`,
+    min: -1,
+    max: 1,
+    step: pan.step ?? 0.05,
+    value: pan.value,
+    valueText: pan.valueText ?? panText(pan.value),
+    defaultValue: 0,
+    compact: true,
+    bipolar: true,
+    help: pan.help,
+    onChange: (value) => pan.onChange(value),
+  };
+}
+
+/** "C", "L 30", "R 45": the pan as a mixer reads it out (percent of the way to the side). */
+export function panText(value) {
+  const n = Math.round(Math.min(1, Math.max(-1, value)) * 100);
+  return n === 0 ? "C" : n < 0 ? `L ${-n}` : `R ${n}`;
 }
 
 /** A single click on a readout opens the type-in after this, unless a second click makes it a double-click. */
@@ -1808,6 +1857,11 @@ function patchStrip(node, control) {
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;
   delete node.dataset.ncIdentity;
+  if (control.pan) {
+    node.style.setProperty("--nc-strip-pan", String(control.pan.value));
+    const knob = node.querySelector(`.nc-strip-pan [data-nc-id="${cssEscape(control.pan.id)}"]`);
+    if (knob) patchControl(knob, panKnob(control));
+  }
   const folded = !control.master && typeof control.onFold === "function" && control.folded === true;
   if (folded) node.dataset.ncFolded = "true";
   else delete node.dataset.ncFolded;

@@ -1716,7 +1716,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   flex: none;
   width: ${v("strip-width")};
   display: grid;
-  grid-template-rows: auto ${v("slider-pitch")} ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+  /* Name, Inserts, M/S, sends, pan, the fader body, the readout. */
+  grid-template-rows: auto ${v("slider-pitch")} ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
   justify-items: center;
   row-gap: ${v("module-gap")};
   min-width: 0;
@@ -1779,6 +1780,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 .nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-remove,
 .nc-strip[data-nc-folded] > .nc-strip-hacks,
 .nc-strip[data-nc-folded] > .nc-strip-sends,
+.nc-strip[data-nc-folded] > .nc-strip-pan,
 .nc-strip[data-nc-folded] > .nc-strip-db,
 .nc-strip[data-nc-folded] > .nc-strip-db-input,
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-fader,
@@ -1790,7 +1792,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   .nc-strip[data-nc-folded] .nc-ms-wrap { width: ${v("target-min")}; }
 }
 .nc-strip[data-nc-folded] > .nc-strip-body {
-  grid-row: 5;
+  grid-row: 6;
   grid-template-columns: auto auto;
   column-gap: ${v("control-gap")};
 }
@@ -1800,6 +1802,25 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 .nc-strip-fold { gap: ${v("control-gap")}; }
 .nc-strip-fold > .nc-ui-fx-fold-name { font-size: ${v("label-size")}; font-weight: ${v("label-weight")}; letter-spacing: ${v("label-tracking")}; text-transform: uppercase; }
 .nc-strip[data-silent="true"] .nc-strip-fold > .nc-ui-fx-fold-name { color: ${v("text-sub")}; }
+/* Folded with a pan: a tiny track with a dot where the pan sits (--nc-strip-pan, −1..1). */
+.nc-strip-fold-pan {
+  position: relative;
+  flex: none;
+  width: ${v("fader-cap-height")};
+  height: ${v("control-gap")};
+  background: linear-gradient(${v("divider")}, ${v("divider")}) center / 100% ${v("hairline")} no-repeat;
+}
+.nc-strip-fold-pan[hidden] { display: none; }
+.nc-strip-fold-pan::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc((var(--nc-strip-pan, 0) + 1) / 2 * (100% - ${v("control-gap")}));
+  width: ${v("control-gap")};
+  height: ${v("control-gap")};
+  border-radius: 50%;
+  background: ${v("text-sub")};
+}
 .nc-strip-fold-cap {
   flex: none;
   width: ${v("fader-cap-height")};
@@ -1837,6 +1858,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 }
 .nc-hacks:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 .nc-strip-sends { display: flex; align-items: flex-start; gap: ${v("module-gap")}; }
+/* Pan: one compact bipolar knob, centred, in its own row (empty on the master, so the faders line up). */
+.nc-strip-pan { display: flex; justify-content: center; align-items: flex-start; }
 .nc-field[data-nc-compact] {
   flex-direction: column-reverse;
   align-items: center;
@@ -1851,6 +1874,26 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
     radial-gradient(closest-side, ${v("surface-page")} 70%, transparent 72%),
     conic-gradient(from 225deg, ${v("meter-fill")} calc(var(--knob-turn, 0) * 1deg), ${v("meter-track")} 0 270deg, transparent 0);
 }
+/* A bipolar knob (pan) fills from the top of its travel (the centre) to the value, either way. */
+.nc-field[data-nc-compact][data-nc-bipolar] .nc-knob {
+  background:
+    radial-gradient(closest-side, ${v("surface-page")} 70%, transparent 72%),
+    conic-gradient(from 225deg, ${v("meter-track")} calc(var(--knob-from, 135) * 1deg), ${v("meter-fill")} 0 calc(var(--knob-to, 135) * 1deg), ${v("meter-track")} 0 270deg, transparent 0);
+}
+/* Its value ("C", "L 30") shows in the label's place while hovered, focused or dragged; no motion. */
+.nc-field[data-nc-compact][data-nc-bipolar] .nc-readout {
+  order: -1;
+  flex: none;
+  width: auto;
+  min-width: max-content;
+  max-width: none;
+  text-align: center;
+  font-size: ${v("label-size")};
+  line-height: ${v("label-leading")};
+  white-space: nowrap;
+}
+.nc-field[data-nc-compact][data-nc-bipolar]:is(:hover, :focus-within, [data-nc-dragging]) .nc-label { display: none; }
+.nc-field[data-nc-compact][data-nc-bipolar]:is(:hover, :focus-within, [data-nc-dragging]) .nc-readout { display: block; }
 /* Its mark starts at the bottom of the travel (7:30) and turns 270° to 4:30, along the ring. */
 .nc-field[data-nc-compact] .nc-knob-mark { transform: rotate(calc((var(--knob-turn, 0) - 135) * 1deg)); }
 .nc-strip-body {
