@@ -2029,6 +2029,15 @@ function fxFold(card, lookup) {
   fold.addEventListener("click", () => {
     const live = lookup(fold);
     if (live?.type !== "fx") return;
+    // Not folded, only shown as a column beside a maximized neighbour: restore that neighbour instead.
+    if (live.folded !== true) {
+      const maxed = card.parentElement?.querySelector(':scope > .nc-ui-fx[data-nc-max="row"]');
+      const toggle = maxed?.querySelector(":scope > .nc-ui-fx-hd > [data-nc-fx-max]");
+      if (toggle instanceof HTMLElement) {
+        toggle.click();
+        return;
+      }
+    }
     live.onFold?.(false);
     fxRefocus(card);
   });
@@ -2068,6 +2077,7 @@ function fxMax(card, lookup) {
   button.type = "button";
   button.className = "nc-fx-max";
   button.dataset.ncFxMax = "";
+  button.dataset.ncMaxToggle = "";
   button.append(maxIcon());
   button.addEventListener("click", () => {
     const live = lookup(button);
@@ -2096,6 +2106,13 @@ function syncMax(card, control) {
   const want = maximizable(control) && MAXED.has(control.id) && !(typeof control.onFold === "function" && control.folded === true);
   if (button instanceof HTMLElement) {
     button.hidden = !maximizable(control) || (typeof control.onFold === "function" && control.folded === true);
+    // The EQ graph is a display until the card is maximized (eq-graph.js): tell it this card can be.
+    if (card.hasAttribute("data-nc-maxable") === button.hidden) {
+      card.toggleAttribute("data-nc-maxable", !button.hidden);
+      nextFrame(card.ownerDocument, () => {
+        for (const graph of card.querySelectorAll(".nc-eq")) if (graph instanceof HTMLElement) paintEqGraph(graph);
+      });
+    }
     button.setAttribute("aria-pressed", want ? "true" : "false");
     button.setAttribute("aria-label", `${want ? "Restore" : "Maximize"} ${control.title}`);
     button.title = want ? "Restore (Esc)" : "Maximize";
@@ -2115,6 +2132,9 @@ function syncMax(card, control) {
     return;
   }
   const mode = maxMode(card);
+  // One line of dials when maximized: one column per dial (the kit sheet reads --nc-fx-dials).
+  const dials = [...card.children].filter((c) => c.matches?.(".nc-field, [data-nc-slider]")).length;
+  if (dials > 0) card.style.setProperty("--nc-fx-dials", String(dials));
   if (card.dataset.ncMax !== mode) {
     if (card.dataset.ncMax) unMax(card);
     card.dataset.ncMax = mode;
@@ -2130,6 +2150,7 @@ function syncMax(card, control) {
 function unMax(card) {
   const mode = card.dataset.ncMax;
   delete card.dataset.ncMax;
+  card.style.removeProperty("--nc-fx-dials");
   if (mode === "over") {
     card.previousElementSibling?.matches(".nc-fx-ghost") && card.previousElementSibling.remove();
     card.querySelector(":scope > .nc-ui-fx-hd > .nc-fx-close")?.remove();

@@ -58,6 +58,8 @@
   --nc-ui-color-filter-blue: #3E6FB0;
   --nc-ui-color-filter-accent: color-mix(in srgb, var(--nc-ui-color-accent) 80%, var(--nc-ui-color-paper));
   --nc-ui-color-filter-red: #B8443A;
+  --nc-ui-color-eq-orange-light: #E8963E;
+  --nc-ui-color-eq-orange-deep: #C26A2A;
   --nc-ui-color-tw-gray-50: oklch(98.5% 0.002 247.839);
   --nc-ui-color-tw-gray-100: oklch(96.7% 0.003 264.542);
   --nc-ui-color-tw-gray-600: oklch(44.6% 0.03 256.802);
@@ -329,17 +331,17 @@
   --nc-ui-strip-width-master: 112px;
   --nc-ui-fx-card-width: 232px;
   --nc-ui-strip-fold-width: var(--nc-ui-space-40);
-  --nc-ui-eq-graph-height: 112px;
+  --nc-ui-eq-graph-height: 168px;
   --nc-ui-eq-graph-height-max: 248px;
-  --nc-ui-eq-node-size: var(--nc-ui-space-12);
+  --nc-ui-eq-node-size: var(--nc-ui-space-8);
   --nc-ui-eq-graph-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-eq-curve: var(--nc-ui-color-accent);
   --nc-ui-eq-fill: var(--nc-ui-color-filter-blue);
   --nc-ui-eq-grid: var(--nc-ui-color-div-0);
   --nc-ui-eq-spectrum: var(--nc-ui-color-slate);
-  --nc-ui-eq-band-1: var(--nc-ui-color-amber);
-  --nc-ui-eq-band-2: var(--nc-ui-color-filter-red);
-  --nc-ui-eq-band-3: var(--nc-ui-color-plum);
+  --nc-ui-eq-band-1: var(--nc-ui-color-eq-orange-light);
+  --nc-ui-eq-band-2: var(--nc-ui-color-astrid-orange);
+  --nc-ui-eq-band-3: var(--nc-ui-color-eq-orange-deep);
   --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
@@ -532,6 +534,8 @@
   --nc-ui-color-plum: #BB93C8;
   --nc-ui-color-filter-blue: #6E9CD8;
   --nc-ui-color-filter-red: #DC746A;
+  --nc-ui-color-eq-orange-light: #F2AE5C;
+  --nc-ui-color-eq-orange-deep: #DB8746;
   --nc-ui-color-tw-gray-50: #1B1A19;
   --nc-ui-color-tw-gray-100: #232221;
   --nc-ui-color-tw-gray-600: #A6A5A4;
@@ -607,6 +611,8 @@
     --nc-ui-color-plum: #BB93C8;
     --nc-ui-color-filter-blue: #6E9CD8;
     --nc-ui-color-filter-red: #DC746A;
+    --nc-ui-color-eq-orange-light: #F2AE5C;
+    --nc-ui-color-eq-orange-deep: #DB8746;
     --nc-ui-color-tw-gray-50: #1B1A19;
     --nc-ui-color-tw-gray-100: #232221;
     --nc-ui-color-tw-gray-600: #A6A5A4;
@@ -1751,7 +1757,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   margin: calc(var(--nc-ui-eq-node-size) / -2) 0 0 calc(var(--nc-ui-eq-node-size) / -2);
   border-radius: 50%;
   background: var(--nc-eq-tone);
-  box-shadow: 0 0 0 calc(var(--nc-ui-hairline) * 2) var(--nc-ui-eq-graph-bg);
+  box-shadow: 0 0 0 var(--nc-ui-hairline) var(--nc-ui-eq-graph-bg);
   cursor: grab;
   touch-action: none;
   outline: none;
@@ -1785,6 +1791,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-eq-node[data-drag="true"] { cursor: grabbing; }
 .nc-eq-node:focus-visible { box-shadow: 0 0 0 calc(var(--nc-ui-hairline) * 2) var(--nc-ui-eq-graph-bg), 0 0 0 calc(var(--nc-ui-hairline) * 2 + var(--nc-ui-focus-width)) var(--nc-ui-focus-ring); }
 .nc-eq[data-on="false"] .nc-eq-node { --nc-eq-tone: var(--nc-ui-text-sub); }
+/* Not maximized: a display. The dots are markers; a click on the plot maximizes the card. */
+.nc-eq[data-locked] .nc-eq-plot { cursor: zoom-in; }
+.nc-eq[data-locked] .nc-eq-node { pointer-events: none; cursor: inherit; }
 /* The readout beside the band in use: "MID −18 dB · 938 Hz · Q 0.3". */
 .nc-eq-tip {
   position: absolute;
@@ -1845,6 +1854,13 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   column-gap: calc(var(--nc-ui-module-pad) * 2);
   row-gap: var(--nc-ui-module-gap);
   align-content: start;
+}
+/* Maximized, the dials sit on one line (Peter, 2026-11-01): as many columns as the card has dials (--nc-fx-dials,
+   set by controls.js), sharing the width. */
+.nc-ui-fx[data-nc-max="over"][style*="--nc-fx-dials"],
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-max="row"][style*="--nc-fx-dials"] {
+  grid-template-columns: repeat(var(--nc-fx-dials), minmax(0, 1fr));
+  column-gap: var(--nc-ui-module-pad);
 }
 .nc-ui-fx[data-nc-max="row"] > :is(.nc-ui-fx-hd, .nc-eq, .nc-ui-more, .nc-ui-fx-fold, .nc-note),
 .nc-ui-fx[data-nc-max="over"] > :is(.nc-ui-fx-hd, .nc-eq, .nc-ui-more, .nc-ui-fx-fold, .nc-note) { grid-column: 1 / -1; }
@@ -2490,6 +2506,26 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 }
 /* A maximized card in a console row takes three cards' width (the whole fx row), folded neighbours or not. */
 @media (min-width: 769px) {
+  /* Its neighbours (Peter, 2026-11-01: "don't wrap the other inserts below, minimize them horizontally") show as
+     folded columns beside it for as long as it is maximized; a click on one restores the card (controls.js). Their
+     own fold state is untouched. */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]):has(> .nc-ui-fx-fold) {
+    flex: none;
+    width: var(--nc-ui-fx-fold-width);
+    padding-inline: 0;
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]):has(> .nc-ui-fx-fold) > :not(.nc-ui-fx-fold, .nc-token-probe) { display: none; }
+  /* !important: the fold button is [hidden] while its card is open, and .nc [hidden] is display: none !important. */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]) > .nc-ui-fx-fold { display: flex !important; }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] > .nc-ui-fx[data-nc-max="row"][data-nc-max="row"][data-nc-max="row"] {
+    flex: none;
+    width: calc(var(--nc-ui-fx-card-width) * 3);
+  }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] > .nc-ui-fx[data-nc-max="row"] { grid-column: span 3; }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-max="row"][data-nc-max="row"] {
     width: calc(var(--nc-ui-fx-card-width) * 3);
