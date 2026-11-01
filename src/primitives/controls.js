@@ -1849,6 +1849,8 @@ function patchStrip(node, control) {
     remove.title = `Remove ${control.label}`;
   }
   node.setAttribute("aria-label", control.label);
+  // sendsHidden: the host hides its sends (the Studio's "− Sends"); the row goes, on every strip, so they line up.
+  node.toggleAttribute("data-nc-sends-hidden", control.sendsHidden === true);
   const faderEl = node.querySelector(".nc-fader");
   const fader = faderEl ? faderHandle(faderEl) : undefined;
   if (fader) {
