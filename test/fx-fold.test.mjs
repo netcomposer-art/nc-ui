@@ -190,7 +190,7 @@ test("strip fold: never on the master; CSS is a narrow column of tokens with the
   assert.match(css, /\.nc-strip\[data-nc-folded\] \{ width: var\(--nc-ui-strip-fold-width\); padding-inline: 0; align-content: start; \}/);
   assert.match(css, /\.nc-strip > \[data-nc-strip-hide\] \{ position: absolute; top: var\(--nc-ui-control-gap\); left: var\(--nc-ui-control-gap\);/);
   assert.doesNotMatch(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd/, "the name row is untouched");
-  assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-row: 5;/);
+  assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-row: 6;/);
   assert.match(css, /\.nc-strip-fold-cap \{[^}]*background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap\)\);/);
   const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
   assert.match(reduced, /\.nc-strip \{|\.nc-strip,|, \.nc-strip \{/);

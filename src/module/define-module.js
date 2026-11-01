@@ -1,5 +1,5 @@
 import { v } from "../alias.js";
-import { paintAll, patchControl, renderControl } from "../primitives/controls.js";
+import { paintAll, panKnob, patchControl, renderControl } from "../primitives/controls.js";
 import { installTheme } from "../primitives/install.js";
 import { createSwitch } from "../primitives/switch.js";
 
@@ -57,8 +57,10 @@ function flatten(def) {
   for (const control of lists) {
     add(control);
     if (control.type === "fx") out.push(...control.controls, ...(control.more ?? []));
-    if (control.type === "strip")
+    if (control.type === "strip") {
       out.push(...(control.sends ?? []).map((send) => ({ ...send, type: "knob", compact: true })));
+      if (control.pan) out.push(panKnob(control));
+    }
   }
   return out;
 }
@@ -88,7 +90,7 @@ function signature(def) {
       if (control.type === "select")
         return `select:${control.id}:${control.options.map((option) => option.value).join(",")}`;
       if (control.type === "strip")
-        return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}${control.onRemove ? "x" : ""}${control.onHacks ? "h" : ""}${control.onFold ? "f" : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
+        return `strip:${control.id}:${control.channels ?? 1}:${control.master ? "master" : ""}:${control.onMute ? "m" : ""}${control.onSolo ? "s" : ""}${control.onRemove ? "x" : ""}${control.onHacks ? "h" : ""}${control.onFold ? "f" : ""}${control.pan ? `p=${control.pan.id}` : ""}:${(control.sends ?? []).map((send) => send.id).join(",")}:${(control.ticks ?? []).map((tick) => `${tick.label}@${tick.value}`).join(",")}`;
       if (control.type === "group")
         return `group:${control.id}:${control.controls.map((child) => child.id).join(",")}`;
       if (control.type === "fx")
