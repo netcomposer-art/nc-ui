@@ -1022,7 +1022,8 @@ button, input, select { font: inherit; color: inherit; }
 .nc-tap:active { background: var(--nc-ui-text); border-color: var(--nc-ui-text); color: var(--nc-ui-surface-page); }
 .nc-tap:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
 /* ASTRID row spacing: a 48 px row every 72 px (measured on ASTRID's VCA at 1280 and 390). */
-.nc-section:has(> .nc-field[data-nc-slider]) { row-gap: var(--nc-ui-module-pad); }
+/* A flat phone-only group's sliders count as the section's own (group.js, collapse: "phone"). */
+.nc-section:is(:has(> .nc-field[data-nc-slider]), :has(> .nc-group[data-nc-collapse="phone"] > .nc-group-body > .nc-field[data-nc-slider])) { row-gap: var(--nc-ui-module-pad); }
 .nc-section[data-nc-inset="true"] {
   margin-inline: calc(var(--nc-ui-module-pad) * -1);
   margin-bottom: calc(var(--nc-ui-module-pad) * -1);
@@ -2009,6 +2010,11 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-group-summary:empty, .nc-group[data-nc-open="true"] .nc-group-summary { display: none; }
 .nc-group-body { display: flex; flex-direction: column; gap: var(--nc-ui-module-pad); min-width: 0; }
 .nc-group-body[hidden] { display: none; }
+/* A phone-only group (collapse: "phone"): flat on tablets and desktops (no header; group and body are display:
+   contents, so its controls are the section's own flex items, as before it was grouped); a group on phones, below,
+   where data-nc-open (not the hidden attribute, which group.js leaves off it) hides its body while closed. */
+.nc-group[data-nc-collapse="phone"], .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: contents; }
+.nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: none; }
 /* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
    text with an accent hairline under it; hover takes the word and the line to text. Both words share one grid cell,
    so the control never changes width when it flips. */
@@ -3408,6 +3414,25 @@ html[data-nc-hosted] .nc-page-body { padding-top: var(--nc-ui-module-gap); }
   html[data-nc-landscape] .nc-stack[data-nc-layout="adjacent"] > .nc-module { border-inline-end: var(--nc-ui-hairline) solid var(--nc-ui-divider); }
   /* Two rows tall as well, so the modules after it fill the column beside it before a new row starts. */
   html[data-nc-landscape] .nc-stack[data-nc-layout="adjacent"] > .nc-module[data-nc-lead]:not([data-nc-slim]) { grid-column: span 2; grid-row: span 2; }
+}
+/* Phone-only groups fold on phones: portrait, a landscape phone, and a Studio frame on a landscape phone. */
+@media (max-width: 768px) {
+  .nc-group[data-nc-collapse="phone"] { display: flex; }
+  .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: grid; }
+  .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: flex; }
+  .nc-group[data-nc-collapse="phone"][data-nc-open="false"] > .nc-group-body { display: none; }
+}
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .nc-group[data-nc-collapse="phone"] { display: flex; }
+  .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: grid; }
+  .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: flex; }
+  .nc-group[data-nc-collapse="phone"][data-nc-open="false"] > .nc-group-body { display: none; }
+}
+@media (max-width: 1023px) {
+  html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] { display: flex; }
+  html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: grid; }
+  html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: flex; }
+  html[data-nc-landscape] .nc-group[data-nc-collapse="phone"][data-nc-open="false"] > .nc-group-body { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,

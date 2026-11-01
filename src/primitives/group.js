@@ -4,6 +4,12 @@
 // target. It is a real button: aria-expanded, aria-controls naming the body, Enter and Space. It shows and hides
 // at once, with no motion.
 //
+// `collapse: "phone"` (Peter, 2026-11-01: "collapse the functions on all modules that are advanced and/or lesser used")
+// makes the group a phone-only fold: on a phone (portrait, max-width 768px; a landscape phone, LANDSCAPE_PHONE; or a
+// Studio frame marked html[data-nc-landscape]) it is a group like any other, closed until toggled; on a tablet or
+// desktop the kit's CSS flattens it (no header, its controls laid out as if the group weren't there), so a wide
+// screen looks exactly as before. Pure CSS: turning the phone round re-lays it out with no script.
+//
 // Whether a group is open is a browser-wide UI preference, kept like the modules' hide (localStorage,
 // GROUP_OPEN_KEY, by the group's id). It is never part of an app's document. `open` is only the first state, until
 // the group is toggled.
@@ -77,6 +83,7 @@ export function renderGroup(control, lookup, renderChild) {
     if (live?.type === "group") live.onToggle?.(open);
   });
   wrap.append(toggle, body);
+  markCollapse(wrap, control);
   setOpen(wrap, groupOpen(control));
   patchGroup(wrap, control);
   return wrap;
@@ -89,11 +96,23 @@ function setOpen(wrap, open) {
   toggle?.setAttribute("aria-expanded", open ? "true" : "false");
   const mark = toggle?.querySelector(".nc-group-mark");
   if (mark) mark.textContent = open ? "−" : "+";
-  if (body instanceof HTMLElement) body.hidden = !open;
+  // A phone-only group's body is never `hidden` (the page's `.nc [hidden]` is display: none !important, which would
+  // hide it on a desktop too): the kit's phone CSS hides it from data-nc-open instead.
+  if (body instanceof HTMLElement) body.hidden = !open && wrap.dataset.ncCollapse !== "phone";
+}
+
+/** data-nc-collapse="phone" from the control; true when it changed. */
+function markCollapse(node, control) {
+  const want = control.collapse === "phone" ? "phone" : undefined;
+  if (node.dataset.ncCollapse === want) return false;
+  if (want) node.dataset.ncCollapse = want;
+  else delete node.dataset.ncCollapse;
+  return true;
 }
 
 /** The header's words (the open state is the kit's own; the children are patched by the caller). */
 export function patchGroup(node, control) {
+  if (markCollapse(node, control)) setOpen(node, node.dataset.ncOpen === "true");
   const title = node.querySelector(":scope > .nc-group-toggle > .nc-group-title");
   if (title && title.textContent !== control.title) title.textContent = control.title;
   const summary = node.querySelector(":scope > .nc-group-toggle > .nc-group-summary");

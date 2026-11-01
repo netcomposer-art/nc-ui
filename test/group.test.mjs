@@ -152,3 +152,49 @@ test("group CSS: the More toggle's look and touch target, tokens only, no motion
   assert.match(summary, /grid-area: 2 \/ 1 \/ 3 \/ -1/);
   assert.doesNotMatch(summary, /nowrap|ellipsis/);
 });
+
+test('group collapse: "phone": marked for the kit CSS, closed until toggled, remembered, unmarked when dropped', () => {
+  store.clear();
+  const m = defineModule(def({ collapse: "phone", id: "more" }));
+  document.body.append(m.el);
+  const group = m.el.querySelector('.nc-group[data-nc-id="more"]');
+  assert.equal(group.dataset.ncCollapse, "phone");
+  assert.equal(group.dataset.ncOpen, "false", "closed by default (shown flat on wide screens by CSS)");
+  // Never `hidden` (the page's `.nc [hidden]` is !important): the phone CSS hides it from data-nc-open.
+  assert.equal(group.querySelector(".nc-group-body").hidden, false);
+  click(group.querySelector(".nc-group-toggle"));
+  assert.equal(group.dataset.ncOpen, "true");
+  assert.equal(readGroups(storage).get("more"), true, "remembered by id, as any group");
+  // A later build that is open from storage.
+  const again = defineModule(def({ collapse: "phone", id: "more" }));
+  assert.equal(again.el.querySelector(".nc-group").dataset.ncOpen, "true");
+  // An update that drops the option drops the mark.
+  m.update(def({ id: "more" }));
+  assert.equal(group.dataset.ncCollapse, undefined);
+  click(group.querySelector(".nc-group-toggle"));
+  assert.equal(group.querySelector(".nc-group-body").hidden, true, "an ordinary group again: hidden while closed");
+  m.el.remove();
+});
+
+test('group collapse: "phone" CSS: flat (display: contents, no header) off phones; a group on phones, landscape and html[data-nc-landscape]', () => {
+  const css = kitCss();
+  const g = '.nc-group[data-nc-collapse="phone"]';
+  assert.ok(css.includes(`${g}, ${g} > .nc-group-body { display: contents; }`));
+  assert.ok(css.includes(`${g} > .nc-group-toggle { display: none; }`));
+  // The phone rules come after the flat ones (same specificity: the later wins) under each phone condition.
+  const flat = css.indexOf(`${g} > .nc-group-toggle { display: none; }`);
+  const media = [
+    "@media (max-width: 768px) {",
+    "@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {",
+  ];
+  for (const q of media) {
+    let at = css.indexOf(q, flat);
+    while (at >= 0 && !css.slice(at, css.indexOf("\n}", at)).includes(g)) at = css.indexOf(q, at + 1);
+    assert.ok(at > flat, q);
+    const body = css.slice(at, css.indexOf("\n}", at));
+    assert.ok(body.includes(`${g} > .nc-group-toggle { display: grid; }`), q);
+    assert.ok(body.includes(`${g}[data-nc-open="false"] > .nc-group-body { display: none; }`), q);
+  }
+  assert.ok(css.includes(`html[data-nc-landscape] ${g}[data-nc-open="false"] > .nc-group-body { display: none; }`));
+  assert.equal(index.LANDSCAPE_PHONE, "(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)");
+});

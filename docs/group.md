@@ -12,6 +12,7 @@ NYX's "Tune & shape" (Tune, Fine, Fit, Attack, Decay, Filter, Resonance) under S
   title: "Tune & shape",
   summary: "+3 st · decay 450 ms",   // shown beside the title while closed; "" shows nothing extra
   open: false,                         // the first state, before this browser has toggled it (default false)
+  collapse: "phone",                   // optional: fold only on phones; flat on tablets and desktops (below)
   onToggle: (open) => {},              // optional: after the kit has opened or closed it
   controls: [ /* any controls, labels included; a group may hold a group */ ],
 }
@@ -34,7 +35,24 @@ callbacks run as anywhere else in the module.
   document, files or presets. `readGroups()` / `writeGroup()` are exported for apps that need them.
 - Open, its controls are spaced as the module's own (`module-pad`).
 
+## Phone-only (`collapse: "phone"`)
+
+Peter, 2026-11-01: "In general, use your best judgement and collapse the functions on all modules that are advanced
+and/or lesser used functions" (on an iPhone). A module puts its advanced or lesser-used controls in a group with
+`collapse: "phone"`:
+
+- On a phone (max-width 768 px; a landscape phone, `LANDSCAPE_PHONE`; or a frame a host marks
+  `html[data-nc-landscape]`, as the Studio does) it is an ordinary group, closed until this browser toggles it.
+- On a tablet or desktop it is flat: no header, and the group and its body are `display: contents`, so its controls
+  lay out as the section's own, exactly as before they were grouped.
+- It is CSS only (`.nc-group[data-nc-collapse="phone"]`), so turning the phone round re-lays it out with no script.
+  The open state is the group's usual one (by id); it only shows on phones. Its body never carries `hidden` (a
+  page's `.nc [hidden]` is `display: none !important`); the phone CSS hides it from `data-nc-open="false"`.
+- Never put a control needed mid-performance in one (Play/Stop, Panic, pads, keys, a main level).
+- Give it a `summary` of what's inside with the current values ("Swing 0% · Sync follower"), so a closed group still
+  says what it holds.
+
 ## Classes
 
 `.nc-group[data-nc-id][data-nc-open]` › `button.nc-group-toggle` (`.nc-group-title`, `.nc-group-summary`,
-`.nc-group-mark`) and `.nc-group-body`.
+`.nc-group-mark`) and `.nc-group-body`; `[data-nc-collapse="phone"]` on a phone-only group.
