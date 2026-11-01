@@ -154,3 +154,27 @@ test('theme.js: applyTheme, currentTheme, onThemeChange, followHostTheme', async
   assert.equal(inner.document.documentElement.getAttribute('data-nc-theme'), 'dark');
   assert.equal(t.followHostTheme({ frameElement: null, document: inner.document }), null);
 });
+
+test('step cells: the velocity fill is the theme\'s ramp, and a theme change repaints them', async () => {
+  const { window, document } = installDom();
+  window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
+  const { renderControl } = await import('../src/primitives/controls.js');
+  const { applyTheme } = await import('../src/theme.js');
+  const control = {
+    type: 'stepGrid', id: 'grid', selectedRow: 'kick', playhead: -1,
+    rows: [{ id: 'kick', label: 'Kick', length: 2, steps: [{ on: true, velocity: 0.5 }, { on: false }] }],
+  };
+  const node = renderControl(control, () => control);
+  document.body.append(node);
+  const cell = node.querySelector('[data-nc-step="kick:0"]');
+  const fill = () => cell.style.getPropertyValue('--nc-ui-velocity-fill');
+  assert.equal(fill(), velocityFill(0.5).fill, 'light ramp');
+  assert.equal(cell.getAttribute('data-nc-velocity'), '0.5');
+  applyTheme('dark', document);
+  await new Promise((r) => setTimeout(r, 0)); // the MutationObserver
+  assert.equal(fill(), velocityFill(0.5, VELOCITY_RAMPS.dark).fill, 'dark ramp after the change');
+  applyTheme('light', document);
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(fill(), velocityFill(0.5).fill, 'light again');
+  assert.equal(node.querySelector('[data-nc-step="kick:1"]').hasAttribute('data-nc-velocity'), false);
+});
