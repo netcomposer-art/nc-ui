@@ -1004,7 +1004,38 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-fx-hd > .nc-ui-fx-name { margin: 0 auto 0 0; }
 /* Fold (onFold): a −/+ after the switch. Folded, the card keeps its header row only; in a console row from 769 px it
    is a narrow column instead (below). It folds and unfolds at once: no motion. */
-.nc-ui-fx-hd > [data-nc-fx-hide] { flex: none; padding-inline-end: 0; }
+.nc-ui-fx-hd > [data-nc-fx-hide] { flex: none; }
+/* The horizontal-fold toggle (foldToggle): a small solid triangle, about the ×'s size, in text-sub (ink on hover).
+   ◀ while open, flipped to ▶ while folded; the flip takes motion-press, and reduced motion makes it instant. −/+
+   (.nc-hide) stays the vertical hide: the triangle means fold sideways. */
+.nc-fold-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin: 0;
+  padding: ${v("hairline")};
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  line-height: 1;
+  cursor: pointer;
+}
+.nc-fold-toggle:hover { color: ${v("text")}; }
+.nc-fold-toggle:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-fold-tri {
+  display: block;
+  width: calc(${v("control-gap")} * 1.5);
+  height: calc(${v("control-gap")} * 2);
+  background: currentColor;
+  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  transition: transform ${v("motion-press")} ${v("motion-press-easing")};
+}
+.nc-fold-toggle[aria-expanded="false"] .nc-fold-tri,
+.nc-ui-fx-fold > .nc-fold-tri { transform: scaleX(-1); }
+.nc-ui-fx-fold > .nc-fold-tri { flex: none; color: ${v("text-sub")}; }
+.nc-ui-fx-fold:hover > .nc-fold-tri { color: ${v("text")}; }
 .nc-ui-fx-fold { display: none; }
 .nc-ui-fx[data-nc-folded] > :not(.nc-ui-fx-hd, .nc-token-probe) { display: none; }
 .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { margin-bottom: 0; }
@@ -1397,6 +1428,15 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 @media (pointer: coarse) {
   .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
   .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
+  .nc-fold-toggle::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, ${v("target-min")});
+    height: max(100%, ${v("target-min")});
+    transform: translate(-50%, -50%);
+  }
   .nc-strip[data-nc-folded] > .nc-strip-ms { gap: 0; }
   .nc-strip[data-nc-folded] .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: 0; margin-top: calc(${v("module-gap")} * -1); }
   .nc-ms {
@@ -1725,27 +1765,15 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   color: ${v("text")};
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
-/* Minimize (onFold): − at the start of the name row; the name and its × stay together as before, after the name, so
-   the name always sits between the − and the × and a minimize click can't land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the + on the name
-   row, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
+/* Minimize (onFold): the fold triangle in the top-left corner, above the name; the name row and its × as before, so a
+   minimize click can't land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the
+   ▶ in the corner, the name row kept but unseen, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
    fader cap's colour (one button, the FX fold's look) beside a thin meter. At once: no motion. */
-.nc-strip[data-nc-foldable] > .nc-strip-hd {
-  justify-content: flex-start;
-  /* Into the strip's side padding, with half gaps: the name keeps the room it had beside the × alone. */
-  width: calc(100% + ${v("control-gap")} * 2);
-  max-width: none;
-  margin-inline: calc(${v("control-gap")} * -1);
-  gap: calc(${v("control-gap")} / 2);
-  /* Over the next strip's background, so the × at the very edge is never painted over. */
-  position: relative;
-  z-index: 1;
-}
-/* line-height 1: the name row stays the master's height, so faders still line up across the console. */
-.nc-strip-hd > [data-nc-strip-hide] { flex: none; padding-inline: 0; line-height: 1; margin-inline-end: auto; }
-/* The name and its × stay together as before, centred in the room after the −. */
-.nc-strip[data-nc-foldable] > .nc-strip-hd > :last-child { margin-inline-end: auto; }
+/* The triangle sits in the strip's top-left corner, above the name; folded, centred over the column. */
+.nc-strip > [data-nc-strip-hide] { position: absolute; top: ${v("control-gap")}; left: ${v("control-gap")}; z-index: 1; }
+.nc-strip[data-nc-folded] > [data-nc-strip-hide] { left: 50%; transform: translateX(-50%); }
 .nc-strip[data-nc-folded] { width: ${v("strip-fold-width")}; padding-inline: 0; align-content: start; }
-.nc-strip[data-nc-folded] > .nc-strip-hd { justify-content: center; width: 100%; margin-inline: 0; }
+.nc-strip[data-nc-folded] > .nc-strip-hd { justify-content: center; }
 /* The name stays in the row, unseen and zero wide, so the row keeps the open strips' height and the meters line up. */
 .nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-name { visibility: hidden; width: 0; flex: 0 0 0; }
 .nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-remove,
@@ -1788,7 +1816,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   width: 100%;
   height: 100%;
   padding: 0;
-  border: ${v("hairline")} solid ${v("strip-hacks-text")};
+  /* A light outline at rest (Peter, 2026-10-31): the divider; text-sub on hover, so it still reads as a button. */
+  border: ${v("hairline")} solid ${v("divider")};
   border-radius: ${v("slot-radius")};
   background: transparent;
   color: ${v("strip-hacks-text")};
@@ -1800,7 +1829,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   cursor: pointer;
   transition: none;
 }
-.nc-hacks:hover { color: ${v("text")}; }
+.nc-hacks:hover { color: ${v("text")}; border-color: ${v("text-sub")}; }
 .nc-hacks[aria-pressed="true"] {
   background: ${v("fader-cap-master")};
   border-color: ${v("fader-cap-master")};
@@ -2286,7 +2315,7 @@ html[data-nc-hosted] .nc-page-body { padding-top: ${v("module-gap")}; }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
   .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
-  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold, .nc-strip {
+  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold, .nc-strip, .nc-fold-tri {
     transition: none;
     animation: none;
   }
