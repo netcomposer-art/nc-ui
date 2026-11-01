@@ -56,8 +56,6 @@ export declare const base: {
     readonly "filter-blue": "#3E6FB0";
     readonly "filter-accent": "#315873";
     readonly "filter-red": "#B8443A";
-    readonly "eq-orange-light": "#E8963E";
-    readonly "eq-orange-deep": "#C26A2A";
     readonly "tw-gray-50": "oklch(98.5% 0.002 247.839)";
     readonly "tw-gray-100": "oklch(96.7% 0.003 264.542)";
     readonly "tw-gray-600": "oklch(44.6% 0.03 256.802)";
@@ -352,9 +350,9 @@ export declare const semantic: {
   readonly "eq-fill": "#3E6FB0";
   readonly "eq-grid": "#DDDDDD";
   readonly "eq-spectrum": "#56688C";
-  readonly "eq-band-1": "#E8963E";
+  readonly "eq-band-1": "#FEAA02";
   readonly "eq-band-2": "#EB512E";
-  readonly "eq-band-3": "#C26A2A";
+  readonly "eq-band-3": "#EF937E";
   readonly "eq-panel-layer": "10";
   readonly "fx-fold-width": "120px";
   readonly "head-margin-compact": "12px";
@@ -973,9 +971,9 @@ export declare const refs: {
   readonly "eq-fill": "color.filter-blue";
   readonly "eq-grid": "color.div-0";
   readonly "eq-spectrum": "color.slate";
-  readonly "eq-band-1": "color.eq-orange-light";
+  readonly "eq-band-1": "color.nyx-amber";
   readonly "eq-band-2": "color.astrid-orange";
-  readonly "eq-band-3": "color.eq-orange-deep";
+  readonly "eq-band-3": null;
   readonly "eq-panel-layer": null;
   readonly "fx-fold-width": null;
   readonly "head-margin-compact": "space.12";
@@ -1121,8 +1119,6 @@ export declare const themes: {
       readonly "filter-blue": "#3E6FB0";
       readonly "filter-accent": "#315873";
       readonly "filter-red": "#B8443A";
-      readonly "eq-orange-light": "#E8963E";
-      readonly "eq-orange-deep": "#C26A2A";
       readonly "tw-gray-50": "oklch(98.5% 0.002 247.839)";
       readonly "tw-gray-100": "oklch(96.7% 0.003 264.542)";
       readonly "tw-gray-600": "oklch(44.6% 0.03 256.802)";
@@ -1258,9 +1254,9 @@ export declare const themes: {
       readonly "eq-fill": "#3E6FB0";
       readonly "eq-grid": "#DDDDDD";
       readonly "eq-spectrum": "#56688C";
-      readonly "eq-band-1": "#E8963E";
+      readonly "eq-band-1": "#FEAA02";
       readonly "eq-band-2": "#EB512E";
-      readonly "eq-band-3": "#C26A2A";
+      readonly "eq-band-3": "#EF937E";
       readonly "eq-panel-layer": "10";
       readonly "fx-fold-width": "120px";
       readonly "head-margin-compact": "12px";
@@ -1464,8 +1460,6 @@ export declare const themes: {
       readonly "filter-blue": "#6E9CD8";
       readonly "filter-accent": "#5A8BAE";
       readonly "filter-red": "#DC746A";
-      readonly "eq-orange-light": "#F2AE5C";
-      readonly "eq-orange-deep": "#DB8746";
       readonly "tw-gray-50": "#1B1A19";
       readonly "tw-gray-100": "#232221";
       readonly "tw-gray-600": "#A6A5A4";
@@ -1601,9 +1595,9 @@ export declare const themes: {
       readonly "eq-fill": "#6E9CD8";
       readonly "eq-grid": "#353433";
       readonly "eq-spectrum": "#90A0C1";
-      readonly "eq-band-1": "#F2AE5C";
+      readonly "eq-band-1": "#FEAA02";
       readonly "eq-band-2": "#EB512E";
-      readonly "eq-band-3": "#DB8746";
+      readonly "eq-band-3": "#993C27";
       readonly "eq-panel-layer": "10";
       readonly "fx-fold-width": "120px";
       readonly "head-margin-compact": "12px";
