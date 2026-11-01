@@ -2340,6 +2340,12 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   transition: none;
 }
 .nc-hacks:hover { color: var(--nc-ui-text); border-color: var(--nc-ui-text-sub); }
+/* On the darker alternate strips the divider outline nearly vanishes: text-sub at 50% there (still lighter than the
+   old outline); hover still takes it to text-sub. */
+.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) .nc-hacks:not([aria-pressed="true"]) {
+  border-color: color-mix(in oklab, var(--nc-ui-text-sub) 50%, var(--nc-ui-divider));
+}
+.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) .nc-hacks:not([aria-pressed="true"]):hover { border-color: var(--nc-ui-text-sub); }
 .nc-hacks[aria-pressed="true"] {
   background: var(--nc-ui-fader-cap-master);
   border-color: var(--nc-ui-fader-cap-master);

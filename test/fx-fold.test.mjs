@@ -222,4 +222,5 @@ test("Inserts button: a light divider outline at rest, text-sub on hover; presse
   assert.match(rule(".nc-hacks"), /color: var\(--nc-ui-strip-hacks-text\);/, "text as before");
   assert.match(css, /\.nc-hacks:hover \{ color: var\(--nc-ui-text\); border-color: var\(--nc-ui-text-sub\); \}/);
   assert.ok(css.indexOf('.nc-hacks[aria-pressed="true"] {') > css.indexOf(".nc-hacks:hover {"), "pressed wins over hover");
+  assert.match(css, /nth-child\(even of \.nc-strip:not\(\[data-nc-master\]\)\) \.nc-hacks:not\(\[aria-pressed="true"\]\) \{\s*border-color: color-mix\(in oklab, var\(--nc-ui-text-sub\) 50%, var\(--nc-ui-divider\)\);/);
 });
