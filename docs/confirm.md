@@ -49,3 +49,23 @@ if (ok) reset();
   35%), `dialog-width` (320px), `dialog-pad`, `dialog-gap`, `dialog-button-gap`, `dialog-radius`, `dialog-leading` (`leading.readout`, 1.35),
   `on-danger` (paper; 5.27:1 on `danger`), plus `surface-page`, `text`, `text-sub`, `divider`, `danger`,
   `focus-ring`, `focus-width-strong`, `target-min`, `title-size-slim`, `body-size`, `readout-size`, `label-tracking`.
+
+## ask(): one text field
+
+```ts
+import { ask } from '@netcomposer/nc-ui';
+
+const url = await ask({
+  title: 'Load a plugin from a URL',
+  body: 'Paste the address of its plugin.json.',
+  field: { label: 'Address', placeholder: 'https://…/plugin.json', type: 'url' },
+  confirmLabel: 'Next',
+  returnFocus: opener,
+});
+if (url) …;              // the text, trimmed; null for Cancel, Escape, the backdrop or an aborted signal
+```
+
+The same dialog, look and rules as `confirm()`, with a labelled field between the line and the buttons. The field has
+focus when it opens; Tab and Shift+Tab move field, Cancel, action. Enter in the field acts. The action is disabled
+(and skipped by Tab) while the field is empty. Styles are in confirm.css (`.nc-ui-confirm-field`,
+`.nc-ui-confirm-label`, `.nc-ui-confirm-input`).

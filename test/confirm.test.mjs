@@ -85,9 +85,10 @@ test('confirm.js links confirm.css beside it', () => {
   assert.match(source, /new URL\("\.\/confirm\.css", import\.meta\.url\)/);
 });
 
-test('confirm.js has no dependencies and stays under 2 KB gzipped', () => {
+// 2.25 KB since ask() (ask.js) shares its dialog: the field hook, Tab over three stops, the text in the answer.
+test('confirm.js has no dependencies and stays under 2.25 KB gzipped', () => {
   const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
   assert.doesNotMatch(code, /^\s*import\b/m);
   assert.doesNotMatch(code, /window\.confirm|\balert\(/);
-  assert.ok(gzipSync(source).length <= 2048, `${gzipSync(source).length} bytes`);
+  assert.ok(gzipSync(source).length <= 2304, `${gzipSync(source).length} bytes`);
 });

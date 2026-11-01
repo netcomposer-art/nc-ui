@@ -1469,6 +1469,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.nc-note[data-nc-tone="danger"] { color: ${v("danger")}; }
 .nc-knob {
   width: ${v("knob-size")};
   height: ${v("knob-size")};

@@ -196,6 +196,10 @@ export function patchControl(node, control) {
     if (value) value.textContent = control.value;
   } else if (control.type === "label" || control.type === "note") {
     setText(node, control.text);
+    if (control.type === "note" && node instanceof HTMLElement) {
+      if (control.tone) node.dataset.ncTone = control.tone;
+      else delete node.dataset.ncTone;
+    }
   } else if (control.type === "knob") {
     if (node instanceof HTMLElement) setHelpWords(node, control.help);
     const knob = node.querySelector(".nc-knob");
@@ -297,11 +301,20 @@ function renderSelect(control, lookup) {
   input.className = "nc-select";
   input.id = control.id;
   input.dataset.ncId = control.id;
+  // Options with a `group` sit under an <optgroup> of that label (consecutive ones share it), e.g. "Plugins".
+  let group = null;
   for (const option of control.options) {
     const el = document.createElement("option");
     el.value = option.value;
     el.textContent = option.label;
-    input.append(el);
+    if (option.disabled) el.disabled = true;
+    if (!option.group) group = null;
+    else if (group?.getAttribute("label") !== option.group) {
+      group = document.createElement("optgroup");
+      group.setAttribute("label", option.group);
+      input.append(group);
+    }
+    (group ?? input).append(el);
   }
   input.value = control.value;
   input.addEventListener("change", () => {
@@ -467,6 +480,7 @@ function renderNote(control) {
   el.className = "nc-note";
   el.dataset.ncId = control.id;
   el.dataset.ncRow = "";
+  if (control.tone) el.dataset.ncTone = control.tone;
   el.textContent = control.text;
   el.append(probe());
   return el;

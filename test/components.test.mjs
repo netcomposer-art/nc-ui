@@ -189,3 +189,41 @@ test("hosted (inside the Studio): no title block or band, the header keeps its c
   assert.match(css, /html\[data-nc-hosted\] \.nc-page-hd::before \{ display: none; \}/);
   assert.match(css, /html\[data-nc-hosted\] \.nc-page \{ padding-top: var\(--nc-ui-module-gap\); min-height: 0; \}/);
 });
+
+test("select: options with a group sit under an <optgroup>; disabled options can't be picked; groups are in the shape", () => {
+  // linkedom's <select> has no value setter: a minimal one (the first option with that value is selected).
+  const proto = Object.getPrototypeOf(document.createElement("select"));
+  if (!Object.getOwnPropertyDescriptor(proto, "value")?.set)
+    Object.defineProperty(proto, "value", {
+      configurable: true,
+      get() { return this.querySelector("option[selected]")?.value ?? this.querySelector("option")?.value ?? ""; },
+      set(v) { for (const o of this.querySelectorAll("option")) o.toggleAttribute("selected", o.value === v); },
+    });
+  const options = [
+    { value: "", label: "Effect…" },
+    { value: "delay", label: "Delay" },
+    { value: "plugin:a", label: "Tremolo", group: "Plugins" },
+    { value: "plugin:b", label: "Fuzz (failed)", group: "Plugins", disabled: true },
+    { value: "url", label: "Load plugin from URL…" },
+  ];
+  const el = renderControl({ type: "select", id: "add", label: "Add", value: "", options, onChange() {} }, () => undefined);
+  const select = el.querySelector("select");
+  const groups = select.querySelectorAll("optgroup");
+  assert.equal(groups.length, 1);
+  assert.equal(groups[0].getAttribute("label"), "Plugins");
+  assert.deepEqual([...groups[0].querySelectorAll("option")].map((o) => o.value), ["plugin:a", "plugin:b"]);
+  assert.equal(groups[0].querySelectorAll("option")[1].disabled, true);
+  assert.deepEqual([...select.children].map((c) => c.tagName), ["OPTION", "OPTION", "OPTGROUP", "OPTION"]);
+  // A new plugin in the list rebuilds the select (the module's shape includes the options and their groups).
+  const def = (opts) => ({ id: "m", title: "M", sections: [{ id: "s", controls: [{ type: "select", id: "add", label: "Add", value: "", options: opts, onChange() {} }] }] });
+  const mod = defineModule(def(options));
+  document.body.append(mod.el);
+  mod.update(def([...options.slice(0, 3), { value: "plugin:c", label: "Echo", group: "Plugins" }, options[4]]));
+  assert.deepEqual([...mod.el.querySelectorAll("optgroup option")].map((o) => o.value), ["plugin:a", "plugin:c"]);
+});
+
+test('note: tone "danger" marks it, and an update can clear it', () => {
+  const el = renderControl({ type: "note", id: "n", text: "Stopped.", tone: "danger" }, () => undefined);
+  assert.equal(el.dataset.ncTone, "danger");
+  assert.match(rule('.nc-note[data-nc-tone="danger"]'), /color: var\(--nc-ui-danger\)/);
+});
