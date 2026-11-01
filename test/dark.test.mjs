@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { load, compile, darkSource } from '../scripts/build-tokens.mjs';
 import { themes, semantic } from '../dist/tokens.js';
-import { contrastRatio, velocityFill, VELOCITY_RAMPS, VELOCITY_RAMP } from '../src/color.js';
+import { contrastRatio, hexToOklab, velocityFill, VELOCITY_RAMPS, VELOCITY_RAMP } from '../src/color.js';
 import { isGreen, rgbOf } from '../scripts/lint-ui.mjs';
 import { installDom } from './helpers/dom.mjs';
 
@@ -19,7 +19,7 @@ test('the dark CSS: an explicit choice and the system setting (unless light was 
   const block = css.slice(css.indexOf(':root[data-nc-theme="dark"]'), css.indexOf('@media (prefers-color-scheme: dark)'));
   const props = [...block.matchAll(/^\s+(--[\w-]+):/gm)].map((m) => m[1]);
   assert.ok(props.length > 40);
-  for (const p of props) assert.match(p, /^--nc-ui-(color-|legacy-|toast-|dialog-|eq-curve$|eq-fill$)|^--nc-synth-key-/, p);
+  for (const p of props) assert.match(p, /^--nc-ui-(color-|legacy-|toast-|dialog-|eq-curve$|eq-fill$|meter-fill$)|^--nc-synth-key-/, p);
   // Both blocks carry the same declarations.
   const media = css.slice(css.indexOf('@media (prefers-color-scheme: dark)'));
   for (const p of props) assert.ok(media.includes(`${p}:`), p);
@@ -57,6 +57,11 @@ test('no green in the dark set', () => {
 const PAIRS = [
   ['text', 'surface-page', 7, 'body text'],
   ['text', 'module-bg-stack-4', 7, 'text on the lightest card'],
+  ...[1, 2, 3, 4].map((n) => ['text', `module-bg-adjacent-${n}`, 7, 'text on a module']),
+  ...[1, 2, 3].map((n) => ['text', `module-bg-stack-${n}`, 7, 'text in the stack']),
+  ['text', 'surface-raised', 7, 'text on a raised surface (hover, filled slot)'],
+  // The Studio's FX cards sit on modules 02-04 and inherit the console's stack-1 sub text.
+  ...[2, 3, 4].map((n) => ['module-sub-stack-1', `module-bg-adjacent-${n}`, 4.5, 'secondary text on a console FX card']),
   ['text-sub', 'surface-page', 4.5, 'secondary text'],
   ...[1, 2, 3, 4].map((n) => ['text-sub', `module-bg-adjacent-${n}`, 4.5, 'secondary text on a module']),
   ['text-sub', 'accent-tint', 4.5, 'secondary text on the selected row'],
@@ -101,9 +106,41 @@ test('dark contrast: every text pair clears 4.5:1, every UI part 3:1', () => {
   if (process.env.NC_CONTRAST) console.log(rows.join('\n'));
 });
 
-test('dividers stay subtle', () => {
+test('dividers stay subtle on the page, and no track disappears on a module', () => {
+  // 2026-11-01: the modules step 9 a shade, so the hairline (also the slider and meter track) sits above module 04.
   const r = contrastRatio(d.divider, d['surface-page']);
-  assert.ok(r > 1.2 && r < 1.6, `divider ${r}`);
+  assert.ok(r > 1.2 && r < 2.2, `divider ${r}`);
+  for (const n of [1, 2, 3, 4]) {
+    const bg = d[`module-bg-adjacent-${n}`];
+    for (const k of ['divider', 'slider-track', 'meter-track', 'eq-grid'])
+      assert.ok(contrastRatio(d[k], bg) >= 1.2, `${k} ${d[k]} on module ${n} ${bg}`);
+    assert.ok(contrastRatio(d['surface-raised'], bg) >= 1.15, `surface-raised on module ${n}`);
+    assert.ok(contrastRatio(d['eq-graph-bg'], bg) >= 1.15, `EQ graph plot on module ${n}`);
+  }
+  // FX cards in the console (modules 02-04) keep the console's stack-1 hairline and track.
+  for (const n of [2, 3, 4])
+    assert.ok(contrastRatio(d['module-div-stack-1'], d[`module-bg-adjacent-${n}`]) >= 1.15, `fx card track on module ${n}`);
+});
+
+// Peter, 2026-11-01: 5 levels a module read as "a solid wall of black". Each module now sits a clear step
+// (OKLab lightness) above the one before it, and module 01 a clear step above the page; the stack too.
+const L = (hex) => hexToOklab(hex)[0];
+test('dark modules: each module a clear step lighter than the last, the first clear of the page', () => {
+  const ramp = ['surface-page', 1, 2, 3, 4].map((n) => (typeof n === 'number' ? d[`module-bg-adjacent-${n}`] : d[n]));
+  for (let i = 1; i < ramp.length; i++) {
+    const dl = L(ramp[i]) - L(ramp[i - 1]);
+    assert.ok(dl >= 0.03, `step ${i}: ${ramp[i - 1]} -> ${ramp[i]} is ${dl.toFixed(4)} (min 0.03)`);
+    assert.ok(dl <= 0.05, `step ${i}: ${dl.toFixed(4)} is stripy (max 0.05)`);
+  }
+  // Neutrals: no hue in the module greys.
+  for (const c of ramp.slice(1)) assert.ok(Math.hypot(...hexToOklab(c).slice(1)) < 0.01, `${c} is not neutral`);
+  // The Hacks panel sits below the page; its cards climb apart from each other.
+  const stack = [1, 2, 3, 4].map((n) => d[`module-bg-stack-${n}`]);
+  assert.ok(L(d['surface-page']) - L(stack[0]) >= 0.015, 'the Hacks panel is darker than the page');
+  for (let i = 1; i < stack.length; i++) assert.ok(L(stack[i]) - L(stack[i - 1]) >= 0.04, `hack card ${i}`);
+  // Console strips alternate a clear step, not more.
+  const s = L(d['strip-alt-bg']) - L(d['strip-bg']);
+  assert.ok(s >= 0.03 && s <= 0.05, `strip alternation ${s}`);
 });
 
 test('velocity: the dark ramp keeps its mark at 4.5:1 and climbs away from the page', () => {
