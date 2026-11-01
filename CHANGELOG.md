@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Console strips: on the darker alternate strips the Inserts outline is `text-sub` at 50% against the divider, so it stays visible (Peter); hover is still `text-sub`, pressed unchanged.
 - Console strips: `pan` adds a compact bipolar knob (−1 L .. +1 R) in its own row between the sends and the fader, labelled "L R" and read out as "C" / "L 30" / "R 45" (`panText`) on hover, focus or drag; double-click centres it. Every strip keeps the row, so faders line up; folded strips hide it and show a tiny pan mark. Knobs gain `bipolar` (the ring fills from the centre) and `help` (hover words).
 - Console strips: the Inserts (Hacks) button's outline is the `divider` at rest and `text-sub` on hover (Peter: lighter); its text, and the pressed and master filled looks, are unchanged.
 - Horizontal fold: `foldToggle()` / `setFoldToggle()`, a small solid triangle (◀ open, flipped to ▶ folded; `text-sub`, ink on hover; `motion-press` flip, instant under reduced motion; `target-min` pad on touch), replaces the −/+ on FX cards and console strips (Peter's mockup). On a strip it sits in the top-left corner above the name, so the name row and its × are as before. Labels "Minimize …" / "Expand …". −/+ stays the vertical module hide.
