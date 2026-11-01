@@ -101,6 +101,7 @@ const theme = {
     "nc-strip-width-master": "var(--nc-ui-strip-width-master)",
     "nc-fx-card-width": "var(--nc-ui-fx-card-width)",
     "nc-fx-fold-width": "var(--nc-ui-fx-fold-width)",
+    "nc-strip-fold-width": "var(--nc-ui-strip-fold-width)",
     "nc-head-margin-compact": "var(--nc-ui-head-margin-compact)",
     "nc-tab-pad-y": "var(--nc-ui-tab-pad-y)",
     "nc-tab-mark": "var(--nc-ui-tab-mark)",

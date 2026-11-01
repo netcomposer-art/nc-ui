@@ -121,3 +121,77 @@ test("FX fold CSS: tokens only, a narrow console column from 769 px, header row 
   assert.match(reduced, /\.nc-ui-fx-fold\b/);
   assert.match(css, /\.nc-ui-fx-fold\[data-on="true"\] \.nc-ui-fx-fold-state \{ color: var\(--nc-ui-text\); border-bottom-color: var\(--nc-ui-accent\); \}/);
 });
+
+function stripControl(state) {
+  return {
+    type: "strip",
+    id: "strip-bass",
+    label: "Bass",
+    value: 0.75,
+    step: 0.01,
+    valueText: "−9.0",
+    onChange: (v) => state.levels.push(v),
+    onMute: () => state.ms.push("m"),
+    onSolo: () => state.ms.push("s"),
+    onRemove: () => state.removed++,
+    removeHelp: "Removes Bass from the Studio.",
+    folded: state.folded,
+    onFold: (folded) => state.folds.push(folded),
+    foldHelp: "Minimizes this channel.",
+    foldedHelp: "Bass, minimized.",
+  };
+}
+
+test("strip fold: − first and × last in the name row; folded keeps M, S, the meter and a name button", () => {
+  const state = { folded: false, folds: [], levels: [], ms: [], removed: 0 };
+  let control = stripControl(state);
+  const strip = renderControl(control, () => control);
+  document.body.append(strip);
+  const head = strip.querySelector(".nc-strip-hd");
+  assert.equal(head.firstElementChild.dataset.ncStripHide, "", "minimize first");
+  assert.equal(head.lastElementChild.dataset.ncStripRemove, "", "remove last");
+  const hide = head.firstElementChild;
+  assert.equal(hide.className, "nc-hide");
+  assert.equal(hide.getAttribute("aria-expanded"), "true");
+  assert.equal(hide.getAttribute("aria-label"), "Minimize Bass");
+  assert.equal(hide.getAttribute("data-nc-help"), "Minimizes this channel.");
+  assert.equal(head.lastElementChild.getAttribute("data-nc-help"), "Removes Bass from the Studio.");
+  const fold = strip.querySelector(".nc-strip-body > [data-nc-strip-fold]");
+  assert.ok(fold);
+  assert.equal(fold.hidden, true);
+  click(hide);
+  assert.deepEqual(state.folds, [true]);
+  assert.equal(state.removed, 0, "minimize never removes");
+  state.folded = true;
+  control = stripControl(state);
+  patchControl(strip, control);
+  assert.equal(strip.dataset.ncFolded, "true");
+  assert.equal(hide.textContent, "+");
+  assert.equal(hide.getAttribute("aria-label"), "Show Bass");
+  assert.equal(fold.hidden, false);
+  assert.equal(fold.getAttribute("aria-expanded"), "false");
+  assert.equal(fold.getAttribute("aria-label"), "Show Bass");
+  assert.equal(fold.getAttribute("data-nc-help"), "Bass, minimized.");
+  assert.equal(fold.querySelector("[data-nc-strip-fold-name]").textContent, "Bass");
+  assert.ok(fold.querySelector(".nc-strip-fold-cap"));
+  click(strip.querySelector('[data-nc-ms="mute"]').parentElement);
+  click(strip.querySelector('[data-nc-ms="solo"]').parentElement);
+  assert.deepEqual(state.ms, ["m", "s"], "M and S still work folded");
+  assert.deepEqual(state.levels, [], "folding never moves the fader");
+  click(fold);
+  assert.deepEqual(state.folds, [true, false]);
+  strip.remove();
+});
+
+test("strip fold: never on the master; CSS is a narrow column of tokens with the meter on its row", () => {
+  const control = { ...stripControl({ folds: [], levels: [], ms: [] }), master: true, folded: true };
+  const strip = renderControl(control, () => control);
+  assert.equal(strip.querySelector("[data-nc-strip-hide]"), null);
+  assert.equal(strip.dataset.ncFolded, undefined);
+  assert.match(css, /\.nc-strip\[data-nc-folded\] \{ width: var\(--nc-ui-strip-fold-width\); padding-inline: 0; align-content: start; \}/);
+  assert.match(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd \{\s*justify-content: space-between;/);
+  assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-row: 5;/);
+  assert.match(css, /\.nc-strip-fold-cap \{[^}]*background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap\)\);/);
+  const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
+  assert.match(reduced, /\.nc-strip \{|\.nc-strip,|, \.nc-strip \{/);
+});
