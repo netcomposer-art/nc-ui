@@ -1,5 +1,6 @@
 import { v } from "../alias.js";
 import { paintAll, panKnob, patchControl, renderControl } from "../primitives/controls.js";
+import { onThemeChange } from "../theme.js";
 import { installTheme } from "../primitives/install.js";
 import { createSwitch } from "../primitives/switch.js";
 
@@ -308,6 +309,8 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
     const observer = new ResizeObserver(() => handle.redraw());
     observer.observe(el);
   }
+  // Canvas displays read their colours from the live cascade (readLive): repaint when the theme changes.
+  onThemeChange(() => handle.redraw(), el.ownerDocument);
   return handle;
 }
 

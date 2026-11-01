@@ -2,7 +2,7 @@
 // Pure functions, no DOM, no dependencies. Ported unchanged in behaviour from
 // ASTRID lib/synth-audio/src/surprise.ts (same maths, same random draws).
 // nc-ui was created by Peter Semmelhack (https://psem.me/). MIT License.
-import { semantic, component, constants, cssVar } from '../dist/tokens.js';
+import { semantic, component, constants, cssVar, themes } from '../dist/tokens.js';
 
 /** Label colours: the near-black label ink, or white (tokens label-on-fill-dark / -light). */
 export const INK_DARK = semantic['label-on-fill-dark'];
@@ -115,11 +115,15 @@ export function oklabToHex([L, a, b]) {
 export const VELOCITY_RANGE = constants['velocity-range'];
 /** The default ramp: rhythm.velocity-min (light end) to rhythm.velocity-max (#003153, dark end). */
 export const VELOCITY_RAMP = { min: component.rhythm['velocity-min'], max: component.rhythm['velocity-max'] };
+/** The ramp per theme, with the mark colour on it (rhythm.step-cell-ink). Pass VELOCITY_RAMPS[currentTheme()]. */
+export const VELOCITY_RAMPS = Object.fromEntries(Object.entries(themes).map(([name, t]) =>
+  [name, { min: t.component.rhythm['velocity-min'], max: t.component.rhythm['velocity-max'], ink: t.component.rhythm['step-cell-ink'] }]));
 
 /**
  * The fill of an on step (or pad) at `velocity`.
  * @param {number} velocity 0.05..1 (clamped; anything not a finite number counts as the quietest, 0.05)
- * @param {{ min: string, max: string }} [ramp] #rrggbb ends; defaults to VELOCITY_RAMP (the rhythm tokens)
+ * @param {{ min: string, max: string, ink?: string }} [ramp] #rrggbb ends (and the mark colour); defaults to VELOCITY_RAMP
+ *   (the light rhythm tokens). VELOCITY_RAMPS.dark is the dark theme's
  * @returns {{ velocity: number, t: number, fill: string, ink: string }} the clamped velocity, its place on the ramp
  *   (0 at 0.05, 1 at 1.0), the fill (#RRGGBB; exactly ramp.min at 0.05 and ramp.max at 1.0) and the mark colour
  *   on it (rhythm.step-cell-ink, paper; at least 4.5:1 on every fill of the default ramp).
@@ -128,7 +132,7 @@ export function velocityFill(velocity, ramp = VELOCITY_RAMP) {
   const [lo, hi] = VELOCITY_RANGE;
   const v = Number.isFinite(velocity) ? Math.max(lo, Math.min(hi, velocity)) : lo;
   const t = (v - lo) / (hi - lo);
-  const ink = component.rhythm['step-cell-ink'];
+  const ink = ramp.ink ?? component.rhythm['step-cell-ink'];
   if (t <= 0) return { velocity: v, t: 0, fill: ramp.min.toUpperCase(), ink };
   if (t >= 1) return { velocity: v, t: 1, fill: ramp.max.toUpperCase(), ink };
   const a = hexToOklab(ramp.min), b = hexToOklab(ramp.max);

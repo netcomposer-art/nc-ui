@@ -6,7 +6,10 @@ import * as T from '../dist/tokens.js';
 
 const css = readFileSync(new URL('../dist/tokens.css', import.meta.url), 'utf8');
 const ts = readFileSync(new URL('../src/tokens.ts', import.meta.url), 'utf8');
-const vars = Object.fromEntries([...css.matchAll(/^\s+(--[\w-]+):\s*(.+);$/gm)].map((m) => [m[1], m[2]]));
+const declared = (text) => Object.fromEntries([...text.matchAll(/^\s+(--[\w-]+):\s*(.+);$/gm)].map((m) => [m[1], m[2]]));
+// The light :root block; the dark blocks follow it (see the dark test below).
+const darkAt = css.indexOf(':root[data-nc-theme="dark"]');
+let vars = declared(darkAt > 0 ? css.slice(0, darkAt) : css);
 // color-mix(in srgb, A p%, B), as the browser computes it, so a derived tint is checked against its JS value.
 const rgb = (hex) => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
 const hex = (c) => `#${c.map((x) => Math.round(x).toString(16).padStart(2, '0')).join('').toUpperCase()}`;
@@ -166,4 +169,16 @@ test('WCAG AA on every neutral: ink and accent text 4.5:1, filter curves 3:1 (no
     assert.ok(contrastRatio(c[fg], c[b]) >= 4.5, `${fg} on ${b}: ${contrastRatio(c[fg], c[b]).toFixed(2)}`);
   for (const f of ['filter-lowpass', 'filter-highpass', 'filter-bandpass']) for (const b of ['paper', 'shade-1', 'shade-2', 'shade-3', 'shade-4'])
     assert.ok(contrastRatio(s[f], c[b]) >= 3, `${f} on ${b}: ${contrastRatio(s[f], c[b]).toFixed(2)}`);
+});
+
+test('the dark JS (themes.dark) equals the CSS with the dark block over the light one', () => {
+  const light = vars;
+  vars = { ...light, ...declared(css.slice(darkAt, css.indexOf('@media (prefers-color-scheme: dark)'))) };
+  try {
+    for (const [name, value] of Object.entries(T.themes.dark.color)) assert.equal(resolve(vars[`--nc-ui-color-${name}`]), value, name);
+    for (const [name, value] of [...Object.entries(T.themes.dark.semantic), ...Object.entries(T.themes.dark.runtime)])
+      assert.equal(resolve(vars[`--nc-ui-${name}`]), value, name);
+    for (const [domain, entries] of Object.entries(T.themes.dark.component)) for (const [name, value] of Object.entries(entries))
+      assert.equal(resolve(vars[`--nc-${domain}-${name}`]), value, `${domain}.${name}`);
+  } finally { vars = light; }
 });

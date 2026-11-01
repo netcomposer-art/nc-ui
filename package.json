@@ -47,6 +47,10 @@
       "types": "./src/color.d.ts",
       "import": "./src/color.js"
     },
+    "./theme": {
+      "types": "./src/theme.d.ts",
+      "import": "./src/theme.js"
+    },
     "./nc-ui.css": "./dist/nc-ui.css",
     "./nc-ui.fallback.css": "./dist/nc-ui.fallback.css",
     "./inject": "./dist/nc-ui-inject.min.js",

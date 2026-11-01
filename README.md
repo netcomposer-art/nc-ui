@@ -44,6 +44,21 @@ const { ink, on, onInk } = slotColors(fill); // label is #242424 (ink) or white,
 Object.assign(slots.style, surpriseFillStyle(fill)); // sets --nc-ui-surprise-*
 ```
 
+## Dark mode
+
+`tokens.json` has a `dark` set: the same names as the light tiers (`base.color.paper`, `semantic.toast-bg`, `component.synth.key-black`), each replacing one light value; everything that refers to a replaced token follows it. `tokens.css` declares the changed properties (plus `color-scheme: dark`) twice: under `:root[data-nc-theme="dark"]`, and under `@media (prefers-color-scheme: dark)` for `:root:not([data-nc-theme="light"])`. So a page follows the system by default, and `data-nc-theme="light"` or `"dark"` on `<html>` forces a theme.
+
+```js
+import { applyTheme, currentTheme, onThemeChange, followHostTheme, themeTokens, VELOCITY_RAMPS, velocityFill } from '@netcomposer/nc-ui';
+followHostTheme();                       // in a Studio iframe: take the host's choice before first paint
+applyTheme('dark');                      // 'system' | 'light' | 'dark' (the Studio stores it as netcomposer.studio.theme.v1)
+onThemeChange((theme) => redraw());      // attribute or system change: canvas code re-reads its colours here
+velocityFill(0.5, VELOCITY_RAMPS[currentTheme()]);
+themeTokens('dark').semantic.accent;     // '#69A7D3'
+```
+
+CSS needs nothing: `var(--nc-ui-*)` already follows. Canvas code that reads colours with `readLive` or `getComputedStyle` only has to repaint on `onThemeChange`; code that reads the static `semantic` object should read `themeTokens(currentTheme())` instead.
+
 ## Tokens are the source of truth (S2)
 
 **Decision (nc-ui 0.2.0):** `tokens/tokens.json` is the only place a value lives. Tailwind and every other styling layer may **reference** tokens, and nothing else:
