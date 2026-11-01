@@ -1005,6 +1005,10 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* Fold (onFold): a −/+ after the switch. Folded, the card keeps its header row only; in a console row from 769 px it
    is a narrow column instead (below). It folds and unfolds at once: no motion. */
 .nc-ui-fx-hd > [data-nc-fx-hide] { flex: none; }
+/* Like a channel strip's (Peter, 2026-11-01: "the minimize icon should be positioned in the same place as the
+   instrument channels"): the fold triangle sits in the card's top-left corner, above the name. */
+.nc-ui-fx:has(> .nc-ui-fx-hd > [data-nc-fx-hide]) { position: relative; }
+.nc-ui-fx-hd > [data-nc-fx-hide] { position: absolute; top: ${v("control-gap")}; left: ${v("control-gap")}; z-index: 1; }
 /* The horizontal-fold toggle (foldToggle): a small solid triangle, about the ×'s size, in text-sub (ink on hover).
    ◀ while open, flipped to ▶ while folded; the flip takes motion-press, and reduced motion makes it instant. −/+
    (.nc-hide) stays the vertical hide: the triangle means fold sideways. */
