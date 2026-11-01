@@ -327,6 +327,18 @@
   --nc-ui-strip-width-master: 112px;
   --nc-ui-fx-card-width: 232px;
   --nc-ui-strip-fold-width: var(--nc-ui-space-40);
+  --nc-ui-eq-graph-height: 112px;
+  --nc-ui-eq-graph-height-max: 248px;
+  --nc-ui-eq-node-size: var(--nc-ui-space-12);
+  --nc-ui-eq-graph-bg: var(--nc-ui-color-paper-bright);
+  --nc-ui-eq-curve: var(--nc-ui-color-accent);
+  --nc-ui-eq-fill: var(--nc-ui-color-filter-blue);
+  --nc-ui-eq-grid: var(--nc-ui-color-div-0);
+  --nc-ui-eq-spectrum: var(--nc-ui-color-slate);
+  --nc-ui-eq-band-1: var(--nc-ui-color-amber);
+  --nc-ui-eq-band-2: var(--nc-ui-color-filter-red);
+  --nc-ui-eq-band-3: var(--nc-ui-color-plum);
+  --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
   --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
