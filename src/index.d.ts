@@ -345,6 +345,62 @@ export interface FxControl {
   folded?: boolean;
   /** Hover words (data-nc-help) for the fold triangle and the folded column. */
   foldHelp?: string;
+  /**
+   * A maximize button in the header (on by default for a card holding an `eqGraph`; false turns it off). In a console
+   * row the card takes three columns; elsewhere it opens as a panel three module widths wide over the modules beside
+   * it; on phones it only grows taller. The button again, Escape or the panel's × restores it. The kit remembers it per
+   * card id for the page's life (never stored). See docs/eq-graph.md.
+   */
+  maximize?: boolean;
+  /** Hover words (data-nc-help) for the maximize button. */
+  maxHelp?: string;
+}
+/** One band of an EQ graph, in engine units. */
+export interface EqGraphBand {
+  id: string;
+  label: string;
+  kind: "lowshelf" | "peak" | "highshelf";
+  hz: number;
+  db: number;
+  q: number;
+  /** Dragging across (and Left/Right) moves its frequency. */
+  moveHz?: boolean;
+  /** The wheel over it (and Page Up/Down) moves its Q. */
+  moveQ?: boolean;
+  minHz?: number;
+  maxHz?: number;
+  minQ?: number;
+  maxQ?: number;
+  /** Screen readers: "−18 dB at 938 Hz, Q 0.3". */
+  valueText?: string;
+  /** Hover words (data-nc-help) on its node. */
+  help?: string;
+}
+/**
+ * An EQ's frequency graph (docs/eq-graph.md): 20 Hz-20 kHz, the combined response with a soft fill to 0 dB, each
+ * band's own curve faintly, a draggable node per band, and an optional live spectrum behind. nc-fx's eqGraph() builds
+ * one from a chain.
+ */
+export interface EqGraphControl {
+  type: "eqGraph";
+  id: string;
+  label?: string;
+  /** The gain range, each way (dB). Default 18. */
+  range?: number;
+  sampleRate?: number;
+  /** false while the EQ is bypassed: the curve and nodes go quiet. */
+  on?: boolean;
+  bands: EqGraphBand[];
+  /** The response in dB at each frequency: the combined curve and each band's own, in `bands` order. */
+  response(freqs: Float64Array): { total: ArrayLike<number>; bands: ArrayLike<number>[] };
+  /** An analyser of what the effect puts out; opened only while the graph is on screen. */
+  spectrum?: { open(): AnalyserNode | null; close(): void };
+  /** A drag, key or wheel on a node (engine units). Route it through the same setters as the sliders. */
+  onBand(id: string, patch: { hz?: number; db?: number; q?: number }): void;
+  /** A double-click (or Delete) on a node: put that band back. */
+  onReset?(id: string): void;
+  /** Hover words (data-nc-help) for the graph. */
+  help?: string;
 }
 /**
  * A collapsible run of controls (NYX's "Tune & shape"): a header button that opens and closes them, with the look
@@ -507,6 +563,7 @@ export type Control =
   | PadGridControl
   | CanvasControl
   | FxControl
+  | EqGraphControl
   | GroupControl
   | StripControl
   | StripAddControl;
@@ -636,3 +693,30 @@ export function stripMeter(root: ParentNode | null | undefined, id: string): Met
 export function panText(value: number): string;
 export function foldToggle(): HTMLButtonElement;
 export function setFoldToggle(button: HTMLElement, folded: boolean, label: string): void;
+
+/** The EQ graph's frequency span (Hz). */
+export const EQ_MIN_HZ: 20;
+export const EQ_MAX_HZ: 20000;
+/** x (0..w) for a frequency on the graph's log axis, and back. */
+export function eqX(hz: number, w: number): number;
+export function eqHz(x: number, w: number): number;
+/** y for a gain in a plot of height h (pad above +range and below -range), and back. */
+export function eqY(db: number, h: number, range: number, pad: number): number;
+export function eqDb(y: number, h: number, range: number, pad: number): number;
+/** "938 Hz", "1.5 kHz". */
+export function hzText(hz: number): string;
+/** What a key does on a band's node: a patch, "reset", or null. */
+export function eqKeyPatch(band: EqGraphBand, key: string, shift: boolean, range: number): { hz?: number; db?: number; q?: number } | "reset" | null;
+/** A relative drag from a band's start, as a patch (fine: a quarter of the movement). */
+export function eqDragPatch(band: EqGraphBand, start: { hz: number; db: number }, dx: number, dy: number, w: number, h: number, range: number, pad: number, fine: boolean): { hz?: number; db: number };
+/** The spectrum's column map (bin span and tilt per column). */
+export function spectrumColumns(cols: number, w: number, binCount: number, sampleRate: number): { lo: Float32Array; hi: Float32Array; tilt: Float32Array };
+export function columnLevel(buf: ArrayLike<number>, lo: number, hi: number): number;
+/** For tests: is a graph's spectrum loop running, and does it hold the analyser open? */
+export function eqSpectrumState(graph: Element): { running: boolean; open: boolean; idle: boolean };
+/** Where a maximized card opens over the modules: three module widths from its own column, inside the row (px in the module). */
+export function overPanelBox(at: DOMRectReadOnly, module: DOMRectReadOnly, row: DOMRectReadOnly, gap: number, viewW: number): { left: number; top: number; width: number };
+/** The graph on its own (outside a kit module): render with a lookup that returns the current control, patch, repaint. */
+export function renderEqGraph(control: EqGraphControl, lookup: (node: Element) => unknown): HTMLElement;
+export function patchEqGraph(graph: Element, control: EqGraphControl): void;
+export function paintEqGraph(graph: Element): void;

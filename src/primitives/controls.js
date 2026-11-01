@@ -2,6 +2,7 @@ import { readCssPx } from "../alias.js";
 import { VELOCITY_RAMPS, surpriseColor, surpriseFillStyle, velocityFillStyle } from "../color.js";
 import { currentTheme, onThemeChange } from "../theme.js";
 import { paintCanvas } from "./canvas.js";
+import { overPanelBox, paintEqGraph, patchEqGraph, renderEqGraph } from "./eq-graph.js";
 import { createFader, faderHandle } from "./fader.js";
 import { bindPadGesture } from "./gesture.js";
 import { createMeter, meterHandle } from "./meter.js";
@@ -145,6 +146,8 @@ export function renderControl(control, lookup) {
       return renderCanvas(control);
     case "fx":
       return renderFx(control, lookup);
+    case "eqGraph":
+      return renderEqGraph(control, lookup);
     case "group":
       return renderGroup(control, lookup, renderControl);
     case "strip":
@@ -206,6 +209,8 @@ export function patchControl(node, control) {
   else if (control.type === "canvas" && node instanceof HTMLElement) {
     const canvas = node.querySelector("canvas");
     if (canvas instanceof HTMLCanvasElement) paintCanvas(canvas, control);
+  } else if (control.type === "eqGraph") {
+    patchEqGraph(node, control);
   } else if (control.type === "strip") {
     patchStrip(node, control);
     for (const child of control.sends ?? []) {
@@ -1915,7 +1920,7 @@ function renderFx(control, lookup) {
   name.id = `${control.id}-name`;
   name.textContent = control.title;
   const foldable = typeof control.onFold === "function";
-  if (control.on === undefined && !foldable) card.append(name);
+  if (control.on === undefined && !foldable && !maximizable(control)) card.append(name);
   else {
     // fx-blocks' header: the name, then a real switch named by it. Off dims the card by colour.
     const head = document.createElement("div");
@@ -1934,6 +1939,7 @@ function renderFx(control, lookup) {
       head.append(toggle.el);
     }
     if (foldable) head.append(fxHide(card, lookup));
+    if (maximizable(control)) head.append(fxMax(card, lookup));
     card.append(head);
   }
   // Folded (onFold / folded): one button over the whole card, the name read bottom to top and the on/off word. In a
@@ -2029,6 +2035,176 @@ function fxFold(card, lookup) {
   return fold;
 }
 
+/**
+ * Maximize (Peter, 2026-11-01: "a 'maximize' button that expands the width of the EQ to three module widths"): a card
+ * with an EQ graph (or `maximize: true`) gets a button in its header. In a console row the card takes three columns
+ * in place ("row"); anywhere else (an instrument's Hacks column) it opens as a wide panel over the module area,
+ * three module widths, anchored to its own column, while everything else keeps playing ("over"); on phones it only
+ * grows taller ("tall"). The button again, Escape, or the panel's × restores it. Remembered per card id for this
+ * page only (never stored), so a re-render or a rebuild keeps it and a reload forgets it.
+ */
+const MAXED = new Set();
+/** After layout (the next frame), or soon where there are no frames. */
+function nextFrame(doc, fn) {
+  const view = doc.defaultView;
+  if (typeof view?.requestAnimationFrame === "function") view.requestAnimationFrame(fn);
+  else setTimeout(fn, 16);
+}
+const maximizable = (control) =>
+  control.maximize === true || (control.maximize !== false && control.controls.some((c) => c.type === "eqGraph"));
+const PHONE_MAX = "(max-width: 768px)"; // ui-guard: allow the kit's phone breakpoint, as the console's
+
+function maxIcon() {
+  // Four corner ticks: out while normal, in while maximized (CSS turns them).
+  const icon = document.createElement("span");
+  icon.className = "nc-fx-max-icon";
+  icon.setAttribute("aria-hidden", "true");
+  for (let i = 0; i < 4; i++) icon.append(document.createElement("i"));
+  return icon;
+}
+
+function fxMax(card, lookup) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "nc-fx-max";
+  button.dataset.ncFxMax = "";
+  button.append(maxIcon());
+  button.addEventListener("click", () => {
+    const live = lookup(button);
+    if (live?.type !== "fx") return;
+    setMax(card, live, !MAXED.has(live.id));
+    button.focus();
+  });
+  return button;
+}
+
+/** Maximize or restore a card (the button, Escape, the panel's ×). */
+function setMax(card, control, on) {
+  if (on) MAXED.add(control.id);
+  else MAXED.delete(control.id);
+  syncMax(card, control);
+}
+
+function maxMode(card) {
+  const view = card.ownerDocument.defaultView;
+  if (view?.matchMedia?.(PHONE_MAX).matches) return "tall";
+  return card.closest('[data-nc-layout="console"] [data-nc-area="fx"]') ? "row" : "over";
+}
+
+function syncMax(card, control) {
+  const button = card.querySelector(":scope > .nc-ui-fx-hd > [data-nc-fx-max]");
+  const want = maximizable(control) && MAXED.has(control.id) && !(typeof control.onFold === "function" && control.folded === true);
+  if (button instanceof HTMLElement) {
+    button.hidden = !maximizable(control) || (typeof control.onFold === "function" && control.folded === true);
+    button.setAttribute("aria-pressed", want ? "true" : "false");
+    button.setAttribute("aria-label", `${want ? "Restore" : "Maximize"} ${control.title}`);
+    button.title = want ? "Restore (Esc)" : "Maximize";
+    setHelpWords(button, control.maxHelp);
+  }
+  if (!want) {
+    if (card.dataset.ncMax) unMax(card);
+    return;
+  }
+  // Not placed yet (a fresh render): decide once the card is in the page.
+  if (!card.isConnected) {
+    const retry = () => card.isConnected && MAXED.has(control.id) && syncMax(card, control);
+    queueMicrotask(() => {
+      if (card.isConnected) retry();
+      else nextFrame(card.ownerDocument, retry);
+    });
+    return;
+  }
+  const mode = maxMode(card);
+  if (card.dataset.ncMax !== mode) {
+    if (card.dataset.ncMax) unMax(card);
+    card.dataset.ncMax = mode;
+    if (mode === "over") openOver(card, control);
+  }
+  bindEscape(card.ownerDocument);
+  if (mode === "over") placeOver(card);
+  nextFrame(card.ownerDocument, () => {
+    for (const graph of card.querySelectorAll(".nc-eq")) if (graph instanceof HTMLElement) paintEqGraph(graph);
+  });
+}
+
+function unMax(card) {
+  const mode = card.dataset.ncMax;
+  delete card.dataset.ncMax;
+  if (mode === "over") {
+    card.previousElementSibling?.matches(".nc-fx-ghost") && card.previousElementSibling.remove();
+    card.querySelector(":scope > .nc-ui-fx-hd > .nc-fx-close")?.remove();
+    card.style.removeProperty("left");
+    card.style.removeProperty("top");
+    card.style.removeProperty("width");
+    card.removeAttribute("role");
+    card.removeAttribute("aria-label");
+  }
+  nextFrame(card.ownerDocument, () => {
+    for (const graph of card.querySelectorAll(".nc-eq")) if (graph instanceof HTMLElement) paintEqGraph(graph);
+  });
+}
+
+/** The wide panel: a ghost keeps the card's place in its column; the card floats over the modules beside it. */
+function openOver(card, control) {
+  const ghost = document.createElement("div");
+  ghost.className = "nc-fx-ghost";
+  ghost.setAttribute("aria-hidden", "true");
+  ghost.style.height = `${card.offsetHeight}px`;
+  card.before(ghost);
+  card.setAttribute("role", "region");
+  card.setAttribute("aria-label", `${control.title}, maximized`);
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "nc-fx-close";
+  close.textContent = "×";
+  close.setAttribute("aria-label", `Close ${control.title}`);
+  close.title = "Close (Esc)";
+  close.addEventListener("click", () => {
+    const button = card.querySelector("[data-nc-fx-max]");
+    if (button instanceof HTMLElement) button.click();
+  });
+  card.querySelector(":scope > .nc-ui-fx-hd")?.append(close);
+}
+
+/** Three module widths, starting at the card's own column and kept inside the row of modules. */
+function placeOver(card) {
+  const ghost = card.previousElementSibling;
+  const module = card.closest(".nc-module");
+  if (!(ghost instanceof HTMLElement) || !ghost.matches(".nc-fx-ghost") || !(module instanceof HTMLElement)) return;
+  const row = module.parentElement instanceof HTMLElement ? module.parentElement : module;
+  const view = card.ownerDocument.defaultView;
+  const gap = Number.parseFloat(view?.getComputedStyle(row).columnGap ?? "") || 0;
+  const place = overPanelBox(
+    ghost.getBoundingClientRect(),
+    module.getBoundingClientRect(),
+    row.getBoundingClientRect(),
+    gap,
+    view?.innerWidth ?? Number.POSITIVE_INFINITY,
+  );
+  // The card is positioned in the module (kit.js gives a module holding one position: relative).
+  card.style.left = `${place.left}px`;
+  card.style.top = `${place.top}px`;
+  card.style.width = `${place.width}px`;
+}
+
+const escBound = new WeakSet();
+function bindEscape(doc) {
+  if (escBound.has(doc)) return;
+  escBound.add(doc);
+  doc.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    const open = [...doc.querySelectorAll(".nc-ui-fx[data-nc-max]")];
+    const card = open.find((c) => c.contains(doc.activeElement)) ?? open[open.length - 1];
+    const button = card?.querySelector("[data-nc-fx-max]");
+    if (!(button instanceof HTMLElement)) return;
+    event.preventDefault();
+    button.click();
+  });
+  doc.defaultView?.addEventListener("resize", () => {
+    for (const card of doc.querySelectorAll('.nc-ui-fx[data-nc-max="over"]')) if (card instanceof HTMLElement) placeOver(card);
+  });
+}
+
 function patchFx(node, control) {
   const name = node.querySelector(".nc-ui-fx-name");
   if (name) name.textContent = control.title;
@@ -2044,6 +2220,7 @@ function patchFx(node, control) {
     setFoldToggle(hide, folded, control.title);
     setHelpWords(hide, control.foldHelp);
   }
+  syncMax(node, control);
   const fold = node.querySelector(":scope > [data-nc-fx-fold]");
   if (fold instanceof HTMLElement) {
     const state = control.on === undefined ? "" : control.on ? "On" : "Off";
@@ -2078,5 +2255,7 @@ export function paintAll(root, controls) {
     );
     if (control?.type === "canvas") paintCanvas(canvas, control);
   }
+  for (const graph of root.querySelectorAll(".nc-eq")) if (graph instanceof HTMLElement) paintEqGraph(graph);
+  for (const card of root.querySelectorAll('.nc-ui-fx[data-nc-max="over"]')) if (card instanceof HTMLElement) placeOver(card);
   placeHits(root);
 }

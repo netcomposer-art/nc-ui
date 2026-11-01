@@ -1079,6 +1079,132 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-ui-fx-fold:hover .nc-ui-fx-fold-state { color: ${v("text")}; }
 .nc-ui-fx-visual { display: block; width: 100%; height: ${v("display-height")}; }
+/* EQ graph (eq-graph.js): a display at the top of an EQ card. A plot a touch off the card's shade, a hairline frame,
+   the spectrum and curve canvases filling it, and one dot per band (its own colour) over them, each a 44 px target. */
+.nc-eq { position: relative; min-width: 0; margin-bottom: ${v("control-gap")}; }
+.nc-eq-plot {
+  position: relative;
+  height: ${v("eq-graph-height")};
+  background: ${v("eq-graph-bg")};
+  border-radius: ${v("slot-radius")};
+  box-shadow: inset 0 0 0 ${v("hairline")} ${v("divider")};
+}
+.nc-eq-plot > canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+.nc-eq-node {
+  --nc-eq-tone: ${v("eq-curve")};
+  position: absolute;
+  width: ${v("eq-node-size")};
+  height: ${v("eq-node-size")};
+  margin: calc(${v("eq-node-size")} / -2) 0 0 calc(${v("eq-node-size")} / -2);
+  border-radius: 50%;
+  background: var(--nc-eq-tone);
+  box-shadow: 0 0 0 calc(${v("hairline")} * 2) ${v("eq-graph-bg")};
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+  z-index: 1;
+}
+.nc-eq-node[data-tone="1"] { --nc-eq-tone: ${v("eq-band-1")}; }
+.nc-eq-node[data-tone="2"] { --nc-eq-tone: ${v("eq-band-2")}; }
+.nc-eq-node[data-tone="3"] { --nc-eq-tone: ${v("eq-band-3")}; }
+/* The hit area (target-min), and a soft halo in the band's colour while it is hovered, focused or dragged. */
+.nc-eq-node::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: ${v("target-min")};
+  height: ${v("target-min")};
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+.nc-eq-node::after {
+  content: "";
+  position: absolute;
+  inset: calc(${v("control-gap")} * -1.5);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nc-eq-tone) 24%, transparent);
+  transform: scale(0);
+  transition: transform ${v("motion-press")} ${v("motion-press-easing")};
+  pointer-events: none;
+}
+.nc-eq-node:hover::after, .nc-eq-node[data-active="true"]::after { transform: scale(1); }
+.nc-eq-node[data-drag="true"] { cursor: grabbing; }
+.nc-eq-node:focus-visible { box-shadow: 0 0 0 calc(${v("hairline")} * 2) ${v("eq-graph-bg")}, 0 0 0 calc(${v("hairline")} * 2 + ${v("focus-width")}) ${v("focus-ring")}; }
+.nc-eq[data-on="false"] .nc-eq-node { --nc-eq-tone: ${v("text-sub")}; }
+/* The readout beside the band in use: "MID −18 dB · 938 Hz · Q 0.3". */
+.nc-eq-tip {
+  position: absolute;
+  z-index: 2;
+  padding: ${v("hairline")} ${v("control-gap")};
+  border-radius: ${v("slot-radius")};
+  background: ${v("eq-graph-bg")};
+  box-shadow: inset 0 0 0 ${v("hairline")} ${v("divider")};
+  color: ${v("text")};
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  line-height: ${v("label-leading")};
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.nc-eq-tip[hidden] { display: none; }
+/* Maximize (controls.js setMax): four corner ticks, out to maximize and in to restore, after the switch. */
+.nc-fx-max, .nc-fx-close {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin: 0;
+  padding: ${v("hairline")};
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+.nc-fx-max[hidden] { display: none; }
+.nc-fx-max:hover, .nc-fx-close:hover { color: ${v("text")}; }
+.nc-fx-max:focus-visible, .nc-fx-close:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-fx-close { font-size: ${v("title-size")}; padding-inline: ${v("control-gap")}; }
+.nc-fx-max-icon { position: relative; display: block; width: calc(${v("control-gap")} * 2.5); height: calc(${v("control-gap")} * 2.5); }
+.nc-fx-max-icon > i {
+  position: absolute;
+  width: calc(${v("control-gap")} * 1.1);
+  height: calc(${v("control-gap")} * 1.1);
+  border: 0 solid currentColor;
+  transition: transform ${v("motion-press")} ${v("motion-press-easing")};
+}
+.nc-fx-max-icon > i:nth-child(1) { left: 0; top: 0; border-left-width: calc(${v("hairline")} * 1.5); border-top-width: calc(${v("hairline")} * 1.5); }
+.nc-fx-max-icon > i:nth-child(2) { right: 0; top: 0; border-right-width: calc(${v("hairline")} * 1.5); border-top-width: calc(${v("hairline")} * 1.5); }
+.nc-fx-max-icon > i:nth-child(3) { left: 0; bottom: 0; border-left-width: calc(${v("hairline")} * 1.5); border-bottom-width: calc(${v("hairline")} * 1.5); }
+.nc-fx-max-icon > i:nth-child(4) { right: 0; bottom: 0; border-right-width: calc(${v("hairline")} * 1.5); border-bottom-width: calc(${v("hairline")} * 1.5); }
+.nc-fx-max[aria-pressed="true"] .nc-fx-max-icon > i { transform: rotate(180deg); }
+/* Maximized: a taller plot, and the dials in columns under it (row and over). */
+.nc-ui-fx[data-nc-max] .nc-eq-plot { height: ${v("eq-graph-height-max")}; }
+.nc-ui-fx[data-nc-max="over"],
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-max="row"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(${v("fx-card-width")} * 0.6)), 1fr));
+  column-gap: calc(${v("module-pad")} * 2);
+  row-gap: ${v("module-gap")};
+  align-content: start;
+}
+.nc-ui-fx[data-nc-max="row"] > :is(.nc-ui-fx-hd, .nc-eq, .nc-ui-more, .nc-ui-fx-fold, .nc-note),
+.nc-ui-fx[data-nc-max="over"] > :is(.nc-ui-fx-hd, .nc-eq, .nc-ui-more, .nc-ui-fx-fold, .nc-note) { grid-column: 1 / -1; }
+.nc-ui-fx[data-nc-max] > .nc-eq { margin-bottom: ${v("module-gap")}; }
+/* Over the modules (an instrument's Hacks column): a panel three module widths wide, in its module, above the rest. */
+.nc-module:has(.nc-ui-fx[data-nc-max="over"]) { position: relative; z-index: ${v("eq-panel-layer")}; }
+.nc-ui-fx[data-nc-max="over"] {
+  position: absolute;
+  z-index: ${v("eq-panel-layer")};
+  margin: 0;
+  box-shadow: 0 0 0 ${v("hairline")} ${v("text-sub")};
+}
+.nc-fx-ghost { margin-inline: calc(${v("module-pad")} * -1); }
 .nc-ui-more > summary {
   display: flex;
   align-items: center;
@@ -1708,6 +1834,13 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   }
   .nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { display: none; }
   .nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-folded] > .nc-ui-fx-fold { display: flex; }
+}
+/* A maximized card in a console row takes three cards' width (the whole fx row), folded neighbours or not. */
+@media (min-width: 769px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] > .nc-ui-fx[data-nc-max="row"] { grid-column: span 3; }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-max="row"][data-nc-max="row"] {
+    width: calc(${v("fx-card-width")} * 3);
+  }
 }
 /* One channel strip: name, M and S, sends, then the fader with its scale and meter, then the readout. Every strip
    (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up. */
@@ -2364,7 +2497,7 @@ html[data-nc-hosted] .nc-page-body { padding-top: ${v("module-gap")}; }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
   .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
-  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold, .nc-strip, .nc-fold-tri {
+  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold, .nc-strip, .nc-eq-node::after, .nc-fx-max-icon > i, .nc-fold-tri {
     transition: none;
     animation: none;
   }
