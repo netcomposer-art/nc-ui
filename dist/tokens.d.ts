@@ -341,6 +341,7 @@ export declare const semantic: {
   readonly "strip-width": "88px";
   readonly "strip-width-master": "112px";
   readonly "fx-card-width": "232px";
+  readonly "fx-fold-width": "120px";
   readonly "head-margin-compact": "12px";
   readonly "scale-size": "9px";
   readonly "focus-width": "1px";
@@ -739,6 +740,7 @@ export declare const vars: {
   readonly "strip-width": "var(--nc-ui-strip-width)";
   readonly "strip-width-master": "var(--nc-ui-strip-width-master)";
   readonly "fx-card-width": "var(--nc-ui-fx-card-width)";
+  readonly "fx-fold-width": "var(--nc-ui-fx-fold-width)";
   readonly "head-margin-compact": "var(--nc-ui-head-margin-compact)";
   readonly "scale-size": "var(--nc-ui-scale-size)";
   readonly "focus-width": "var(--nc-ui-focus-width)";
@@ -934,6 +936,7 @@ export declare const refs: {
   readonly "strip-width": null;
   readonly "strip-width-master": null;
   readonly "fx-card-width": null;
+  readonly "fx-fold-width": null;
   readonly "head-margin-compact": "space.12";
   readonly "scale-size": "font-size.3xs";
   readonly "focus-width": "border.hairline";

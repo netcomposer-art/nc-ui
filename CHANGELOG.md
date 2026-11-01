@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- FX card fold: `onFold` / `folded` / `foldHelp` give an `fx` card a −/+ after its ON/OFF; folded in a console row (769 px up) it is a narrow column (`fx-fold-width`, 120 px), one button with the on/off word and the name read bottom to top, elsewhere its header row. No motion; the host keeps the state (docs/fx-fold.md). First user: the Studio's Mix.
 - Step grid: Fill and Clear are text actions like Save and Load (held Fill: ink underline); coarse pointers keep a target-min pad.
 - Console strips: `--nc-strip-cap` on a strip colours its fader cap (the Studio: each instrument's colour, muted). Unset, the cap stays ink.
 - Group: the `group` control folds a run of a module's controls under one header (the More toggle's look and touch target, `aria-expanded` / `aria-controls`, no motion), closed by default, with a summary while closed; open state is a browser-wide preference (`GROUP_OPEN_KEY`, `readGroups`, `writeGroup`; docs/group.md). First user: NYX's "Tune & shape".

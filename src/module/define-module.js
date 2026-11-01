@@ -92,7 +92,7 @@ function signature(def) {
       if (control.type === "group")
         return `group:${control.id}:${control.controls.map((child) => child.id).join(",")}`;
       if (control.type === "fx")
-        return `fx:${control.id}:${control.depth}:${control.on === undefined ? "" : "sw"}:${control.controls.map((child) => child.id).join(",")}/${(control.more ?? []).map((child) => child.id).join(",")}`;
+        return `fx:${control.id}:${control.depth}:${control.on === undefined ? "" : "sw"}${control.onFold ? ":fold" : ""}:${control.controls.map((child) => child.id).join(",")}/${(control.more ?? []).map((child) => child.id).join(",")}`;
       return `${control.type}:${control.id}`;
     })
     .join("|")}`;

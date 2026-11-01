@@ -309,7 +309,7 @@ ${[1, 2, 3, 4].map(inset).join("\n")}
 .nc-range:disabled::-webkit-slider-thumb { background: ${v("text-sub")}; }
 .nc-range:disabled::-moz-range-thumb { background: ${v("text-sub")}; }
 .nc-range:disabled::-moz-range-progress { background: ${v("text-sub")}; }
-[data-nc-dim="true"] .nc-label, [data-nc-dim="true"] .nc-readout, [data-nc-dim="true"] .nc-ui-fx-name,
+[data-nc-dim="true"] .nc-label, [data-nc-dim="true"] .nc-readout, [data-nc-dim="true"] .nc-ui-fx-name, [data-nc-dim="true"] .nc-ui-fx-fold-name,
 [data-nc-dim="true"] .nc-select { color: ${v("text-sub")}; }
 [data-nc-dim="true"] .nc-range { accent-color: ${v("text-sub")}; }
 [data-nc-dim="true"] .nc-range::-webkit-slider-thumb { background: ${v("text-sub")}; }
@@ -1001,7 +1001,52 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   margin-bottom: ${v("module-gap")};
   min-width: 0;
 }
-.nc-ui-fx-hd > .nc-ui-fx-name { margin: 0; }
+.nc-ui-fx-hd > .nc-ui-fx-name { margin: 0 auto 0 0; }
+/* Fold (onFold): a −/+ after the switch. Folded, the card keeps its header row only; in a console row from 769 px it
+   is a narrow column instead (below). It folds and unfolds at once: no motion. */
+.nc-ui-fx-hd > [data-nc-fx-hide] { flex: none; padding-inline-end: 0; }
+.nc-ui-fx-fold { display: none; }
+.nc-ui-fx[data-nc-folded] > :not(.nc-ui-fx-hd, .nc-token-probe) { display: none; }
+.nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { margin-bottom: 0; }
+.nc-ui-fx-fold {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: ${v("module-gap")};
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  font: inherit;
+  cursor: pointer;
+  transition: none;
+}
+.nc-ui-fx-fold:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
+/* The on/off word as the switch draws it: off text-sub, on text with the accent hairline. */
+.nc-ui-fx-fold-state {
+  padding-bottom: ${v("control-gap")};
+  border-bottom: ${v("hairline")} solid transparent;
+  font-size: ${v("label-size")};
+  font-weight: ${v("control-weight")};
+  letter-spacing: ${v("label-tracking")};
+  text-transform: uppercase;
+  line-height: ${v("label-leading")};
+}
+.nc-ui-fx-fold[data-on="true"] .nc-ui-fx-fold-state { color: ${v("text")}; border-bottom-color: ${v("accent")}; }
+/* The name read bottom to top (the Studio's instrument spine). */
+.nc-ui-fx-fold-name {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: ${v("body-size")};
+  font-weight: ${v("fx-name-weight")};
+  color: ${v("text")};
+  white-space: nowrap;
+}
+.nc-ui-fx-fold:hover .nc-ui-fx-fold-state { color: ${v("text")}; }
 .nc-ui-fx-visual { display: block; width: 100%; height: ${v("display-height")}; }
 .nc-ui-more > summary {
   display: flex;
@@ -1594,6 +1639,23 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 /* In the console a card is a column: a select row gets the same space under it as a slider row. */
 .nc-module-body[data-nc-layout="console"] .nc-ui-fx { display: flex; flex-direction: column; gap: ${v("module-gap")}; }
 .nc-module-body[data-nc-layout="console"] .nc-ui-fx > .nc-field:not([data-nc-slider]) { padding-bottom: ${v("module-gap")}; }
+/* Folded cards in a console row (769 px up): a narrow column, the whole column one button. Once any card is folded the
+   fx area is a row of its cards' own widths, so the strips get the room back. */
+@media (min-width: 769px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx { flex: none; width: ${v("fx-card-width")}; }
+  /* :has() counts its argument, so the folded card repeats it to win over the open cards' width. */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-folded] {
+    width: ${v("fx-fold-width")};
+    padding-inline: 0;
+  }
+  .nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { display: none; }
+  .nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-folded] > .nc-ui-fx-fold { display: flex; }
+}
 /* One channel strip: name, M and S, sends, then the fader with its scale and meter, then the readout. Every strip
    (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up. */
 .nc-strip {
@@ -1907,6 +1969,14 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 @media (max-width: 1023px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+/* Tablets (769-1023 px): the fx row is full width under the strips; with a card folded, the open ones share the rest. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx:not([data-nc-folded]) {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+}
 @media (max-width: 768px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }
   /* Phones: the master as narrow as a channel strip, so the strips keep the room. */
@@ -2141,7 +2211,7 @@ html[data-nc-hosted] .nc-page-body { padding-top: ${v("module-gap")}; }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
   .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
-  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip {
+  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold {
     transition: none;
     animation: none;
   }
