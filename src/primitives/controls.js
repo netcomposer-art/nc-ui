@@ -1506,13 +1506,12 @@ function renderStrip(control, lookup) {
   name.className = "nc-strip-name";
   name.dataset.ncStripName = "";
   const foldable = !control.master && typeof control.onFold === "function";
-  // Minimize (onFold): the modules' −/+ at the start of the name row; the × stays right after the name, so the name
-  // always sits between them and a minimize click can never land on remove.
+  // Minimize (onFold): the kit's horizontal-fold triangle in the strip's top-left corner, above the name (◀ open,
+  // ▶ minimized). The name row and its × are unchanged, so a minimize click can never land on remove.
+  let hide = null;
   if (foldable) {
     strip.dataset.ncFoldable = "";
-    const hide = document.createElement("button");
-    hide.type = "button";
-    hide.className = "nc-hide";
+    hide = foldToggle();
     hide.dataset.ncStripHide = "";
     hide.addEventListener("click", () => {
       const live = lookup(strip);
@@ -1520,7 +1519,6 @@ function renderStrip(control, lookup) {
       live.onFold?.(live.folded !== true);
       if (document.activeElement !== hide) hide.focus();
     });
-    head.append(hide);
   }
   head.append(name);
   // Remove (an instance of an instrument): a quiet × after the name, as on ASTRID's hack cards. The host confirms.
@@ -1656,6 +1654,7 @@ function renderStrip(control, lookup) {
     const live = lookup(strip);
     if (live?.type === "strip") reset(live);
   });
+  if (hide) strip.append(hide);
   strip.append(head, hacks, ms, sends, body, readout, probe());
   patchStrip(strip, control);
   return strip;
@@ -1814,16 +1813,13 @@ function patchStrip(node, control) {
   else delete node.dataset.ncFolded;
   const hide = node.querySelector("[data-nc-strip-hide]");
   if (hide instanceof HTMLElement) {
-    hide.textContent = folded ? "+" : "−";
-    hide.setAttribute("aria-expanded", folded ? "false" : "true");
-    hide.setAttribute("aria-label", `${folded ? "Show" : "Minimize"} ${control.label}`);
-    hide.title = folded ? "Show" : "Minimize";
+    setFoldToggle(hide, folded, control.label);
     setHelpWords(hide, control.foldHelp);
   }
   const fold = node.querySelector("[data-nc-strip-fold]");
   if (fold instanceof HTMLElement) {
     fold.hidden = !folded;
-    fold.setAttribute("aria-label", `Show ${control.label}`);
+    fold.setAttribute("aria-label", `Expand ${control.label}`);
     const label = fold.querySelector("[data-nc-strip-fold-name]");
     if (label && label.textContent !== control.label) label.textContent = control.label;
     setHelpWords(fold, control.foldedHelp ?? control.foldHelp);
@@ -1897,11 +1893,9 @@ function fxRefocus(card) {
   if (target instanceof HTMLElement && document.activeElement !== target) target.focus();
 }
 
-/** The card's −/+ (the modules' .nc-hide), at the end of its header, after the switch. */
+/** The card's horizontal-fold triangle, at the end of its header, after the switch. */
 function fxHide(card, lookup) {
-  const hide = document.createElement("button");
-  hide.type = "button";
-  hide.className = "nc-hide";
+  const hide = foldToggle();
   hide.dataset.ncFxHide = "";
   hide.addEventListener("click", () => {
     const live = lookup(hide);
@@ -1910,6 +1904,29 @@ function fxHide(card, lookup) {
     fxRefocus(card);
   });
   return hide;
+}
+
+/**
+ * The horizontal-fold toggle (Peter, 2026-10-31): a small solid triangle, ◀ while open ("collapse this way"), flipped
+ * to ▶ while folded ("expand"). −/+ stays the vertical hide; the triangle means fold sideways. A real button; the
+ * host's state sets it with setFoldToggle.
+ */
+export function foldToggle() {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "nc-fold-toggle";
+  const tri = document.createElement("span");
+  tri.className = "nc-fold-tri";
+  tri.setAttribute("aria-hidden", "true");
+  button.append(tri);
+  return button;
+}
+
+/** Point the triangle and name the button: "Minimize <label>" while open, "Expand <label>" while folded. */
+export function setFoldToggle(button, folded, label) {
+  button.setAttribute("aria-expanded", folded ? "false" : "true");
+  button.setAttribute("aria-label", `${folded ? "Expand" : "Minimize"} ${label}`);
+  button.title = folded ? "Expand" : "Minimize";
 }
 
 /** The folded card: one button (aria-expanded="false"); a click, Enter or Space unfolds it. */
@@ -1925,7 +1942,11 @@ function fxFold(card, lookup) {
   const name = document.createElement("span");
   name.className = "nc-ui-fx-fold-name";
   name.dataset.ncFxFoldName = "";
-  fold.append(state, name);
+  // The same triangle, pointing right ("expand"), at the top of the column; the whole column is the button.
+  const tri = document.createElement("span");
+  tri.className = "nc-fold-tri";
+  tri.setAttribute("aria-hidden", "true");
+  fold.append(tri, state, name);
   fold.addEventListener("click", () => {
     const live = lookup(fold);
     if (live?.type !== "fx") return;
@@ -1947,17 +1968,14 @@ function patchFx(node, control) {
   else delete node.dataset.ncFolded;
   const hide = node.querySelector("[data-nc-fx-hide]");
   if (hide instanceof HTMLElement) {
-    hide.textContent = folded ? "+" : "−";
-    hide.setAttribute("aria-expanded", folded ? "false" : "true");
-    hide.setAttribute("aria-label", `${folded ? "Show" : "Hide"} ${control.title}`);
-    hide.title = folded ? "Show" : "Hide";
+    setFoldToggle(hide, folded, control.title);
     setHelpWords(hide, control.foldHelp);
   }
   const fold = node.querySelector(":scope > [data-nc-fx-fold]");
   if (fold instanceof HTMLElement) {
     const state = control.on === undefined ? "" : control.on ? "On" : "Off";
     fold.hidden = !folded;
-    fold.setAttribute("aria-label", `Show ${control.title}${state ? `, ${state.toLowerCase()}` : ""}`);
+    fold.setAttribute("aria-label", `Expand ${control.title}${state ? `, ${state.toLowerCase()}` : ""}`);
     fold.dataset.on = control.on === true ? "true" : "false";
     const word = fold.querySelector("[data-nc-fx-fold-state]");
     if (word) {

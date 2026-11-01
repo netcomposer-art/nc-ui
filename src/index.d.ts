@@ -327,7 +327,7 @@ export interface FxControl {
   more?: Control[];
   moreLabel?: string;
   /**
-   * Give the card a −/+ fold toggle after its switch (the modules' .nc-hide). Folded, a card in a console row is a
+   * Give the card a horizontal-fold triangle after its switch (◀ open, ▶ folded; foldToggle). Folded, a card in a console row is a
    * narrow column (fx-fold-width): one button with its name read bottom to top and its on/off word; a click, Enter or
    * Space unfolds it. Elsewhere, and on phones, a folded card keeps only its header row. Folding never touches `on`.
    * The host keeps the state (a UI preference) and passes it back as `folded`.
@@ -335,7 +335,7 @@ export interface FxControl {
   onFold?: (folded: boolean) => void;
   /** Folded now (only with `onFold`). */
   folded?: boolean;
-  /** Hover words (data-nc-help) for the fold toggle and the folded column. */
+  /** Hover words (data-nc-help) for the fold triangle and the folded column. */
   foldHelp?: string;
 }
 /**
@@ -415,15 +415,16 @@ export interface StripControl {
   /** Adds a remove × after the name (an instrument instance). `opener` is the button, for the confirm's focus. */
   onRemove?: (opener: HTMLElement) => void;
   /**
-   * Minimize (not on the master): a −/+ at the start of the name row (the × stays right after the name). Folded, the strip
-   * is a narrow column (strip-fold-width): the +, M and S stacked (still working), the fader cap's colour as a small
+   * Minimize (not on the master): the horizontal-fold triangle in the strip's top-left corner, above the name (the name
+   * row and its × are unchanged). Folded, the strip
+   * is a narrow column (strip-fold-width): the ▶, M and S stacked (still working), the fader cap's colour as a small
    * mark and the name read bottom to top (one button: a click, Enter or Space unfolds it), and a thin meter that
    * lines up with the open strips'. Folding never touches the level or the sound. The host keeps the state.
    */
   onFold?: (folded: boolean) => void;
   /** Minimized now (only with `onFold`). */
   folded?: boolean;
-  /** Hover words for the −/+ (and the folded column, unless `foldedHelp`). */
+  /** Hover words for the triangle (and the folded column, unless `foldedHelp`). */
   foldHelp?: string;
   /** Hover words for the folded column. */
   foldedHelp?: string;
@@ -598,3 +599,9 @@ export function meterHandle(el: Element | null | undefined): MeterHandle | undef
 export function cssSeconds(text: string | null | undefined, fallback: number): number;
 /** The meter of the strip control `id` inside `root` (a module element). */
 export function stripMeter(root: ParentNode | null | undefined, id: string): MeterHandle | undefined;
+/**
+ * The horizontal-fold toggle (FX cards, console strips): a small solid triangle, ◀ while open, flipped to ▶ while
+ * folded. −/+ (.nc-hide) stays the vertical hide. `setFoldToggle` sets aria-expanded and "Minimize/Expand <label>".
+ */
+export function foldToggle(): HTMLButtonElement;
+export function setFoldToggle(button: HTMLElement, folded: boolean, label: string): void;

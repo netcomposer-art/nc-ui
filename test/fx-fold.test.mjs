@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { click, installDom } from "./helpers/dom.mjs";
 
 const { document } = installDom();
-const { renderControl, patchControl } = await import("../src/primitives/controls.js");
+const { renderControl, patchControl, foldToggle, setFoldToggle } = await import("../src/primitives/controls.js");
 const { defineModule } = await import("../src/module/define-module.js");
 const { kitCss } = await import("../src/primitives/kit.js");
 
@@ -25,7 +25,7 @@ function foldable(state) {
   return control;
 }
 
-test("FX fold: a −/+ after the switch, aria-expanded, help words; folded draws one button that unfolds", () => {
+test("FX fold: the fold triangle after the switch, aria-expanded, help words; folded draws one button that unfolds", () => {
   const state = { on: true, folded: false, toggles: [], folds: [] };
   let control = foldable(state);
   const card = renderControl(control, () => control);
@@ -39,10 +39,11 @@ test("FX fold: a −/+ after the switch, aria-expanded, help words; folded draws
   assert.equal(hide.previousElementSibling, sw, "the toggle sits next to ON/OFF");
   assert.equal(hide.tagName, "BUTTON");
   assert.equal(hide.getAttribute("type"), "button");
-  assert.equal(hide.className, "nc-hide");
-  assert.equal(hide.textContent, "−");
+  assert.equal(hide.className, "nc-fold-toggle");
+  assert.ok(hide.querySelector(".nc-fold-tri[aria-hidden='true']"), "a triangle, not −/+");
+  assert.equal(hide.textContent, "");
   assert.equal(hide.getAttribute("aria-expanded"), "true");
-  assert.equal(hide.getAttribute("aria-label"), "Hide A · Reverb");
+  assert.equal(hide.getAttribute("aria-label"), "Minimize A · Reverb");
   assert.match(hide.getAttribute("data-nc-help"), /narrow column/);
   assert.equal(card.dataset.ncFolded, undefined);
   const fold = card.querySelector(":scope > [data-nc-fx-fold]");
@@ -55,14 +56,13 @@ test("FX fold: a −/+ after the switch, aria-expanded, help words; folded draws
   control = foldable(state);
   patchControl(card, control);
   assert.equal(card.dataset.ncFolded, "true");
-  assert.equal(hide.textContent, "+");
   assert.equal(hide.getAttribute("aria-expanded"), "false");
-  assert.equal(hide.getAttribute("aria-label"), "Show A · Reverb");
+  assert.equal(hide.getAttribute("aria-label"), "Expand A · Reverb");
   assert.equal(fold.hidden, false);
   assert.equal(fold.tagName, "BUTTON");
   assert.equal(fold.getAttribute("type"), "button");
   assert.equal(fold.getAttribute("aria-expanded"), "false");
-  assert.equal(fold.getAttribute("aria-label"), "Show A · Reverb, on");
+  assert.equal(fold.getAttribute("aria-label"), "Expand A · Reverb, on");
   assert.equal(fold.dataset.on, "true");
   assert.equal(fold.querySelector("[data-nc-fx-fold-name]").textContent, "A · Reverb");
   assert.equal(fold.querySelector("[data-nc-fx-fold-state]").textContent, "On");
@@ -73,7 +73,7 @@ test("FX fold: a −/+ after the switch, aria-expanded, help words; folded draws
   state.on = false;
   control = foldable(state);
   patchControl(card, control);
-  assert.equal(fold.getAttribute("aria-label"), "Show A · Reverb, off");
+  assert.equal(fold.getAttribute("aria-label"), "Expand A · Reverb, off");
   assert.equal(fold.querySelector("[data-nc-fx-fold-state]").textContent, "Off");
   assert.equal(card.dataset.ncDim, "true");
 
@@ -141,21 +141,20 @@ function stripControl(state) {
   };
 }
 
-test("strip fold: − first, the name between, × right after it; folded keeps M, S, the meter and a name button", () => {
+test("strip fold: the triangle in the corner, the name row and × unchanged; folded keeps M, S, the meter and a name button", () => {
   const state = { folded: false, folds: [], levels: [], ms: [], removed: 0 };
   let control = stripControl(state);
   const strip = renderControl(control, () => control);
   document.body.append(strip);
   const head = strip.querySelector(".nc-strip-hd");
-  assert.equal(head.firstElementChild.dataset.ncStripHide, "", "minimize first");
-  assert.equal(head.lastElementChild.dataset.ncStripRemove, "", "remove last");
-  const hide = head.firstElementChild;
-  assert.equal(hide.className, "nc-hide");
+  assert.deepEqual([...head.children].map((n) => n.className), ["nc-strip-name", "nc-strip-remove"], "name row as before");
+  const hide = strip.querySelector(":scope > [data-nc-strip-hide]");
+  assert.equal(strip.firstElementChild, hide, "first in the strip (tab order), drawn in the corner");
+  assert.equal(hide.className, "nc-fold-toggle");
   assert.equal(hide.getAttribute("aria-expanded"), "true");
   assert.equal(hide.getAttribute("aria-label"), "Minimize Bass");
   assert.equal(hide.getAttribute("data-nc-help"), "Minimizes this channel.");
   assert.equal(head.lastElementChild.hasAttribute("data-nc-help"), false, "the × is unchanged: no new words");
-  assert.equal(head.lastElementChild.previousElementSibling, head.querySelector(".nc-strip-name"), "× right after the name");
   const fold = strip.querySelector(".nc-strip-body > [data-nc-strip-fold]");
   assert.ok(fold);
   assert.equal(fold.hidden, true);
@@ -166,11 +165,11 @@ test("strip fold: − first, the name between, × right after it; folded keeps M
   control = stripControl(state);
   patchControl(strip, control);
   assert.equal(strip.dataset.ncFolded, "true");
-  assert.equal(hide.textContent, "+");
-  assert.equal(hide.getAttribute("aria-label"), "Show Bass");
+  assert.equal(hide.getAttribute("aria-expanded"), "false");
+  assert.equal(hide.getAttribute("aria-label"), "Expand Bass");
   assert.equal(fold.hidden, false);
   assert.equal(fold.getAttribute("aria-expanded"), "false");
-  assert.equal(fold.getAttribute("aria-label"), "Show Bass");
+  assert.equal(fold.getAttribute("aria-label"), "Expand Bass");
   assert.equal(fold.getAttribute("data-nc-help"), "Bass, minimized.");
   assert.equal(fold.querySelector("[data-nc-strip-fold-name]").textContent, "Bass");
   assert.ok(fold.querySelector(".nc-strip-fold-cap"));
@@ -189,10 +188,30 @@ test("strip fold: never on the master; CSS is a narrow column of tokens with the
   assert.equal(strip.querySelector("[data-nc-strip-hide]"), null);
   assert.equal(strip.dataset.ncFolded, undefined);
   assert.match(css, /\.nc-strip\[data-nc-folded\] \{ width: var\(--nc-ui-strip-fold-width\); padding-inline: 0; align-content: start; \}/);
-  assert.match(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd \{\s*justify-content: flex-start;/);
-  assert.match(css, /\.nc-strip-hd > \[data-nc-strip-hide\] \{[^}]*margin-inline-end: auto;/);
+  assert.match(css, /\.nc-strip > \[data-nc-strip-hide\] \{ position: absolute; top: var\(--nc-ui-control-gap\); left: var\(--nc-ui-control-gap\);/);
+  assert.doesNotMatch(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd/, "the name row is untouched");
   assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-row: 5;/);
   assert.match(css, /\.nc-strip-fold-cap \{[^}]*background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap\)\);/);
   const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
   assert.match(reduced, /\.nc-strip \{|\.nc-strip,|, \.nc-strip \{/);
+});
+
+test("fold triangle: ◀ open, flipped to ▶ folded; text-sub, ink on hover; motion token, reduced motion instant", () => {
+  const button = foldToggle();
+  assert.equal(button.tagName, "BUTTON");
+  assert.equal(button.getAttribute("type"), "button");
+  setFoldToggle(button, true, "Synth 2");
+  assert.equal(button.getAttribute("aria-expanded"), "false");
+  assert.equal(button.getAttribute("aria-label"), "Expand Synth 2");
+  setFoldToggle(button, false, "Synth 2");
+  assert.equal(button.getAttribute("aria-label"), "Minimize Synth 2");
+  const tri = css.slice(css.indexOf("\n.nc-fold-tri {"), css.indexOf("}", css.indexOf("\n.nc-fold-tri {")));
+  assert.match(tri, /clip-path: polygon\(100% 0, 0 50%, 100% 100%\)/, "points left");
+  assert.match(tri, /transition: transform var\(--nc-ui-motion-press\) var\(--nc-ui-motion-press-easing\)/);
+  assert.match(css, /\.nc-fold-toggle\[aria-expanded="false"\] \.nc-fold-tri,\s*\.nc-ui-fx-fold > \.nc-fold-tri \{ transform: scaleX\(-1\); \}/);
+  assert.match(css, /\.nc-fold-toggle \{[^}]*color: var\(--nc-ui-text-sub\);/);
+  assert.match(css, /\.nc-fold-toggle:hover \{ color: var\(--nc-ui-text\); \}/);
+  assert.match(css, /@media \(pointer: coarse\) \{[^@]*\.nc-fold-toggle::before \{[^}]*var\(--nc-ui-target-min\)/);
+  const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
+  assert.match(reduced, /\.nc-fold-tri \{/);
 });
