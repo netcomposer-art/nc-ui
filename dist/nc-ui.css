@@ -2214,12 +2214,12 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   color: var(--nc-ui-text);
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: var(--nc-ui-text-sub); }
-/* Minimize (onFold): − at the start of the name row and × at its far end, the name between, so a minimize click can't
-   land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the + on the name
+/* Minimize (onFold): − at the start of the name row; the name and its × stay together as before, after the name, so
+   the name always sits between the − and the × and a minimize click can't land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the + on the name
    row, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
    fader cap's colour (one button, the FX fold's look) beside a thin meter. At once: no motion. */
 .nc-strip[data-nc-foldable] > .nc-strip-hd {
-  justify-content: space-between;
+  justify-content: flex-start;
   /* Into the strip's side padding, with half gaps: the name keeps the room it had beside the × alone. */
   width: calc(100% + var(--nc-ui-control-gap) * 2);
   max-width: none;
@@ -2230,7 +2230,9 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   z-index: 1;
 }
 /* line-height 1: the name row stays the master's height, so faders still line up across the console. */
-.nc-strip-hd > [data-nc-strip-hide] { flex: none; padding-inline: 0; line-height: 1; }
+.nc-strip-hd > [data-nc-strip-hide] { flex: none; padding-inline: 0; line-height: 1; margin-inline-end: auto; }
+/* The name and its × stay together as before, centred in the room after the −. */
+.nc-strip[data-nc-foldable] > .nc-strip-hd > :last-child { margin-inline-end: auto; }
 .nc-strip[data-nc-folded] { width: var(--nc-ui-strip-fold-width); padding-inline: 0; align-content: start; }
 .nc-strip[data-nc-folded] > .nc-strip-hd { justify-content: center; width: 100%; margin-inline: 0; }
 /* The name stays in the row, unseen and zero wide, so the row keeps the open strips' height and the meters line up. */

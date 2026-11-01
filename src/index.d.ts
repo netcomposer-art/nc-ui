@@ -414,10 +414,8 @@ export interface StripControl {
   onClipClear?: () => void;
   /** Adds a remove × after the name (an instrument instance). `opener` is the button, for the confirm's focus. */
   onRemove?: (opener: HTMLElement) => void;
-  /** Hover words (data-nc-help) for the remove ×. */
-  removeHelp?: string;
   /**
-   * Minimize (not on the master): a −/+ at the start of the name row (the × stays at its far end). Folded, the strip
+   * Minimize (not on the master): a −/+ at the start of the name row (the × stays right after the name). Folded, the strip
    * is a narrow column (strip-fold-width): the +, M and S stacked (still working), the fader cap's colour as a small
    * mark and the name read bottom to top (one button: a click, Enter or Space unfolds it), and a thin meter that
    * lines up with the open strips'. Folding never touches the level or the sound. The host keeps the state.
