@@ -283,3 +283,28 @@ test("console: an optional meters area after the FX, left of the master; its own
   assert.match(rule('.nc-module-body[data-nc-layout="console"] > [data-nc-area="meters"]'), /grid-area: meters;[^}]*background: var\(--nc-ui-module-bg-stack-1\)/);
   assert.match(css, /@media \(max-width: 768px\) \{[^@]*"strips master" "meters meters" "fx fx"/);
 });
+
+test("strip sendsHidden: the sends row goes on every strip given it (rows still line up), and comes back", () => {
+  const state = { bass: 0.5, master: 0.8, mute: false };
+  const calls = [];
+  const hide = (def, on) => {
+    for (const s of def.sections) for (const c of s.controls) if (c.type === "strip") c.sendsHidden = on;
+    return def;
+  };
+  const m = defineModule(hide(consoleDef(state, calls), true));
+  document.body.append(m.el);
+  const strips = [...m.el.querySelectorAll(".nc-strip")];
+  assert.equal(strips.length, 2);
+  for (const s of strips) assert.ok(s.hasAttribute("data-nc-sends-hidden"), "every strip, the master too");
+  assert.ok(m.el.querySelector(".nc-strip-sends .nc-field"), "the knobs stay (view only), unseen");
+  assert.match(rule(".nc-strip[data-nc-sends-hidden] > .nc-strip-sends"), /display: none/);
+  const rows = rule(".nc-strip[data-nc-sends-hidden]").match(/grid-template-rows:([^;]*)/)[1];
+  const full = rule(".nc-strip").match(/grid-template-rows:([^;]*)/)[1];
+  const knobRows = (t) => t.split("calc(").length - 1;
+  assert.equal(knobRows(full), 2, "sends and pan rows");
+  assert.equal(knobRows(rows), 1, "one knob row fewer: the sends'");
+  assert.match(rule(".nc-strip[data-nc-folded][data-nc-sends-hidden] > .nc-strip-body"), /grid-row: 5/);
+  m.update(hide(consoleDef(state, calls), false));
+  for (const s of m.el.querySelectorAll(".nc-strip")) assert.ok(!s.hasAttribute("data-nc-sends-hidden"));
+  m.el.remove();
+});
