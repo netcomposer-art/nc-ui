@@ -1,3 +1,4 @@
+import { TAPER_STEPS, isTapered, taperFromUnit, taperKeyValue, taperPosition, taperToUnit, taperValue } from "./taper.js";
 import { readCssPx } from "../alias.js";
 import { VELOCITY_RAMPS, surpriseColor, surpriseFillStyle, velocityFillStyle } from "../color.js";
 import { currentTheme, onThemeChange } from "../theme.js";
@@ -173,7 +174,7 @@ export function patchControl(node, control) {
     if (input instanceof HTMLInputElement) {
       input.disabled = control.disabled === true;
       markModulated(input, control.modulated === true);
-      if (document.activeElement !== input) input.value = String(control.value);
+      if (document.activeElement !== input) input.value = String(sliderPosition(control));
       if (control.valueText) input.setAttribute("aria-valuetext", control.valueText);
       else input.removeAttribute("aria-valuetext");
     }
@@ -247,26 +248,50 @@ function renderSlider(control, lookup) {
   input.type = "range";
   input.className = "nc-range";
   input.id = control.id;
-  input.min = String(control.min);
-  input.max = String(control.max);
-  input.step = String(control.step);
-  input.value = String(control.value);
+  // A tapered slider (control.taper, taper.js) runs in 0..TAPER_STEPS positions; the host still sees its own units.
+  const tapered = isTapered(control.taper, control.min, control.max);
+  input.min = String(tapered ? 0 : control.min);
+  input.max = String(tapered ? TAPER_STEPS : control.max);
+  input.step = String(tapered ? 1 : control.step);
+  if (tapered) input.dataset.ncTaper = control.taper;
+  input.value = String(sliderPosition(control));
   input.disabled = control.disabled === true;
   input.dataset.ncId = control.id;
+  const valueOf = (live) =>
+    tapered ? taperValue(live.taper ?? control.taper, live.min, live.max, input.value, live.step) : Number(input.value);
   input.addEventListener("input", () => {
     const live = lookup(input);
-    if (live?.type === "slider") live.onChange(Number(input.value));
+    if (live?.type === "slider") live.onChange(valueOf(live));
   });
   input.addEventListener("change", () => {
     const live = lookup(input);
-    if (live?.type === "slider") live.onCommit?.(Number(input.value));
+    if (live?.type === "slider") live.onCommit?.(valueOf(live));
   });
+  if (tapered)
+    input.addEventListener("keydown", (event) => {
+      const live = lookup(input);
+      if (live?.type !== "slider" || input.disabled) return;
+      const taper = live.taper ?? control.taper;
+      const next = taperKeyValue(taper, live.min, live.max, live.value, event.key, event.shiftKey, live.step);
+      if (next === null) return;
+      event.preventDefault();
+      input.value = String(taperPosition(taper, live.min, live.max, next));
+      live.onChange(next);
+      live.onCommit?.(next);
+    });
   const readout = wrap.querySelector("[data-nc-readout]");
   wrap.insertBefore(input, readout);
   if (control.onTap) wrap.insertBefore(tapButton(control, input, lookup), readout);
   wrap.append(probe());
   patchControl(wrap, control);
   return wrap;
+}
+
+/** Where a slider's input sits for its value: the value itself, or its taper position. */
+function sliderPosition(control) {
+  return isTapered(control.taper, control.min, control.max)
+    ? taperPosition(control.taper, control.min, control.max, control.value)
+    : control.value;
 }
 
 /** Tap tempo on a slider's label line: timed on pointerdown (not click) so release latency stays out. */
@@ -501,8 +526,7 @@ function markModulated(el, modulated) {
 }
 
 function paintKnob(knob, control) {
-  const span = control.max - control.min || 1;
-  const t = (control.value - control.min) / span;
+  const t = taperToUnit(control.taper, control.min, control.max, control.value);
   markModulated(knob, control.modulated === true);
   const turn = Math.round(t * 270);
   knob.style.setProperty("--knob-turn", String(turn));
@@ -521,6 +545,8 @@ function paintKnob(knob, control) {
 }
 
 function nudgeKnob(live, event) {
+  if (isTapered(live.taper, live.min, live.max))
+    return taperKeyValue(live.taper, live.min, live.max, live.value, event.key, event.shiftKey, live.step);
   const span = live.max - live.min || 1;
   const step = typeof live.step === "number" && live.step > 0 ? live.step : span / 100;
   const fine = event.shiftKey ? step / 10 : step;
@@ -562,6 +588,12 @@ function renderKnob(control, lookup) {
     if (knob.hasPointerCapture && !knob.hasPointerCapture(event.pointerId)) return;
     const live = lookup(knob);
     if (live?.type !== "knob") return;
+    if (isTapered(live.taper, live.min, live.max)) {
+      // 120 px of drag is the whole travel, as for a linear knob; the taper turns travel into value.
+      const unit = taperToUnit(live.taper, live.min, live.max, startVal) - (event.clientY - startY) / 120;
+      live.onChange(taperFromUnit(live.taper, live.min, live.max, unit));
+      return;
+    }
     const span = live.max - live.min || 1;
     const next = Math.min(
       live.max,

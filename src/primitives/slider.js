@@ -1,23 +1,26 @@
 // The kit's slider as a factory, matching fx-blocks' SliderFactory contract
 // ((spec) => { el, set(value) }), so a block (or any app) gets the same row as renderControl's slider:
 // label and value on one line, the range full width below with a target-min (44 px) touch band on every pointer,
-// and colour dimming when disabled. A log slider runs its range in 0..LOG_STEPS positions.
+// and colour dimming when disabled. A tapered slider (spec.taper, see taper.js; `log: true` is the "freq" taper)
+// runs its range in 0..TAPER_STEPS positions.
+import { TAPER_STEPS, isTapered, taperKeyValue, taperPosition, taperValue } from "./taper.js";
 
-export const LOG_STEPS = 1000;
+export const LOG_STEPS = TAPER_STEPS;
 
-/** @param {number} min @param {number} max @param {number} value */
+const taperName = (log) => (log === true ? "log" : typeof log === "string" ? log : "linear");
+
+/** A value to the range input's position. `log`: true (logarithmic) or a taper name (taper.js). */
 export function toPosition(min, max, value, log) {
-  if (!log) return value;
-  const lo = Math.log(min);
-  const span = Math.log(max) - lo;
-  const clamped = Math.min(max, Math.max(min, value));
-  return Math.round(((Math.log(clamped) - lo) / span) * LOG_STEPS);
+  const taper = taperName(log);
+  if (!isTapered(taper, min, max)) return value;
+  return taperPosition(taper, min, max, value);
 }
 
-/** @param {number} min @param {number} max @param {number} position */
+/** A range input's position to its value (unrounded; createSlider snaps to the spec's step). */
 export function fromPosition(min, max, position, log) {
-  if (!log) return position;
-  return min * (max / min) ** (position / LOG_STEPS);
+  const taper = taperName(log);
+  if (!isTapered(taper, min, max)) return position;
+  return taperValue(taper, min, max, position);
 }
 
 /**
@@ -27,8 +30,9 @@ export function fromPosition(min, max, position, log) {
  */
 export function createSlider(spec, options = {}) {
   const doc = options.doc ?? globalThis.document;
-  const log = spec.log === true;
-  if (log && !(spec.min > 0 && spec.max > spec.min)) throw new RangeError(`log slider ${spec.id} needs 0 < min < max`);
+  if (spec.log === true && !(spec.min > 0 && spec.max > spec.min)) throw new RangeError(`log slider ${spec.id} needs 0 < min < max`);
+  const taper = spec.taper ?? taperName(spec.log);
+  const log = isTapered(taper, spec.min, spec.max);
   const el = doc.createElement("div");
   el.className = "nc-field";
   el.dataset.ncRow = "";
@@ -62,14 +66,24 @@ export function createSlider(spec, options = {}) {
   };
   const set = (next) => {
     value = next;
-    if (doc.activeElement !== input) input.value = String(toPosition(spec.min, spec.max, value, log));
+    if (doc.activeElement !== input) input.value = String(log ? taperPosition(taper, spec.min, spec.max, value) : value);
     show();
   };
   input.addEventListener("input", () => {
-    value = fromPosition(spec.min, spec.max, Number(input.value), log);
+    value = log ? taperValue(taper, spec.min, spec.max, input.value, spec.step) : Number(input.value);
     show();
     spec.onInput(value);
   });
+  if (log)
+    input.addEventListener("keydown", (event) => {
+      const next = taperKeyValue(taper, spec.min, spec.max, value, event.key, event.shiftKey, spec.step);
+      if (next === null || input.disabled) return;
+      event.preventDefault();
+      input.value = String(taperPosition(taper, spec.min, spec.max, next));
+      value = next;
+      show();
+      spec.onInput(value);
+    });
   input.disabled = spec.disabled === true;
   set(spec.value);
   return {
