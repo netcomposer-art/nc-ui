@@ -56,6 +56,7 @@
   --nc-ui-color-filter-blue: #3E6FB0;
   --nc-ui-color-filter-accent: color-mix(in srgb, var(--nc-ui-color-accent) 80%, var(--nc-ui-color-paper));
   --nc-ui-color-filter-red: #B8443A;
+  --nc-ui-color-eq-blue-gray: #B3C2D2;
   --nc-ui-color-tw-gray-50: oklch(98.5% 0.002 247.839);
   --nc-ui-color-tw-gray-100: oklch(96.7% 0.003 264.542);
   --nc-ui-color-tw-gray-600: oklch(44.6% 0.03 256.802);
@@ -557,6 +558,8 @@
   --nc-ui-legacy-destructive: 8.1 62% 64.9%;
   --nc-ui-legacy-chart-3: 0 0% 30%;
   --nc-ui-legacy-shadow-color: hsl(0 0% 0% / 0);
+  --nc-ui-eq-curve: var(--nc-ui-color-eq-blue-gray);
+  --nc-ui-eq-fill: var(--nc-ui-color-eq-blue-gray);
   --nc-ui-toast-bg: var(--nc-ui-color-shade-8);
   --nc-ui-toast-text: var(--nc-ui-color-ink);
   --nc-ui-dialog-scrim: color-mix(in srgb, var(--nc-ui-color-black) 55%, transparent);
@@ -632,6 +635,8 @@
     --nc-ui-legacy-destructive: 8.1 62% 64.9%;
     --nc-ui-legacy-chart-3: 0 0% 30%;
     --nc-ui-legacy-shadow-color: hsl(0 0% 0% / 0);
+    --nc-ui-eq-curve: var(--nc-ui-color-eq-blue-gray);
+    --nc-ui-eq-fill: var(--nc-ui-color-eq-blue-gray);
     --nc-ui-toast-bg: var(--nc-ui-color-shade-8);
     --nc-ui-toast-text: var(--nc-ui-color-ink);
     --nc-ui-dialog-scrim: color-mix(in srgb, var(--nc-ui-color-black) 55%, transparent);
