@@ -57,8 +57,6 @@
   --nc-ui-color-filter-blue: #3E6FB0;
   --nc-ui-color-filter-accent: color-mix(in srgb, var(--nc-ui-color-accent) 80%, var(--nc-ui-color-paper));
   --nc-ui-color-filter-red: #B8443A;
-  --nc-ui-color-eq-orange-light: #E8963E;
-  --nc-ui-color-eq-orange-deep: #C26A2A;
   --nc-ui-color-tw-gray-50: oklch(98.5% 0.002 247.839);
   --nc-ui-color-tw-gray-100: oklch(96.7% 0.003 264.542);
   --nc-ui-color-tw-gray-600: oklch(44.6% 0.03 256.802);
@@ -338,9 +336,9 @@
   --nc-ui-eq-fill: var(--nc-ui-color-filter-blue);
   --nc-ui-eq-grid: var(--nc-ui-color-div-0);
   --nc-ui-eq-spectrum: var(--nc-ui-color-slate);
-  --nc-ui-eq-band-1: var(--nc-ui-color-eq-orange-light);
+  --nc-ui-eq-band-1: var(--nc-ui-color-nyx-amber);
   --nc-ui-eq-band-2: var(--nc-ui-color-astrid-orange);
-  --nc-ui-eq-band-3: var(--nc-ui-color-eq-orange-deep);
+  --nc-ui-eq-band-3: color-mix(in srgb, var(--nc-ui-color-astrid-orange) 60%, var(--nc-ui-color-paper));
   --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
@@ -533,8 +531,6 @@
   --nc-ui-color-plum: #BB93C8;
   --nc-ui-color-filter-blue: #6E9CD8;
   --nc-ui-color-filter-red: #DC746A;
-  --nc-ui-color-eq-orange-light: #F2AE5C;
-  --nc-ui-color-eq-orange-deep: #DB8746;
   --nc-ui-color-tw-gray-50: #1B1A19;
   --nc-ui-color-tw-gray-100: #232221;
   --nc-ui-color-tw-gray-600: #A6A5A4;
@@ -610,8 +606,6 @@
     --nc-ui-color-plum: #BB93C8;
     --nc-ui-color-filter-blue: #6E9CD8;
     --nc-ui-color-filter-red: #DC746A;
-    --nc-ui-color-eq-orange-light: #F2AE5C;
-    --nc-ui-color-eq-orange-deep: #DB8746;
     --nc-ui-color-tw-gray-50: #1B1A19;
     --nc-ui-color-tw-gray-100: #232221;
     --nc-ui-color-tw-gray-600: #A6A5A4;
@@ -2620,6 +2614,11 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   min-width: 0;
   padding-inline: var(--nc-ui-control-gap);
 }
+/* sendsHidden: no sends row (the host's "hide the sends"); give it to every strip so their rows still line up. */
+.nc-strip[data-nc-sends-hidden] {
+  grid-template-rows: auto var(--nc-ui-slider-pitch) var(--nc-ui-slider-pitch) calc(var(--nc-ui-knob-size) + var(--nc-ui-control-gap) + var(--nc-ui-label-size) * var(--nc-ui-label-leading)) auto auto;
+}
+.nc-strip[data-nc-sends-hidden] > .nc-strip-sends { display: none; }
 .nc-strip + .nc-strip { border-inline-start: var(--nc-ui-hairline) solid var(--nc-ui-divider); }
 /* Channel strips alternate light and dark grey, full height, so a row of identical strips reads apart (Peter,
    2026-10-30); the master keeps the module's shade. */
@@ -2693,6 +2692,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   grid-template-columns: auto auto;
   column-gap: var(--nc-ui-control-gap);
 }
+.nc-strip[data-nc-folded][data-nc-sends-hidden] > .nc-strip-body { grid-row: 5; }
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-strip-fold { display: flex; grid-column: 1; grid-row: 1 / span 2; width: auto; }
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-meter { grid-column: 2; }
 .nc-strip[data-nc-folded] .nc-meter-bar { width: var(--nc-ui-control-gap); }

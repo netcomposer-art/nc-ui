@@ -1962,6 +1962,11 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   min-width: 0;
   padding-inline: ${v("control-gap")};
 }
+/* sendsHidden: no sends row (the host's "hide the sends"); give it to every strip so their rows still line up. */
+.nc-strip[data-nc-sends-hidden] {
+  grid-template-rows: auto ${v("slider-pitch")} ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+}
+.nc-strip[data-nc-sends-hidden] > .nc-strip-sends { display: none; }
 .nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
 /* Channel strips alternate light and dark grey, full height, so a row of identical strips reads apart (Peter,
    2026-10-30); the master keeps the module's shade. */
@@ -2035,6 +2040,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   grid-template-columns: auto auto;
   column-gap: ${v("control-gap")};
 }
+.nc-strip[data-nc-folded][data-nc-sends-hidden] > .nc-strip-body { grid-row: 5; }
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-strip-fold { display: flex; grid-column: 1; grid-row: 1 / span 2; width: auto; }
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-meter { grid-column: 2; }
 .nc-strip[data-nc-folded] .nc-meter-bar { width: ${v("control-gap")}; }

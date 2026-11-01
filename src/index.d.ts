@@ -463,6 +463,11 @@ export interface StripControl {
   /** Muted, or silenced by another strip's solo: the name and readout dim by colour. */
   silent?: boolean;
   sends?: StripSend[];
+  /**
+   * The sends row is hidden (view only: the knobs stay, unseen). Give it to every strip in a console, the master
+   * too, so their rows still line up: the strips get shorter by the row.
+   */
+  sendsHidden?: boolean;
   onChange: (value: number) => void;
   onReset?: () => void;
   /** Adds the Hacks button above M and S: the host shows this strip's effects stack (the console's fx area). */
