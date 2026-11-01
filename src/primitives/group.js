@@ -4,6 +4,12 @@
 // target. It is a real button: aria-expanded, aria-controls naming the body, Enter and Space. It shows and hides
 // at once, with no motion.
 //
+// `collapse: "phone"` (Peter, 2026-11-01: "collapse the functions on all modules that are advanced and/or lesser used")
+// makes the group a phone-only fold: on a phone (portrait, max-width 768px; a landscape phone, LANDSCAPE_PHONE; or a
+// Studio frame marked html[data-nc-landscape]) it is a group like any other, closed until toggled; on a tablet or
+// desktop the kit's CSS flattens it (no header, its controls laid out as if the group weren't there), so a wide
+// screen looks exactly as before. Pure CSS: turning the phone round re-lays it out with no script.
+//
 // Whether a group is open is a browser-wide UI preference, kept like the modules' hide (localStorage,
 // GROUP_OPEN_KEY, by the group's id). It is never part of an app's document. `open` is only the first state, until
 // the group is toggled.
@@ -94,6 +100,8 @@ function setOpen(wrap, open) {
 
 /** The header's words (the open state is the kit's own; the children are patched by the caller). */
 export function patchGroup(node, control) {
+  if (control.collapse === "phone") node.dataset.ncCollapse = "phone";
+  else delete node.dataset.ncCollapse;
   const title = node.querySelector(":scope > .nc-group-toggle > .nc-group-title");
   if (title && title.textContent !== control.title) title.textContent = control.title;
   const summary = node.querySelector(":scope > .nc-group-toggle > .nc-group-summary");

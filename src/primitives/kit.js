@@ -5,6 +5,15 @@ import { MODULATED_SELECTOR } from "../modulated.js";
 export const LANDSCAPE_PHONE = "(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)";
 
 /** The landscape-phone module grid, under `pre` (a root selector, or ""). */
+/** A phone-only group (group.js, collapse: "phone") as an ordinary group, under `pre` (a host's landscape mark). */
+function phoneGroup(pre) {
+  const g = `${pre}.nc-group[data-nc-collapse="phone"]`;
+  return `  ${g} { display: flex; }
+  ${g} > .nc-group-toggle { display: grid; }
+  ${g} > .nc-group-body { display: flex; }
+  ${g} > .nc-group-body[hidden] { display: none; }`;
+}
+
 function landscapeStack(pre) {
   const st = `${pre}.nc-stack[data-nc-layout="adjacent"]`;
   return `  ${st} {
@@ -1362,6 +1371,10 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-group-summary:empty, .nc-group[data-nc-open="true"] .nc-group-summary { display: none; }
 .nc-group-body { display: flex; flex-direction: column; gap: ${v("module-pad")}; min-width: 0; }
 .nc-group-body[hidden] { display: none; }
+/* A phone-only group (collapse: "phone"): flat on tablets and desktops (no header; group and body are display:
+   contents, so its controls are the section's own flex items, as before it was grouped); a group on phones, below. */
+.nc-group[data-nc-collapse="phone"], .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: contents; }
+.nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: none; }
 /* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
    text with an accent hairline under it; hover takes the word and the line to text. Both words share one grid cell,
    so the control never changes width when it flips. */
@@ -2746,6 +2759,16 @@ ${landscapeStack("")}
 }
 @media (max-width: 1023px) {
 ${landscapeStack("html[data-nc-landscape] ")}
+}
+/* Phone-only groups fold on phones: portrait, a landscape phone, and a Studio frame on a landscape phone. */
+@media (max-width: 768px) {
+${phoneGroup("")}
+}
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+${phoneGroup("")}
+}
+@media (max-width: 1023px) {
+${phoneGroup("html[data-nc-landscape] ")}
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,

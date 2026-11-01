@@ -435,6 +435,12 @@ export interface GroupControl {
   summary?: string;
   /** Open before this browser has toggled it. Default false. */
   open?: boolean;
+  /**
+   * "phone": fold only on phones (max-width 768px, a landscape phone, or a frame under html[data-nc-landscape]),
+   * closed until toggled; on tablets and desktops the controls show flat, with no header, as if ungrouped.
+   * Default: a group everywhere.
+   */
+  collapse?: "phone";
   /** After each toggle (the kit has already opened or closed it and remembered it). */
   onToggle?: (open: boolean) => void;
   controls: Control[];
