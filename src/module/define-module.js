@@ -1,5 +1,5 @@
 import { v } from "../alias.js";
-import { paintAll, panKnob, patchControl, renderControl } from "../primitives/controls.js";
+import { paintAll, panKnob, patchControl, renderControl, restoreMax } from "../primitives/controls.js";
 import { onThemeChange } from "../theme.js";
 import { installTheme } from "../primitives/install.js";
 import { createSwitch } from "../primitives/switch.js";
@@ -144,7 +144,7 @@ function lookup(node) {
   return findControl(def, id);
 }
 
-function renderBody(body, def) {
+function renderBody(body, def, paging) {
   const sections = def.sections ?? [{ id: "main", controls: def.controls ?? [] }];
   const next = signature(def);
   if (body.dataset.ncSignature === next) {
@@ -155,6 +155,7 @@ function renderBody(body, def) {
         const node = body.querySelector(`[data-nc-id="${cssEscape(control.id)}"]`);
         if (node instanceof Element) patchControl(node, control);
       }
+      if (wrap instanceof HTMLElement) paginate(wrap, section, paging);
     }
     return;
   }
@@ -189,7 +190,116 @@ function renderBody(body, def) {
     }
     for (const control of section.controls) target.append(renderControl(control, lookup));
     body.append(wrap);
+    paginate(wrap, section, paging);
   }
+}
+
+/**
+ * Pages (Peter, 2026-11-01: "don't push to a second row, create a second 'page' that user access via some standard
+ * arrow or chevron icon. Needs to be obvious though"): a section with `pageSize` shows its FX cards that many at a
+ * time from 769 px, with ‹ and › and "1 / 3" in a slim bar above them; phones stack them all as before. Pages count
+ * cards, folded or not, so a card's page never depends on what else is folded.
+ */
+export function fxPages(count, size, page) {
+  const pages = size > 0 ? Math.max(1, Math.ceil(count / size)) : 1;
+  const at = Number.isFinite(page) ? Math.trunc(page) : 0;
+  return { pages, page: Math.min(pages - 1, Math.max(0, at)) };
+}
+
+const PHONE_PAGES = "(max-width: 768px)"; // ui-guard: allow the kit's phone breakpoint, as the console's
+const liveSections = new WeakMap();
+
+function pageChevron(dir) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "nc-fx-page-btn";
+  button.dataset.ncFxPage = dir;
+  const label = dir === "prev" ? "Previous effects page" : "Next effects page";
+  button.setAttribute("aria-label", label);
+  button.title = dir === "prev" ? "Previous page" : "Next page";
+  const icon = document.createElement("span");
+  icon.className = "nc-fx-page-icon";
+  icon.setAttribute("aria-hidden", "true");
+  button.append(icon);
+  return button;
+}
+
+function pagerFor(wrap, paging) {
+  const found = [...wrap.children].find((node) => node.classList.contains("nc-fx-pager"));
+  if (found) return found;
+  const bar = document.createElement("div");
+  bar.className = "nc-fx-pager";
+  bar.dataset.ncFxPager = "";
+  bar.setAttribute("role", "group");
+  bar.setAttribute("aria-label", "Effects pages");
+  const prev = pageChevron("prev");
+  const next = pageChevron("next");
+  const count = document.createElement("span");
+  count.className = "nc-fx-page-count";
+  count.dataset.ncFxPageCount = "";
+  count.setAttribute("aria-hidden", "true");
+  // Said once per turn of the page; the visible "2 / 3" is for the eye.
+  const live = document.createElement("span");
+  live.className = "nc-ui-toast-live";
+  live.dataset.ncFxPageLive = "";
+  live.setAttribute("aria-live", "polite");
+  bar.append(prev, count, next, live);
+  const turn = (by, from) => {
+    const section = liveSections.get(wrap);
+    if (!section || from.getAttribute("aria-disabled") === "true") return;
+    const cards = wrap.querySelectorAll(":scope > .nc-ui-fx").length;
+    const { page } = fxPages(cards, section.pageSize, (paging.pages.get(section.id) ?? 0) + by);
+    paging.pages.set(section.id, page);
+    // The host's page wins on its next render, so it hears of the turn first; the kit shows it at once either way.
+    section.onPage?.(page);
+    paginate(wrap, { ...section, page }, paging);
+    // At an end the pressed chevron goes quiet: keep the keyboard in the bar, on the other one.
+    if (from.getAttribute("aria-disabled") === "true" && wrap.ownerDocument.activeElement === from)
+      (from === prev ? next : prev).focus();
+    paging.redraw();
+  };
+  prev.addEventListener("click", () => turn(-1, prev));
+  next.addEventListener("click", () => turn(1, next));
+  wrap.prepend(bar);
+  return bar;
+}
+
+function paginate(wrap, section, paging) {
+  liveSections.set(wrap, section);
+  const cards = [...wrap.querySelectorAll(":scope > .nc-ui-fx")];
+  const size = section.pageSize ?? 0;
+  const { pages, page } = fxPages(cards.length, size, section.page ?? paging.pages.get(section.id) ?? 0);
+  if (size > 0) paging.pages.set(section.id, page);
+  if (pages <= 1) {
+    for (const node of [...wrap.children]) if (node.classList.contains("nc-fx-pager")) node.remove();
+    delete wrap.dataset.ncPaged;
+    for (const card of cards) delete card.dataset.ncOffPage;
+    return;
+  }
+  wrap.dataset.ncPaged = "";
+  const phone = wrap.ownerDocument.defaultView?.matchMedia?.(PHONE_PAGES).matches === true;
+  const module = wrap.closest(".nc-module");
+  cards.forEach((card, i) => {
+    const off = Math.floor(i / size) !== page;
+    if (off) card.dataset.ncOffPage = "";
+    else delete card.dataset.ncOffPage;
+    // A maximized card takes its own page; turning away from it restores it (phones show every card: nothing to do).
+    if (off && !phone) {
+      const def = module instanceof HTMLElement ? defs.get(module) : undefined;
+      restoreMax(card, findControl(def, card.dataset.ncId));
+    }
+  });
+  const bar = pagerFor(wrap, paging);
+  const prev = bar.querySelector('[data-nc-fx-page="prev"]');
+  const next = bar.querySelector('[data-nc-fx-page="next"]');
+  prev.setAttribute("aria-disabled", page === 0 ? "true" : "false");
+  next.setAttribute("aria-disabled", page === pages - 1 ? "true" : "false");
+  const count = bar.querySelector("[data-nc-fx-page-count]");
+  const text = `${page + 1} / ${pages}`;
+  if (count.textContent !== text) count.textContent = text;
+  const live = bar.querySelector("[data-nc-fx-page-live]");
+  const said = `Effects page ${page + 1} of ${pages}`;
+  if (live.textContent !== said) live.textContent = said;
 }
 
 function cssEscape(value) {
@@ -276,6 +386,8 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
     syncAdjacentColumns(el.parentElement);
   });
 
+  // The pages each paged section shows (by section id), kept across re-renders and rebuilds.
+  const paging = { pages: new Map(), redraw: () => handle.redraw() };
   const handle = {
     el,
     update(next) {
@@ -292,7 +404,7 @@ export function defineModule(def, storageKey = RHYTHM_HIDDEN_KEY) {
       if (next.on === false) body.dataset.ncDim = "true";
       else delete body.dataset.ncDim;
       slim.setAttribute("aria-label", `Show ${next.title}`);
-      renderBody(body, next);
+      renderBody(body, next, paging);
       applyHidden(body.hidden);
       handle.redraw();
     },

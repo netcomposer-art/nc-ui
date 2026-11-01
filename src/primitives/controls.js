@@ -2104,6 +2104,11 @@ function setMax(card, control, on) {
   syncMax(card, control);
 }
 
+/** Restore a maximized card without moving focus: a console fx page turned away from it (define-module.js). */
+export function restoreMax(card, control) {
+  if (control?.type === "fx" && MAXED.has(control.id)) setMax(card, control, false);
+}
+
 function maxMode(card) {
   const view = card.ownerDocument.defaultView;
   if (view?.matchMedia?.(PHONE_MAX).matches) return "tall";
