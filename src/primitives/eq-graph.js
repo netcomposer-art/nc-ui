@@ -170,6 +170,11 @@ export function renderEqGraph(control, lookup) {
   plot.append(spec, curve);
   for (const band of control.bands) plot.append(renderNode(wrap, band, lookup));
   plot.append(tip);
+  plot.addEventListener("click", (event) => {
+    if (!eqLocked(wrap) || event.button > 0) return;
+    const max = maxHost(wrap)?.querySelector("[data-nc-max-toggle]");
+    if (max instanceof HTMLElement) max.click();
+  });
   wrap.append(plot);
   const probeEl = document.createElement("i");
   probeEl.className = "nc-token-probe";
@@ -328,6 +333,7 @@ export function patchEqGraph(wrap, control) {
   if (control.help) wrap.setAttribute("data-nc-help", control.help);
   else wrap.removeAttribute("data-nc-help");
   wrap.dataset.on = control.on === false ? "false" : "true";
+  syncLock(wrap);
   const range = control.range ?? 18;
   control.bands.forEach((band, i) => {
     const node = nodeOf(wrap, band.id);
@@ -387,6 +393,7 @@ function curveKey(control, w) {
 
 /** Repaint the curve layer and place the nodes (after a value, size or theme change). */
 export function paintEqGraph(wrap) {
+  if (state.has(wrap)) syncLock(wrap);
   const st = state.get(wrap);
   const canvas = wrap.querySelector(".nc-eq-curve");
   // Not in the page yet (a fresh render): the module's redraw paints it once it is placed.
@@ -432,9 +439,9 @@ export function paintEqGraph(wrap) {
       ctx.fillStyle = col;
       fillToZero(ctx, xs, ys, zeroY);
     }
-    ctx.globalAlpha = on ? 0.7 : 0.4;
+    ctx.globalAlpha = on ? 0.75 : 0.4;
     ctx.strokeStyle = col;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 0.75;
     strokeLine(ctx, xs, ys);
     ctx.restore();
   });
@@ -451,13 +458,13 @@ export function paintEqGraph(wrap) {
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
   if (on) {
-    ctx.globalAlpha = 0.22;
-    ctx.lineWidth = 6;
+    ctx.globalAlpha = 0.16;
+    ctx.lineWidth = 4;
     strokeLine(ctx, xs, ys);
   }
   ctx.globalAlpha = 1;
   ctx.strokeStyle = col;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1.25;
   strokeLine(ctx, xs, ys);
   ctx.restore();
   placeNodes(wrap);
@@ -548,7 +555,43 @@ function fillToZero(ctx, xs, ys, zeroY) {
   ctx.fill();
 }
 
+/**
+ * Inside a host that can be maximized, the graph is a display until the host is maximized (Peter, 2026-11-01: "when
+ * not maxed don't offer the ability to adjust the freq nodes directly"): the dots are markers, not sliders, and a click
+ * on the plot maximizes. The contract, so apps outside the kit can join: the host carries data-nc-maxable, gets
+ * data-nc-max while maximized, and its maximize button carries data-nc-max-toggle. With no such host (a graph on its
+ * own), the nodes stay editable.
+ */
+function maxHost(wrap) {
+  return wrap.closest("[data-nc-maxable]");
+}
+function eqLocked(wrap) {
+  const host = maxHost(wrap);
+  return !!host && !host.hasAttribute("data-nc-max");
+}
+
+function syncLock(wrap) {
+  const locked = eqLocked(wrap);
+  if (locked) wrap.dataset.locked = "";
+  else delete wrap.dataset.locked;
+  for (const n of wrap.querySelectorAll(".nc-eq-node")) {
+    if (!(n instanceof HTMLElement)) continue;
+    n.setAttribute("tabindex", locked ? "-1" : "0");
+    if (locked) n.setAttribute("aria-hidden", "true");
+    else n.removeAttribute("aria-hidden");
+  }
+  if (locked) {
+    const st = state.get(wrap);
+    if (st?.active) {
+      st.active = null;
+      placeTip(wrap);
+    }
+  }
+  return locked;
+}
+
 function placeNodes(wrap) {
+  syncLock(wrap);
   const st = state.get(wrap);
   if (!st?.box) return;
   const { w, h, pad } = st.box;

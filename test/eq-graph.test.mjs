@@ -254,3 +254,30 @@ test("over panel: three module widths from its column, kept inside the row", asy
   // A narrow row: never wider than the row.
   assert.equal(overPanelBox(r(0, 0, 300), r(0, 0, 300), r(0, 0, 600), 16, 2000).width, 598);
 });
+
+test("not maximized, the graph is a display: markers, not sliders; a click on the plot maximizes; maximized it edits", async () => {
+  const log = [];
+  const control = card(log, { id: "hack-ch-eq-locked" });
+  const el = renderControl(control, (n) => {
+    const id = n.closest?.("[data-nc-id]")?.getAttribute("data-nc-id");
+    return id === "eq-g" ? control.controls[0] : id === control.id ? control : undefined;
+  });
+  document.body.append(el);
+  await new Promise((r) => setTimeout(r, 40));
+  const g = el.querySelector(".nc-eq");
+  assert.ok(el.hasAttribute("data-nc-maxable"), "the card says it can be maximized");
+  assert.ok(g.hasAttribute("data-locked"), "locked until maximized");
+  for (const n of g.querySelectorAll(".nc-eq-node")) {
+    assert.equal(n.getAttribute("tabindex"), "-1");
+    assert.equal(n.getAttribute("aria-hidden"), "true");
+  }
+  click(g.querySelector(".nc-eq-plot"));
+  await new Promise((r) => setTimeout(r, 40));
+  assert.ok(el.hasAttribute("data-nc-max"), "a click on the plot maximizes");
+  assert.ok(!g.hasAttribute("data-locked"), "maximized: editable");
+  for (const n of g.querySelectorAll(".nc-eq-node")) assert.equal(n.getAttribute("tabindex"), "0");
+  click(el.querySelector("[data-nc-fx-max]"));
+  await new Promise((r) => setTimeout(r, 40));
+  assert.ok(g.hasAttribute("data-locked"), "restored: a display again");
+  el.remove();
+});
