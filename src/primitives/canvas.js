@@ -1,4 +1,5 @@
 import { filterPaint, readCanvasFont, readLive } from "../alias.js";
+import { envelopeXs } from "./envelope.js";
 
 function sizeOf(canvas) {
   const w = Math.max(1, canvas.clientWidth || 0);
@@ -36,6 +37,10 @@ export function paintCanvas(canvas, control) {
     ctx.fillRect(w / 2, 0, w / 2, h);
     return;
   }
+  if (control.paint === "filter" && typeof control.hz === "number") {
+    paintFilterResponse(ctx, w, h, control, canvas, font);
+    return;
+  }
   if (control.paint === "filter") {
     const mode = control.mode ?? "lp";
     const stroke = readLive(canvas, filterPaint(mode));
@@ -67,14 +72,24 @@ export function paintCanvas(canvas, control) {
     return;
   }
   if (control.paint === "envelope") {
+    // An attack-decay envelope on the kit's fixed time scale (envelope.js): attack ramps to full, decay falls to
+    // silence (an exponential to 1% at its end). 0 s is a vertical line. `max`: the longest [attack, decay] (s).
     ctx.strokeStyle = readLive(canvas, "accent");
+    const attack = Math.max(0, control.attack ?? 0);
+    const decay = Math.max(0, control.decay ?? 0.4);
+    const [x0, xa, xd] = envelopeXs([attack, decay], control.max ?? [1, 4], w);
+    const top = 2;
+    const base = h - 1;
     ctx.beginPath();
-    const decay = Math.max(0.05, control.decay ?? 0.4);
-    for (let x = 0; x <= w; x++) {
-      const t = x / Math.max(1, w);
-      const y = (h - 4) * (1 - Math.exp((-t * 4) / decay));
-      ctx.lineTo(x, h - y);
+    ctx.moveTo(x0, base);
+    ctx.lineTo(xa, top);
+    const n = Math.max(1, Math.ceil(xd - xa));
+    for (let i = 1; i <= n; i++) {
+      const f = i / n;
+      ctx.lineTo(xa + (xd - xa) * f, base - (base - top) * Math.exp(-4.6 * f) * (1 - f * 0.01));
     }
+    ctx.lineTo(xd, base);
+    ctx.lineTo(w, base);
     ctx.stroke();
     canvas.dataset.ncAccent = ctx.strokeStyle;
     return;
@@ -142,4 +157,89 @@ export function paintCanvas(canvas, control) {
   ctx.fillStyle = readLive(canvas, "rhythm.playhead");
   ctx.fillRect((step / steps) * w, h * 0.3, Math.max(1, w / steps), h * 0.4);
   canvas.dataset.ncAccent = readLive(canvas, "accent");
+}
+
+/** The response box: 20 Hz .. 20 kHz on a log axis, +24 .. −60 dB (ASTRID's FilterCurve frame). */
+export const FILTER_MIN_HZ = 20;
+export const FILTER_MAX_HZ = 20000;
+export const FILTER_TOP_DB = 24;
+export const FILTER_FLOOR_DB = -60;
+
+/** |H| of the RBJ biquad nc-fx runs (low-pass, high-pass, band-pass with 0 dB peak) at `f` Hz. */
+export function biquadMagnitude(mode, hz, q, f, sampleRate = 48000) {
+  const w0 = (2 * Math.PI * Math.min(hz, sampleRate * 0.49)) / sampleRate;
+  const c = Math.cos(w0);
+  const alpha = Math.sin(w0) / (2 * q);
+  let b0, b1, b2;
+  if (mode === "hp") [b0, b1, b2] = [(1 + c) / 2, -(1 + c), (1 + c) / 2];
+  else if (mode === "bp") [b0, b1, b2] = [alpha, 0, -alpha];
+  else [b0, b1, b2] = [(1 - c) / 2, 1 - c, (1 - c) / 2];
+  const a0 = 1 + alpha, a1 = -2 * c, a2 = 1 - alpha;
+  const w = (2 * Math.PI * f) / sampleRate;
+  const re = (k0, k1, k2) => k0 + k1 * Math.cos(w) + k2 * Math.cos(2 * w);
+  const im = (k1, k2) => -(k1 * Math.sin(w) + k2 * Math.sin(2 * w));
+  const num = Math.hypot(re(b0, b1, b2), im(b1, b2));
+  const den = Math.hypot(re(a0, a1, a2), im(a1, a2));
+  return den > 0 ? num / den : 0;
+}
+
+/** x (0..w) for a frequency on the log axis, and y (0..h) for a level in dB, in the response box. */
+export function filterX(hz, w) {
+  const t = Math.log(Math.max(FILTER_MIN_HZ, Math.min(FILTER_MAX_HZ, hz)) / FILTER_MIN_HZ) / Math.log(FILTER_MAX_HZ / FILTER_MIN_HZ);
+  return t * w;
+}
+export function filterY(db, top, bottom) {
+  const d = Math.max(FILTER_FLOOR_DB, Math.min(FILTER_TOP_DB, db));
+  return top + ((FILTER_TOP_DB - d) / (FILTER_TOP_DB - FILTER_FLOOR_DB)) * (bottom - top);
+}
+
+/**
+ * The filter's real response (control.hz, control.q, control.sampleRate; mode lp | hp | bp), the 0 dB line, a dashed
+ * mark at the cutoff and the axis ends. `open: true` (a low-pass all the way up) draws the flat line.
+ */
+function paintFilterResponse(ctx, w, h, control, canvas, font) {
+  const mode = control.mode ?? "lp";
+  const stroke = readLive(canvas, filterPaint(mode));
+  const axis = readLive(canvas, "divider");
+  const sub = readLive(canvas, "text-sub");
+  const size = Number.parseFloat(String(font).match(/(\d+(?:\.\d+)?)px/)?.[1] ?? "10");
+  const top = 1;
+  const bottom = Math.max(top + 4, h - size - 3);
+  const q = control.q ?? Math.SQRT1_2;
+  const zero = Math.round(filterY(0, top, bottom)) + 0.5;
+  ctx.strokeStyle = axis;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, zero);
+  ctx.lineTo(w, zero);
+  ctx.stroke();
+  ctx.beginPath();
+  for (let x = 0; x <= w; x++) {
+    const f = FILTER_MIN_HZ * (FILTER_MAX_HZ / FILTER_MIN_HZ) ** (x / Math.max(1, w));
+    const mag = control.open ? 1 : biquadMagnitude(mode, control.hz, q, f, control.sampleRate);
+    const y = filterY(20 * Math.log10(Math.max(1e-5, mag)), top, bottom);
+    if (x === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = stroke;
+  ctx.stroke();
+  if (!control.open) {
+    const mx = Math.round(filterX(control.hz, w)) + 0.5;
+    ctx.strokeStyle = sub;
+    ctx.setLineDash?.([2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(mx, top);
+    ctx.lineTo(mx, bottom);
+    ctx.stroke();
+    ctx.setLineDash?.([]);
+  }
+  ctx.fillStyle = sub;
+  ctx.font = font;
+  ctx.textAlign = "left";
+  ctx.fillText("20 Hz", 0, h - 1);
+  ctx.textAlign = "right";
+  ctx.fillText("20 kHz", w, h - 1);
+  ctx.textAlign = "left";
+  canvas.dataset.ncAccent = stroke;
+  canvas.dataset.ncFilterHz = String(Math.round(control.hz));
 }

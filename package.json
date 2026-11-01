@@ -51,6 +51,14 @@
       "types": "./src/theme.d.ts",
       "import": "./src/theme.js"
     },
+    "./taper": {
+      "types": "./src/primitives/taper.d.ts",
+      "import": "./src/primitives/taper.js"
+    },
+    "./envelope": {
+      "types": "./src/primitives/envelope.d.ts",
+      "import": "./src/primitives/envelope.js"
+    },
     "./page-menu": {
       "types": "./src/primitives/page-menu.d.ts",
       "import": "./src/primitives/page-menu.js"

@@ -48,6 +48,21 @@ export {
   fxLevelState,
 } from "./primitives/fx-level.js";
 export { GROUP_OPEN_KEY, readGroups, writeGroup } from "./primitives/group.js";
+export {
+  TAPERS,
+  TAPER_POWER,
+  TAPER_STEPS,
+  dialTaper,
+  isTapered,
+  snapToStep,
+  taperCurve,
+  taperFromUnit,
+  taperKeyPosition,
+  taperPosition,
+  taperToUnit,
+  taperValue,
+} from "./primitives/taper.js";
+export { ENV_TAU, envUnits, envelopeLabelXs, envelopeXs } from "./primitives/envelope.js";
 export { LOG_STEPS, createSlider, fromPosition, sliderFactory, toPosition } from "./primitives/slider.js";
 export { DEFAULT_GESTURE, PadGesture, bindPadGesture } from "./primitives/gesture.js";
 export { openStepEditor, percent } from "./primitives/step-editor.js";

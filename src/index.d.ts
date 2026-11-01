@@ -33,6 +33,23 @@ export { type ConfirmOptions, type AskOptions, confirm, confirmCss } from "./pri
 export { ask } from "./primitives/ask.js";
 export { type SwitchHandle, type SwitchOptions, createSwitch } from "./primitives/switch.js";
 export {
+  TAPERS,
+  TAPER_POWER,
+  TAPER_STEPS,
+  type Taper,
+  dialTaper,
+  isTapered,
+  snapToStep,
+  taperCurve,
+  taperFromUnit,
+  taperKeyPosition,
+  taperPosition,
+  taperToUnit,
+  taperValue,
+} from "./primitives/taper.js";
+import type { Taper } from "./primitives/taper.js";
+export { ENV_TAU, envUnits, envelopeLabelXs, envelopeXs } from "./primitives/envelope.js";
+export {
   LOG_STEPS,
   type SliderHandle,
   type SliderSpec,
@@ -83,6 +100,11 @@ export interface SliderControl {
   onTap?: (timeMs: number) => void;
   /** Readout text with its unit (e.g. "62%", "55 Hz"); also the slider's aria-valuetext. Default: the number. */
   valueText?: string;
+  /**
+   * How the travel maps to the value (taper.js): "time", "freq", "q" and "rate" spread the travel by ear; the
+   * others (the default) are linear. Values, onChange and onCommit stay in the control's own units.
+   */
+  taper?: Taper;
 }
 export interface SelectControl {
   type: "select";
@@ -163,6 +185,8 @@ export interface KnobControl {
   bipolar?: boolean;
   /** Hover words (data-nc-help) on the knob's field (label and knob). */
   help?: string;
+  /** How the turn maps to the value (taper.js); linear by default. */
+  taper?: Taper;
   onChange: (value: number) => void;
 }
 export interface ChoiceControl {
@@ -317,6 +341,18 @@ export interface CanvasControl {
   mode?: FilterPaint;
   cutoff?: number;
   resonance?: number;
+  /**
+   * filter: the real response instead of the sketch. The filter's frequency (Hz), its Q (default 0.7071) and the
+   * sample rate (default 48 kHz): the RBJ biquad nc-fx runs, 20 Hz .. 20 kHz (log) by +24 .. −60 dB.
+   */
+  hz?: number;
+  q?: number;
+  sampleRate?: number;
+  /** filter (with hz): a low-pass all the way open, drawn flat. */
+  open?: boolean;
+  /** envelope: the attack (s); decay is the decay (s); max the longest [attack, decay] (s), which fixes the scale. */
+  attack?: number;
+  max?: [number, number];
   decay?: number;
   level?: number;
   step?: number;
