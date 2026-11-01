@@ -19,7 +19,7 @@ test('the dark CSS: an explicit choice and the system setting (unless light was 
   const block = css.slice(css.indexOf(':root[data-nc-theme="dark"]'), css.indexOf('@media (prefers-color-scheme: dark)'));
   const props = [...block.matchAll(/^\s+(--[\w-]+):/gm)].map((m) => m[1]);
   assert.ok(props.length > 40);
-  for (const p of props) assert.match(p, /^--nc-ui-(color-|legacy-|toast-|dialog-)|^--nc-synth-key-/, p);
+  for (const p of props) assert.match(p, /^--nc-ui-(color-|legacy-|toast-|dialog-|eq-curve$|eq-fill$)|^--nc-synth-key-/, p);
   // Both blocks carry the same declarations.
   const media = css.slice(css.indexOf('@media (prefers-color-scheme: dark)'));
   for (const p of props) assert.ok(media.includes(`${p}:`), p);

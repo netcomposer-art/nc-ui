@@ -56,6 +56,7 @@ export declare const base: {
     readonly "filter-blue": "#3E6FB0";
     readonly "filter-accent": "#315873";
     readonly "filter-red": "#B8443A";
+    readonly "eq-blue-gray": "#B3C2D2";
     readonly "tw-gray-50": "oklch(98.5% 0.002 247.839)";
     readonly "tw-gray-100": "oklch(96.7% 0.003 264.542)";
     readonly "tw-gray-600": "oklch(44.6% 0.03 256.802)";
@@ -1137,6 +1138,7 @@ export declare const themes: {
       readonly "filter-blue": "#3E6FB0";
       readonly "filter-accent": "#315873";
       readonly "filter-red": "#B8443A";
+      readonly "eq-blue-gray": "#B3C2D2";
       readonly "tw-gray-50": "oklch(98.5% 0.002 247.839)";
       readonly "tw-gray-100": "oklch(96.7% 0.003 264.542)";
       readonly "tw-gray-600": "oklch(44.6% 0.03 256.802)";
@@ -1484,6 +1486,7 @@ export declare const themes: {
       readonly "filter-blue": "#6E9CD8";
       readonly "filter-accent": "#5A8BAE";
       readonly "filter-red": "#DC746A";
+      readonly "eq-blue-gray": "#B3C2D2";
       readonly "tw-gray-50": "#1B1A19";
       readonly "tw-gray-100": "#232221";
       readonly "tw-gray-600": "#A6A5A4";
@@ -1621,8 +1624,8 @@ export declare const themes: {
       readonly "eq-graph-height-max": "248px";
       readonly "eq-node-size": "8px";
       readonly "eq-graph-bg": "#1A1918";
-      readonly "eq-curve": "#69A7D3";
-      readonly "eq-fill": "#6E9CD8";
+      readonly "eq-curve": "#B3C2D2";
+      readonly "eq-fill": "#B3C2D2";
       readonly "eq-grid": "#353433";
       readonly "eq-spectrum": "#90A0C1";
       readonly "eq-band-1": "#9CA536";
