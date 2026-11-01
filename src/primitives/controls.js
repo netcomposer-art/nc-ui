@@ -4,6 +4,7 @@ import { currentTheme, onThemeChange } from "../theme.js";
 import { paintCanvas } from "./canvas.js";
 import { overPanelBox, paintEqGraph, patchEqGraph, renderEqGraph } from "./eq-graph.js";
 import { createFader, faderHandle } from "./fader.js";
+import { bindFxLevel, createFxLevel } from "./fx-level.js";
 import { bindPadGesture } from "./gesture.js";
 import { createMeter, meterHandle } from "./meter.js";
 import { patchGroup, renderGroup } from "./group.js";
@@ -1920,12 +1921,15 @@ function renderFx(control, lookup) {
   name.id = `${control.id}-name`;
   name.textContent = control.title;
   const foldable = typeof control.onFold === "function";
-  if (control.on === undefined && !foldable && !maximizable(control)) card.append(name);
+  const metered = !!control.meter;
+  if (control.on === undefined && !foldable && !maximizable(control) && !metered) card.append(name);
   else {
     // fx-blocks' header: the name, then a real switch named by it. Off dims the card by colour.
     const head = document.createElement("div");
     head.className = "nc-ui-fx-hd";
     head.append(name);
+    // The level meter (fx-level.js): a fixed-size column before the switch, so a meter never moves anything.
+    if (metered) head.append(fxLevelEl(card, "head"));
     if (control.on !== undefined) {
       const toggle = createSwitch({
         checked: control.on,
@@ -1945,6 +1949,7 @@ function renderFx(control, lookup) {
   // Folded (onFold / folded): one button over the whole card, the name read bottom to top and the on/off word. In a
   // console row it is a narrow column; elsewhere (and on phones) the card keeps only its header row.
   if (foldable) card.prepend(fxFold(card, lookup));
+  if (metered) bindCardLevel(card, control);
   for (const child of control.controls) card.append(renderControl(child, lookup));
   if (control.more?.length) {
     const more = document.createElement("details");
@@ -2026,6 +2031,8 @@ function fxFold(card, lookup) {
   tri.className = "nc-fold-tri";
   tri.setAttribute("aria-hidden", "true");
   fold.append(tri, state, name);
+  // The level meter again at the foot of the column (the same levels as the header's); it gives way if there is no room.
+  if (card.querySelector(':scope > .nc-ui-fx-hd > [data-nc-fx-level="head"]')) fold.append(fxLevelEl(card, "fold"));
   fold.addEventListener("click", () => {
     const live = lookup(fold);
     if (live?.type !== "fx") return;
@@ -2226,7 +2233,24 @@ function bindEscape(doc) {
   });
 }
 
+/** The card's meters (header, folded column), one binding per card, to the live control's `meter`. */
+const LEVELS = new WeakMap();
+function fxLevelEl(card, where) {
+  const el = createFxLevel(card.ownerDocument);
+  el.dataset.ncFxLevel = where;
+  return el;
+}
+function bindCardLevel(card, control) {
+  const els = [...card.querySelectorAll("[data-nc-fx-level]")];
+  if (!els.length) return;
+  for (const el of els) setHelpWords(el, control.meterHelp);
+  const binding = LEVELS.get(card);
+  if (binding) binding.set(control.meter);
+  else LEVELS.set(card, bindFxLevel(els, control.meter));
+}
+
 function patchFx(node, control) {
+  if (control.meter || LEVELS.has(node)) bindCardLevel(node, control);
   const name = node.querySelector(".nc-ui-fx-name");
   if (name) name.textContent = control.title;
   const toggle = node.querySelector("[data-nc-fx-switch]");

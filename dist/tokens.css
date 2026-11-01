@@ -315,6 +315,12 @@
   --nc-ui-meter-track: var(--nc-ui-color-div-0);
   --nc-ui-meter-width: var(--nc-ui-space-8);
   --nc-ui-clip-size: var(--nc-ui-space-6);
+  --nc-ui-fx-level-bar: var(--nc-ui-space-3);
+  --nc-ui-fx-level-height: var(--nc-ui-space-20);
+  --nc-ui-fx-level-fold-length: var(--nc-ui-space-48);
+  --nc-ui-fx-level-in: var(--nc-ui-color-accent-pad);
+  --nc-ui-fx-level-out: var(--nc-ui-color-accent);
+  --nc-ui-fx-level-hot: var(--nc-ui-color-astrid-orange);
   --nc-ui-fader-height: 148px;
   --nc-ui-fader-cap-width: var(--nc-ui-space-28);
   --nc-ui-fader-cap-height: var(--nc-ui-space-14);
