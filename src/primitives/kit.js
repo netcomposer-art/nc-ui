@@ -1967,6 +1967,88 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
     width: calc(${v("fx-card-width")} * 3);
   }
 }
+/* Pages (define-module.js, a section's pageSize; Peter, 2026-11-01: "don't push to a second row, create a second
+   'page' ... Needs to be obvious though"). From 769 px a paged fx area shows one page of cards in its row, never a
+   second row, under a slim bar: ‹ at its left end, "1 / 3" in the middle, › at its right end. The cards of the other
+   pages stay laid out but unseen, at their own width and taking no room (a negative margin as wide as the card), so
+   the row is as tall as the tallest card of any page and turning a page never changes the Mix's height. Phones (up
+   to 768 px) stack every card as before: no bar. */
+.nc-fx-pager { display: none; }
+@media (min-width: 769px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    padding-top: ${v("target-min")};
+  }
+  /* No card folded on this page: three cards' width, a part-filled last page too, so the strips never shift. */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged]:not(:has(> .nc-ui-fx[data-nc-folded]:not([data-nc-off-page]))) {
+    min-width: calc(${v("fx-card-width")} * 3);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] > .nc-ui-fx { flex: none; width: ${v("fx-card-width")}; }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] > .nc-ui-fx[data-nc-off-page][data-nc-off-page][data-nc-off-page] {
+    order: -1;
+    flex: none;
+    width: ${v("fx-card-width")};
+    margin-inline-end: calc(${v("fx-card-width")} * -1);
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] > .nc-ui-fx[data-nc-off-page][data-nc-off-page][data-nc-off-page][data-nc-folded] {
+    width: ${v("fx-fold-width")};
+    margin-inline-end: calc(${v("fx-fold-width")} * -1);
+    padding-inline: 0;
+  }
+  /* A maximized card takes its page (its page-mates as fold columns beside it): the other pages stay out of it. */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx[data-nc-off-page] { display: none; }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] > .nc-fx-pager {
+    position: absolute;
+    inset: 0 0 auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: ${v("module-gap")};
+    height: ${v("target-min")};
+  }
+}
+/* A chevron button: a full target, a square outline like Moves' buttons, the chevron in ink so it reads at a glance.
+   At an end it stays focusable (aria-disabled) and dims by colour. */
+.nc-fx-page-btn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: ${v("target-min")};
+  height: ${v("target-min")};
+  margin: 0;
+  padding: 0;
+  border: ${v("hairline")} solid ${v("text-sub")};
+  border-radius: ${v("slot-radius")};
+  background: transparent;
+  color: ${v("text")};
+  cursor: pointer;
+}
+.nc-fx-page-btn:hover:not([aria-disabled="true"]) { border-color: ${v("text")}; }
+.nc-fx-page-btn:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-fx-page-btn[aria-disabled="true"] { color: ${v("divider")}; border-color: ${v("divider")}; cursor: default; }
+.nc-fx-page-icon {
+  display: block;
+  width: calc(${v("control-gap")} * 2.5);
+  height: calc(${v("control-gap")} * 2.5);
+  border-style: solid;
+  border-color: currentColor;
+  border-width: calc(${v("hairline")} * 2) calc(${v("hairline")} * 2) 0 0;
+  transform: translateX(calc(${v("control-gap")} * -0.5)) rotate(45deg);
+}
+.nc-fx-page-btn[data-nc-fx-page="prev"] .nc-fx-page-icon { transform: translateX(calc(${v("control-gap")} * 0.5)) rotate(-135deg); }
+.nc-fx-page-count {
+  font-size: ${v("label-size")};
+  font-weight: ${v("label-weight")};
+  letter-spacing: ${v("label-tracking")};
+  font-variant-numeric: tabular-nums;
+  color: ${v("text")};
+  white-space: nowrap;
+}
 /* One channel strip: name, M and S, sends, then the fader with its scale and meter, then the readout. Every strip
    (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up. */
 .nc-strip {
@@ -2402,6 +2484,16 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
     flex: 1 1 0;
     width: auto;
     min-width: 0;
+  }
+  /* Paged: a third each, so a part-filled last page keeps the columns; with a card folded on the page the open
+     ones share the rest. */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged][data-nc-paged] > .nc-ui-fx:not([data-nc-folded], [data-nc-off-page]) {
+    flex: 0 0 calc(100% / 3);
+    width: auto;
+    min-width: 0;
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged][data-nc-paged]:has(> .nc-ui-fx[data-nc-folded]:not([data-nc-off-page])) > .nc-ui-fx:not([data-nc-folded], [data-nc-off-page]) {
+    flex: 1 1 0;
   }
 }
 @media (max-width: 768px) {

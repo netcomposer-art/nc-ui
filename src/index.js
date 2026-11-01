@@ -64,6 +64,7 @@ export {
   HIDDEN_STORAGE_KEY,
   RHYTHM_HIDDEN_KEY,
   defineModule,
+  fxPages,
   placeModules,
   readHidden,
   syncAdjacentColumns,

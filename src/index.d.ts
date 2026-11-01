@@ -607,8 +607,21 @@ export interface ModuleSection {
   area?: "strips" | "fx" | "meters" | "master";
   /** Accessible group name for the section. */
   label?: string;
+  /**
+   * Pages (a console's fx area): from 769 px show the section's FX cards this many at a time, on one row, with a slim
+   * bar above them: ‹ ("Previous effects page"), "1 / 3", › ("Next effects page"), quiet at the ends. Pages count
+   * cards, folded or not. The row is as tall as the tallest card of any page, so turning a page never changes the
+   * module's height. A maximized card takes its page; turning away restores it. Phones stack every card (no bar).
+   */
+  pageSize?: number;
+  /** The page to show, from 0, clamped to the pages there are. Omitted: the kit keeps the page it shows. */
+  page?: number;
+  /** A press on ‹ or ›: the new page, from 0 (the kit has already shown it). Pass `page` back on the next render. */
+  onPage?(page: number): void;
   controls: Control[];
 }
+/** The pages of `count` cards shown `size` at a time, and `page` clamped into them (from 0). */
+export function fxPages(count: number, size: number, page: number): { pages: number; page: number };
 export interface ModuleDef {
   id: string;
   title: string;
