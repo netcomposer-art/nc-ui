@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- Console: an optional `meters` area (`area: "meters"`) after the FX cards and left of the master, on the master's shade with a hairline between; tablets put it beside the master on the strips' row, phones on its own row above the FX. First user: the Studio's VU meters.
 - FX card fold: `onFold` / `folded` / `foldHelp` give an `fx` card a −/+ after its ON/OFF; folded in a console row (769 px up) it is a narrow column (`fx-fold-width`, 120 px), one button with the on/off word and the name read bottom to top, elsewhere its header row. No motion; the host keeps the state (docs/fx-fold.md). First user: the Studio's Mix.
 - Step grid: Fill and Clear are text actions like Save and Load (held Fill: ink underline); coarse pointers keep a target-min pad.
 - Console strips: `--nc-strip-cap` on a strip colours its fader cap (the Studio: each instrument's colour, muted). Unset, the cap stays ink.

@@ -177,7 +177,7 @@ test("console CSS: tokens only; strips scroll on phones with the master pinned; 
   assert.match(rule(".nc-meter-peak, .nc-meter-rms"), /transition: none/);
   assert.match(rule('.nc-meter-clip[data-lit="true"]'), /background: var\(--nc-ui-meter-clip\)/);
   assert.match(rule(".nc-meter-rms") + rule(".nc-meter-peak"), /meter-fill|meter-peak/);
-  assert.match(css, /@media \(max-width: 1023px\) \{\s*\.nc-module-body\[data-nc-layout="console"\] \{[^}]*"strips master" "fx fx"/);
+  assert.match(css, /@media \(max-width: 1023px\) \{\s*\.nc-module-body\[data-nc-layout="console"\] \{[^}]*"strips meters master" "fx fx fx"/);
   assert.match(css, /\[data-nc-area="strips"\] \{[^}]*overflow-x: auto/);
   // Identity colours belong to each instrument's own title only (Peter): never on a strip.
   assert.doesNotMatch(css, /nc-strip[^{]*identity|instrument-(astrid|petra|olive)\)[^;]*;[^}]*\}[^{]*nc-strip/);
@@ -262,4 +262,24 @@ test("strip: remove × and the typed readout (click opens, Enter commits, Escape
   select.dispatchEvent(new Event("change"));
   assert.deepEqual(typed, ["-3.5", "add:olive-bass"]);
   mod.el.remove();
+});
+
+test("console: an optional meters area after the FX, left of the master; its own row on phones", () => {
+  const meters = { id: "meters", area: "meters", label: "Meters", controls: [{ type: "label", id: "vu", text: "VU" }] };
+  const mod = defineModule({
+    id: "mixm",
+    title: "Mix",
+    layout: "console",
+    sections: [
+      { id: "strips", area: "strips", controls: [] },
+      { id: "fx", area: "fx", controls: [] },
+      meters,
+      { id: "master", area: "master", controls: [] },
+    ],
+  });
+  const body = mod.el.querySelector(".nc-module-body");
+  assert.deepEqual([...body.children].map((n) => n.dataset.ncArea), ["strips", "fx", "meters", "master"]);
+  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) auto auto auto;\s*grid-template-areas: "strips fx meters master";/);
+  assert.match(rule('.nc-module-body[data-nc-layout="console"] > [data-nc-area="meters"]'), /grid-area: meters;[^}]*background: var\(--nc-ui-module-bg-stack-1\)/);
+  assert.match(css, /@media \(max-width: 768px\) \{[^@]*"strips master" "meters meters" "fx fx"/);
 });
