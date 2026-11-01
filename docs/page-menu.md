@@ -41,3 +41,8 @@ Not part of the menu, but the same pass (Peter, 2026-11-01): on a short, wide sc
 (`(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)`) an `adjacent` module stack is a grid of
 as many columns as fit at two `module-slim-column`s wide (two or three on a phone), each module at its own height, in
 reading order; a lead module (a step grid) spans two columns.
+
+Inside the Studio an instrument's frame is as tall as its page, so its own media query never reads as landscape. The
+Studio mirrors `LANDSCAPE_PHONE` (exported) onto each frame's `<html>` as `data-nc-landscape`, and the kit applies the
+same grid under `html[data-nc-landscape]` (below 1024 px).
+

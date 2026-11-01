@@ -59,6 +59,7 @@ export {
 } from "./primitives/toast.js";
 export { HELP_ATTR, HELP_DELAY, installHelpTips, placeHelp } from "./primitives/help.js";
 export { PAGE_MENU_ICON, PAGE_MENU_PHONE, pageMenu } from "./primitives/page-menu.js";
+export { LANDSCAPE_PHONE } from "./primitives/kit.js";
 export {
   HIDDEN_STORAGE_KEY,
   RHYTHM_HIDDEN_KEY,
