@@ -1398,7 +1398,6 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
   .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
   .nc-strip[data-nc-folded] > .nc-strip-ms { gap: 0; }
-  .nc-strip[data-nc-folded] .nc-ms-wrap { width: ${v("target-min")}; }
   .nc-strip[data-nc-folded] .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: 0; margin-top: calc(${v("module-gap")} * -1); }
   .nc-ms {
     inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
@@ -1756,6 +1755,10 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-scale { display: none; }
 .nc-strip[data-nc-folded] > .nc-strip-ms { grid-row: 2 / span 2; flex-direction: column; height: auto; gap: ${v("module-gap")}; }
 .nc-strip[data-nc-folded] .nc-ms-wrap { width: ${v("slider-pitch")}; }
+/* Touch: each folded M and S a full target-min box (after the rule above, so it wins). */
+@media (pointer: coarse) {
+  .nc-strip[data-nc-folded] .nc-ms-wrap { width: ${v("target-min")}; }
+}
 .nc-strip[data-nc-folded] > .nc-strip-body {
   grid-row: 5;
   grid-template-columns: auto auto;
