@@ -11,7 +11,7 @@ function phoneGroup(pre) {
   return `  ${g} { display: flex; }
   ${g} > .nc-group-toggle { display: grid; }
   ${g} > .nc-group-body { display: flex; }
-  ${g} > .nc-group-body[hidden] { display: none; }`;
+  ${g}[data-nc-open="false"] > .nc-group-body { display: none; }`;
 }
 
 function landscapeStack(pre) {
@@ -1373,7 +1373,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-group-body { display: flex; flex-direction: column; gap: ${v("module-pad")}; min-width: 0; }
 .nc-group-body[hidden] { display: none; }
 /* A phone-only group (collapse: "phone"): flat on tablets and desktops (no header; group and body are display:
-   contents, so its controls are the section's own flex items, as before it was grouped); a group on phones, below. */
+   contents, so its controls are the section's own flex items, as before it was grouped); a group on phones, below,
+   where data-nc-open (not the hidden attribute, which group.js leaves off it) hides its body while closed. */
 .nc-group[data-nc-collapse="phone"], .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: contents; }
 .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: none; }
 /* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is

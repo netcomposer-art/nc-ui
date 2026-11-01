@@ -46,7 +46,8 @@ and/or lesser used functions" (on an iPhone). A module puts its advanced or less
 - On a tablet or desktop it is flat: no header, and the group and its body are `display: contents`, so its controls
   lay out as the section's own, exactly as before they were grouped.
 - It is CSS only (`.nc-group[data-nc-collapse="phone"]`), so turning the phone round re-lays it out with no script.
-  The open state is the group's usual one (by id); it only shows on phones.
+  The open state is the group's usual one (by id); it only shows on phones. Its body never carries `hidden` (a
+  page's `.nc [hidden]` is `display: none !important`); the phone CSS hides it from `data-nc-open="false"`.
 - Never put a control needed mid-performance in one (Play/Stop, Panic, pads, keys, a main level).
 - Give it a `summary` of what's inside with the current values ("Swing 0% · Sync follower"), so a closed group still
   says what it holds.

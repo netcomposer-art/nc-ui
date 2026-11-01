@@ -2012,7 +2012,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-group-body { display: flex; flex-direction: column; gap: var(--nc-ui-module-pad); min-width: 0; }
 .nc-group-body[hidden] { display: none; }
 /* A phone-only group (collapse: "phone"): flat on tablets and desktops (no header; group and body are display:
-   contents, so its controls are the section's own flex items, as before it was grouped); a group on phones, below. */
+   contents, so its controls are the section's own flex items, as before it was grouped); a group on phones, below,
+   where data-nc-open (not the hidden attribute, which group.js leaves off it) hides its body while closed. */
 .nc-group[data-nc-collapse="phone"], .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: contents; }
 .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: none; }
 /* On/off (ASTRID's ghost On / Off, Peter 2026-10): role="switch", the word alone, no track. Off is text-sub; on is
@@ -3419,19 +3420,19 @@ html[data-nc-hosted] .nc-page-body { padding-top: var(--nc-ui-module-gap); }
   .nc-group[data-nc-collapse="phone"] { display: flex; }
   .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: grid; }
   .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: flex; }
-  .nc-group[data-nc-collapse="phone"] > .nc-group-body[hidden] { display: none; }
+  .nc-group[data-nc-collapse="phone"][data-nc-open="false"] > .nc-group-body { display: none; }
 }
 @media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
   .nc-group[data-nc-collapse="phone"] { display: flex; }
   .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: grid; }
   .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: flex; }
-  .nc-group[data-nc-collapse="phone"] > .nc-group-body[hidden] { display: none; }
+  .nc-group[data-nc-collapse="phone"][data-nc-open="false"] > .nc-group-body { display: none; }
 }
 @media (max-width: 1023px) {
   html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] { display: flex; }
   html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] > .nc-group-toggle { display: grid; }
   html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] > .nc-group-body { display: flex; }
-  html[data-nc-landscape] .nc-group[data-nc-collapse="phone"] > .nc-group-body[hidden] { display: none; }
+  html[data-nc-landscape] .nc-group[data-nc-collapse="phone"][data-nc-open="false"] > .nc-group-body { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
