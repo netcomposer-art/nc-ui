@@ -328,6 +328,7 @@
   --nc-ui-strip-width: 88px;
   --nc-ui-strip-width-master: 112px;
   --nc-ui-fx-card-width: 232px;
+  --nc-ui-strip-fold-width: var(--nc-ui-space-40);
   --nc-ui-fx-fold-width: 120px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
   --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
@@ -1886,6 +1887,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 @media (pointer: coarse) {
   .nc-ms-wrap { flex-basis: var(--nc-ui-target-min); height: var(--nc-ui-target-min); }
   .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(var(--nc-ui-module-gap) * -1); }
+  .nc-strip[data-nc-folded] > .nc-strip-ms { gap: 0; }
+  .nc-strip[data-nc-folded] .nc-ms-wrap { width: var(--nc-ui-target-min); }
+  .nc-strip[data-nc-folded] .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: 0; margin-top: calc(var(--nc-ui-module-gap) * -1); }
   .nc-ms {
     inset: calc((var(--nc-ui-target-min) - var(--nc-ui-slider-pitch)) / 2);
     width: auto;
@@ -2212,6 +2216,53 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   color: var(--nc-ui-text);
 }
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: var(--nc-ui-text-sub); }
+/* Minimize (onFold): − at the start of the name row and × at its far end, the name between, so a minimize click can't
+   land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the + on the name
+   row, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
+   fader cap's colour (one button, the FX fold's look) beside a thin meter. At once: no motion. */
+.nc-strip[data-nc-foldable] > .nc-strip-hd {
+  justify-content: space-between;
+  /* Into the strip's side padding, with half gaps: the name keeps the room it had beside the × alone. */
+  width: calc(100% + var(--nc-ui-control-gap) * 2);
+  max-width: none;
+  margin-inline: calc(var(--nc-ui-control-gap) * -1);
+  gap: calc(var(--nc-ui-control-gap) / 2);
+  /* Over the next strip's background, so the × at the very edge is never painted over. */
+  position: relative;
+  z-index: 1;
+}
+/* line-height 1: the name row stays the master's height, so faders still line up across the console. */
+.nc-strip-hd > [data-nc-strip-hide] { flex: none; padding-inline: 0; line-height: 1; }
+.nc-strip[data-nc-folded] { width: var(--nc-ui-strip-fold-width); padding-inline: 0; align-content: start; }
+.nc-strip[data-nc-folded] > .nc-strip-hd { justify-content: center; width: 100%; margin-inline: 0; }
+/* The name stays in the row, unseen and zero wide, so the row keeps the open strips' height and the meters line up. */
+.nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-name { visibility: hidden; width: 0; flex: 0 0 0; }
+.nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-remove,
+.nc-strip[data-nc-folded] > .nc-strip-hacks,
+.nc-strip[data-nc-folded] > .nc-strip-sends,
+.nc-strip[data-nc-folded] > .nc-strip-db,
+.nc-strip[data-nc-folded] > .nc-strip-db-input,
+.nc-strip[data-nc-folded] .nc-strip-body > .nc-fader,
+.nc-strip[data-nc-folded] .nc-strip-body > .nc-scale { display: none; }
+.nc-strip[data-nc-folded] > .nc-strip-ms { grid-row: 2 / span 2; flex-direction: column; height: auto; gap: var(--nc-ui-module-gap); }
+.nc-strip[data-nc-folded] .nc-ms-wrap { width: var(--nc-ui-slider-pitch); }
+.nc-strip[data-nc-folded] > .nc-strip-body {
+  grid-row: 5;
+  grid-template-columns: auto auto;
+  column-gap: var(--nc-ui-control-gap);
+}
+.nc-strip[data-nc-folded] .nc-strip-body > .nc-strip-fold { display: flex; grid-column: 1; grid-row: 1 / span 2; width: auto; }
+.nc-strip[data-nc-folded] .nc-strip-body > .nc-meter { grid-column: 2; }
+.nc-strip[data-nc-folded] .nc-meter-bar { width: var(--nc-ui-control-gap); }
+.nc-strip-fold { gap: var(--nc-ui-control-gap); }
+.nc-strip-fold > .nc-ui-fx-fold-name { font-size: var(--nc-ui-label-size); font-weight: var(--nc-ui-label-weight); letter-spacing: var(--nc-ui-label-tracking); text-transform: uppercase; }
+.nc-strip[data-silent="true"] .nc-strip-fold > .nc-ui-fx-fold-name { color: var(--nc-ui-text-sub); }
+.nc-strip-fold-cap {
+  flex: none;
+  width: var(--nc-ui-fader-cap-height);
+  height: var(--nc-ui-control-gap);
+  background: var(--nc-strip-cap, var(--nc-ui-fader-cap));
+}
 .nc-strip-ms { display: flex; gap: var(--nc-ui-control-gap); height: var(--nc-ui-slider-pitch); }
 /* Hacks: a full-width toggle above M and S, in mixed case and a lighter grey (Peter); pressed while the console's fx area shows this strip's stack. */
 .nc-strip-hacks { display: flex; width: 100%; height: var(--nc-ui-slider-pitch); }
@@ -2720,7 +2771,7 @@ html[data-nc-hosted] .nc-page-body { padding-top: var(--nc-ui-module-gap); }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,
   .nc-ui-toast, .nc-ui-toast[data-state="closing"], .nc-ui-switch, .nc-select,
-  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold {
+  .nc-meter, .nc-meter-fill, .nc-step[data-playhead="true"], .nc-fader-cap, .nc-meter-clip, .nc-ui-fx, .nc-ui-fx-fold, .nc-strip {
     transition: none;
     animation: none;
   }

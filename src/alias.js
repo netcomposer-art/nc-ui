@@ -137,6 +137,7 @@ const semanticKinds = {
   "scale-size": "length",
   "fx-card-width": "length",
   "fx-fold-width": "length",
+  "strip-fold-width": "length",
   "head-margin-compact": "length",
   "motion-press": "duration",
   "control-weight": "other",

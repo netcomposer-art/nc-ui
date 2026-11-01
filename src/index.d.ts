@@ -414,6 +414,21 @@ export interface StripControl {
   onClipClear?: () => void;
   /** Adds a remove × after the name (an instrument instance). `opener` is the button, for the confirm's focus. */
   onRemove?: (opener: HTMLElement) => void;
+  /** Hover words (data-nc-help) for the remove ×. */
+  removeHelp?: string;
+  /**
+   * Minimize (not on the master): a −/+ at the start of the name row (the × stays at its far end). Folded, the strip
+   * is a narrow column (strip-fold-width): the +, M and S stacked (still working), the fader cap's colour as a small
+   * mark and the name read bottom to top (one button: a click, Enter or Space unfolds it), and a thin meter that
+   * lines up with the open strips'. Folding never touches the level or the sound. The host keeps the state.
+   */
+  onFold?: (folded: boolean) => void;
+  /** Minimized now (only with `onFold`). */
+  folded?: boolean;
+  /** Hover words for the −/+ (and the folded column, unless `foldedHelp`). */
+  foldHelp?: string;
+  /** Hover words for the folded column. */
+  foldedHelp?: string;
   /**
    * A single click (or Enter) on the readout opens it for typing (ASTRID's type-in values): Enter calls this with
    * the text, Escape or leaving cancels. The host parses and clamps. A double-click still resets.

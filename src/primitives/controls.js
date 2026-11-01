@@ -1505,6 +1505,23 @@ function renderStrip(control, lookup) {
   const name = document.createElement("span");
   name.className = "nc-strip-name";
   name.dataset.ncStripName = "";
+  const foldable = !control.master && typeof control.onFold === "function";
+  // Minimize (onFold): the modules' −/+ at the start of the name row, the × at its far end, so a minimize click can
+  // never land on remove.
+  if (foldable) {
+    strip.dataset.ncFoldable = "";
+    const hide = document.createElement("button");
+    hide.type = "button";
+    hide.className = "nc-hide";
+    hide.dataset.ncStripHide = "";
+    hide.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type !== "strip") return;
+      live.onFold?.(live.folded !== true);
+      if (document.activeElement !== hide) hide.focus();
+    });
+    head.append(hide);
+  }
   head.append(name);
   // Remove (an instance of an instrument): a quiet × after the name, as on ASTRID's hack cards. The host confirms.
   if (control.onRemove) {
@@ -1594,6 +1611,30 @@ function renderStrip(control, lookup) {
     },
   });
   body.append(scale, fader.el, meter.el);
+  // Folded: one button (the FX fold's look) with the fader cap's colour as a small mark and the name read bottom to
+  // top, beside the thin meter; a click, Enter or Space unfolds it.
+  if (foldable) {
+    const fold = document.createElement("button");
+    fold.type = "button";
+    fold.className = "nc-ui-fx-fold nc-strip-fold";
+    fold.dataset.ncStripFold = "";
+    fold.setAttribute("aria-expanded", "false");
+    const cap = document.createElement("span");
+    cap.className = "nc-strip-fold-cap";
+    cap.setAttribute("aria-hidden", "true");
+    const label = document.createElement("span");
+    label.className = "nc-ui-fx-fold-name";
+    label.dataset.ncStripFoldName = "";
+    fold.append(cap, label);
+    fold.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type !== "strip") return;
+      live.onFold?.(false);
+      const hide = strip.querySelector("[data-nc-strip-hide]");
+      if (hide instanceof HTMLElement) hide.focus();
+    });
+    body.prepend(fold);
+  }
   // The readout: mono; a double-click puts the fader back where the strip starts (unity, or the channel default), and
   // with onTypeIn a single click (or Enter) opens it for a typed value, as ASTRID's type-in values: Enter commits,
   // Escape or leaving cancels. The click waits out the double-click window, so a double-click never opens it.
@@ -1768,6 +1809,26 @@ function patchStrip(node, control) {
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;
   delete node.dataset.ncIdentity;
+  const folded = !control.master && typeof control.onFold === "function" && control.folded === true;
+  if (folded) node.dataset.ncFolded = "true";
+  else delete node.dataset.ncFolded;
+  const hide = node.querySelector("[data-nc-strip-hide]");
+  if (hide instanceof HTMLElement) {
+    hide.textContent = folded ? "+" : "−";
+    hide.setAttribute("aria-expanded", folded ? "false" : "true");
+    hide.setAttribute("aria-label", `${folded ? "Show" : "Minimize"} ${control.label}`);
+    hide.title = folded ? "Show" : "Minimize";
+    setHelpWords(hide, control.foldHelp);
+  }
+  const fold = node.querySelector("[data-nc-strip-fold]");
+  if (fold instanceof HTMLElement) {
+    fold.hidden = !folded;
+    fold.setAttribute("aria-label", `Show ${control.label}`);
+    const label = fold.querySelector("[data-nc-strip-fold-name]");
+    if (label && label.textContent !== control.label) label.textContent = control.label;
+    setHelpWords(fold, control.foldedHelp ?? control.foldHelp);
+  }
+  if (remove) setHelpWords(remove, control.removeHelp);
 }
 
 /** The meter handle of a strip control (for the host's per-frame update), from the module or strip element. */

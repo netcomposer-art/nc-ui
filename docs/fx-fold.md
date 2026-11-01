@@ -44,3 +44,30 @@ the browser, never in a document, scene or preset). Without `onFold` the card is
 
 `.nc-ui-fx[data-nc-folded="true"]` › `button.nc-ui-fx-fold[data-on]` (`.nc-ui-fx-fold-state`,
 `.nc-ui-fx-fold-name`), and `.nc-ui-fx-hd > .nc-hide[data-nc-fx-hide]`.
+
+## Strips (minimize a channel)
+
+The console's channel strips use the same fold (Peter, 2026-10-31: "a way of both minimizing and deleting
+channels"). Not on the master.
+
+```ts
+{
+  type: "strip",
+  /* … */
+  onRemove: (opener) => {},             // the × (the host confirms)
+  removeHelp: "Removes Bass from the Studio…",
+  folded: false,
+  onFold: (folded) => {},
+  foldHelp: "Minimizes this channel…",  // the −/+
+  foldedHelp: "Bass, minimized…",       // the folded name (defaults to foldHelp)
+}
+```
+
+- The name row is `−  NAME  ×`: the −/+ (`.nc-hide[data-nc-strip-hide]`, `aria-expanded`, "Minimize Bass" /
+  "Show Bass") at its start and the × at its far end, so a minimize click can't land on remove.
+- Folded, the strip is `strip-fold-width` (40 px) on the same rows as the open strips, so meters still line up: the
+  `+`; M and S stacked (still working); then one button (`.nc-ui-fx-fold.nc-strip-fold`, "Show Bass") holding a small
+  mark in the fader cap's colour (`--nc-strip-cap`) and the name read bottom to top, beside a thin meter (bars
+  `control-gap` wide). The button or the `+` unfolds it (click, Enter or Space).
+- Folding never touches the level, mute, solo or sends. No motion. On phones the strips still scroll sideways;
+  folded ones are just narrower.
