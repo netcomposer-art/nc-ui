@@ -478,8 +478,8 @@ export interface ModuleSection {
   panel?: boolean;
   subject?: string;
   lane?: 1 | 2 | 3 | 4;
-  /** In a console module: where this section sits ("strips" scroll on phones, "fx" cards, the "master" strip). */
-  area?: "strips" | "fx" | "master";
+  /** In a console module: where this section sits ("strips" scroll on phones, "fx" cards, optional "meters" just left of the master, the "master" strip). */
+  area?: "strips" | "fx" | "meters" | "master";
   /** Accessible group name for the section. */
   label?: string;
   controls: Control[];
@@ -496,7 +496,7 @@ export interface ModuleDef {
   sections?: ModuleSection[];
   /** A compact header: the title at the slim size and the index on one slim line, a small gap under it. */
   compact?: boolean;
-  /** "console": the sections sit on one row by `area` (strips, fx, master), full bleed (the Studio's Mix). */
+  /** "console": the sections sit on one row by `area` (strips, fx, meters, master), full bleed (the Studio's Mix). */
   layout?: "console";
   /** Show a header switch (role="switch", named by the title). Off dims the body by colour. */
   on?: boolean;

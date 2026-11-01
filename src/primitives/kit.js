@@ -1584,8 +1584,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
    darker each, and the master darkest (stack-1), so the row reads as the signal path ending on the right. */
 .nc-module-body[data-nc-layout="console"] {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  grid-template-areas: "strips fx master";
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  grid-template-areas: "strips fx meters master";
   align-items: stretch;
   gap: 0;
   margin-inline: calc(${v("module-pad")} * -1);
@@ -1615,6 +1615,17 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   grid-template-columns: repeat(3, ${v("fx-card-width")});
   align-items: stretch;
   padding-top: 0;
+}
+/* An optional meters section (the Studio's VU meters): after the FX cards, just left of the master, on the master's
+   shade with a hairline between them. Without one the column is empty. */
+.nc-module-body[data-nc-layout="console"] > [data-nc-area="meters"] {
+  grid-area: meters;
+  padding: ${v("stack-card-pad-y")} ${v("module-pad")} ${v("module-pad")};
+  border-inline-end: ${v("hairline")} solid ${v("module-div-stack-1")};
+  background: ${v("module-bg-stack-1")};
+  ${prop("text-sub")}: ${v("module-sub-stack-1")};
+  ${prop("divider")}: ${v("module-div-stack-1")};
+  ${prop("slider-track")}: ${v("module-div-stack-1")};
 }
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] {
   grid-area: master;
@@ -1962,8 +1973,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
    (three across on tablets, stacked on phones). */
 @media (max-width: 1023px) {
   .nc-module-body[data-nc-layout="console"] {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "strips master" "fx fx";
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "strips meters master" "fx fx fx";
   }
 }
 @media (max-width: 1023px) {
@@ -1979,6 +1990,15 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 }
 @media (max-width: 768px) {
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: minmax(0, 1fr); }
+  /* Phones: the strips and the master keep their row; the meters get their own row under it, above the FX. */
+  .nc-module-body[data-nc-layout="console"] {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "strips master" "meters meters" "fx fx";
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="meters"] {
+    border-inline-end: 0;
+    border-top: ${v("hairline")} solid ${v("module-div-stack-1")};
+  }
   /* Phones: the master as narrow as a channel strip, so the strips keep the room. */
   .nc-strip[data-nc-master] { width: ${v("strip-width")}; }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="master"] { padding-inline: 0; }
