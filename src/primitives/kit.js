@@ -99,6 +99,78 @@ button, input, select { font: inherit; color: inherit; }
 }
 .nc-page-action:hover { color: ${v("text")}; border-bottom-color: ${v("text")}; }
 .nc-page-action:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("control-gap")}; }
+/* Page menu (pageMenu, page-menu.js; Peter, 2026-11-01: "On mobile put the top menu choices in a hamburger"). Wider
+   than a phone the panel is display: contents, so the actions lay out as before and the ☰ hides. On a phone the
+   actions wait behind the ☰ at the header's right; open, they are a flat list under the header, over the page (no
+   layout shift), each a full-width target-min row. What an app keeps outside the panel (Panic) stays in the header. */
+.nc-page-menu { display: contents; }
+.nc-page-menu-btn { display: none; }
+@media (max-width: 768px) {
+  .nc-page-menu:not([data-nc-open]) { display: none !important; }
+  .nc-page-menu-btn {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    min-width: ${v("target-min")};
+    min-height: ${v("target-min")};
+    /* The bars' right edge on the page gutter, as the text actions' last word. */
+    margin-inline-end: calc((${v("target-min")} - ${v("target-min")} / 2.75) / -2);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: ${v("text")};
+    cursor: pointer;
+  }
+  .nc-page-menu-btn > svg { width: calc(${v("target-min")} / 2.75); height: calc(${v("target-min")} / 2.75); fill: currentColor; }
+  .nc-page-menu-btn:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+  .nc-page-menu[data-nc-open] {
+    position: absolute;
+    top: calc(100% + ${v("hairline")});
+    left: 0;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-block: ${v("control-gap")};
+    background: ${v("surface-page")};
+    color: ${v("text")};
+    border-bottom: ${v("hairline")} solid ${v("divider")};
+  }
+  /* Under a kit header: edge to edge, the items on the page gutter. */
+  .nc-page-hd .nc-page-menu[data-nc-open] {
+    left: calc(${v("page-pad-x")} * -1);
+    right: calc(${v("page-pad-x")} * -1);
+    padding-inline: ${v("page-pad-x")};
+  }
+  .nc-page-menu[data-nc-open] button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: ${v("target-min")};
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-align: left;
+    color: ${v("text")};
+  }
+  .nc-page-menu[data-nc-open] button:focus-visible { outline-offset: calc(${v("focus-width")} * -1); }
+  .nc-page-menu[data-nc-open] > .nc-field { width: auto !important; padding-block: ${v("control-gap")}; }
+  /* The header with a menu keeps one row on a phone: the title at the left (cut only if it must be), the kept
+     actions and the ☰ at the right. */
+  .nc-page-hd:has(.nc-page-menu-btn) { flex-direction: row; align-items: center; justify-content: space-between; gap: ${v("header-gap")}; }
+  .nc-page-hd:has(.nc-page-menu-btn) > :first-child { min-width: 0; }
+  .nc-page-actions:has(> .nc-page-menu-btn) { flex: none; flex-wrap: nowrap; align-items: center; }
+}
+@media (min-width: 768px) and (max-width: 768px) {
+  .nc-page-hd .nc-page-menu[data-nc-open] {
+    left: calc(${v("page-pad-x-md")} * -1);
+    right: calc(${v("page-pad-x-md")} * -1);
+    padding-inline: ${v("page-pad-x-md")};
+  }
+}
 .nc-module {
   background: ${v("module-bg-adjacent-1")};
   color: ${v("text")};
@@ -2536,6 +2608,20 @@ html[data-nc-hosted] .nc-page-body { padding-top: ${v("module-gap")}; }
 }
 @media (max-width: 360px) {
   .nc-label, .nc-name, .nc-note, .nc-title { text-overflow: ellipsis; }
+}
+/* Phones in landscape (Peter, 2026-11-01: "these sections can be side by side in landscape mode"): a short, wide
+   screen puts the modules side by side, as many columns as fit at two slim columns wide (two or three on a phone),
+   each module at its own height, in reading order; the lead (a step grid) takes two columns and two rows. Tablets and desktops
+   are unchanged. */
+@media (orientation: landscape) and (max-height: 500px) and (max-width: 1023px) {
+  .nc-stack[data-nc-layout="adjacent"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(${v("module-slim-column")} * 2)), 1fr));
+    align-items: start;
+  }
+  .nc-stack[data-nc-layout="adjacent"] > .nc-module { border-inline-end: ${v("hairline")} solid ${v("divider")}; }
+  /* Two rows tall as well, so the modules after it fill the column beside it before a new row starts. */
+  .nc-stack[data-nc-layout="adjacent"] > .nc-module[data-nc-lead]:not([data-nc-slim]) { grid-column: span 2; grid-row: span 2; }
 }
 @media (prefers-reduced-motion: reduce) {
   .nc-btn, .nc-btn:active, .nc-toggle, .nc-seg > button, .nc-sparkle, .nc-sparkle-btn, .nc-sparkle-btn:active,

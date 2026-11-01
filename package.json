@@ -51,6 +51,10 @@
       "types": "./src/theme.d.ts",
       "import": "./src/theme.js"
     },
+    "./page-menu": {
+      "types": "./src/primitives/page-menu.d.ts",
+      "import": "./src/primitives/page-menu.js"
+    },
     "./nc-ui.css": "./dist/nc-ui.css",
     "./nc-ui.fallback.css": "./dist/nc-ui.fallback.css",
     "./inject": "./dist/nc-ui-inject.min.js",
