@@ -215,3 +215,11 @@ test("fold triangle: ◀ open, flipped to ▶ folded; text-sub, ink on hover; mo
   const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
   assert.match(reduced, /\.nc-fold-tri \{/);
 });
+
+test("Inserts button: a light divider outline at rest, text-sub on hover; pressed unchanged", () => {
+  const rule = (sel) => css.slice(css.indexOf(`\n${sel} {`), css.indexOf("}", css.indexOf(`\n${sel} {`)));
+  assert.match(rule(".nc-hacks"), /border: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\);/);
+  assert.match(rule(".nc-hacks"), /color: var\(--nc-ui-strip-hacks-text\);/, "text as before");
+  assert.match(css, /\.nc-hacks:hover \{ color: var\(--nc-ui-text\); border-color: var\(--nc-ui-text-sub\); \}/);
+  assert.ok(css.indexOf('.nc-hacks[aria-pressed="true"] {') > css.indexOf(".nc-hacks:hover {"), "pressed wins over hover");
+});

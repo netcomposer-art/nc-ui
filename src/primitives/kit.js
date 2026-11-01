@@ -1816,7 +1816,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   width: 100%;
   height: 100%;
   padding: 0;
-  border: ${v("hairline")} solid ${v("strip-hacks-text")};
+  /* A light outline at rest (Peter, 2026-10-31): the divider; text-sub on hover, so it still reads as a button. */
+  border: ${v("hairline")} solid ${v("divider")};
   border-radius: ${v("slot-radius")};
   background: transparent;
   color: ${v("strip-hacks-text")};
@@ -1828,7 +1829,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   cursor: pointer;
   transition: none;
 }
-.nc-hacks:hover { color: ${v("text")}; }
+.nc-hacks:hover { color: ${v("text")}; border-color: ${v("text-sub")}; }
 .nc-hacks[aria-pressed="true"] {
   background: ${v("fader-cap-master")};
   border-color: ${v("fader-cap-master")};
