@@ -128,5 +128,5 @@ test("kit sheet: phones in landscape put the adjacent modules side by side, the 
   assert.match(block, /display: grid;/);
   assert.match(block, /repeat\(auto-fill, minmax\(min\(100%, calc\(var\(--nc-ui-module-slim-column\) \* 2\)\), 1fr\)\)/);
   assert.match(block, /align-items: start;/);
-  assert.match(block, /\[data-nc-lead\]:not\(\[data-nc-slim\]\) \{ grid-column: span 2; \}/);
+  assert.match(block, /\[data-nc-lead\]:not\(\[data-nc-slim\]\) \{ grid-column: span 2; grid-row: span 2; \}/);
 });
