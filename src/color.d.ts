@@ -16,9 +16,10 @@ export declare function surpriseColor(previous: string | null | undefined, rando
 export declare function surpriseFillStyle(fill: string | null | undefined): Record<string, string> | null;
 export declare function hexToOklab(hex: string): [number, number, number];
 export declare function oklabToHex(lab: readonly [number, number, number]): string;
-export interface VelocityRamp { min: string; max: string }
+export interface VelocityRamp { min: string; max: string; ink?: string }
 export interface VelocityShade { velocity: number; t: number; fill: string; ink: string }
 export declare const VELOCITY_RANGE: readonly [number, number];
 export declare const VELOCITY_RAMP: VelocityRamp;
+export declare const VELOCITY_RAMPS: Record<"light" | "dark", Required<VelocityRamp>>;
 export declare function velocityFill(velocity: number, ramp?: VelocityRamp): VelocityShade;
 export declare function velocityFillStyle(velocity: number, ramp?: VelocityRamp): Record<string, string>;

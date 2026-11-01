@@ -1,5 +1,6 @@
 export * from "../dist/tokens.js";
 export * from "./color.js";
+export * from "./theme.js";
 export {
   applyAlias,
   entry,

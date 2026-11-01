@@ -116,8 +116,10 @@ test('the committed outputs are current (node scripts/build-tokens.mjs --check)'
   for (const [path, text] of Object.entries(files)) assert.equal(readFileSync(path, 'utf8'), text, `${path} is stale`);
 });
 
-test('CSS is one :root block, prefixed, no duplicates', () => {
-  const css = renderCss(compile(src));
+test('CSS is one :root block (then the dark blocks), prefixed, no duplicates', () => {
+  const all = renderCss(compile(src));
+  const css = all.slice(0, all.indexOf('/* Dark theme'));
+  assert.equal((css.match(/^:root \{/gm) ?? []).length, 1);
   const names = [...css.matchAll(/^\s+(--[\w-]+):/gm)].map((m) => m[1]);
   assert.equal(new Set(names).size, names.length);
   assert.ok(names.every((n) => n.startsWith('--nc-ui-') || /^--nc-(synth|meaning|situation|rhythm)-/.test(n)));

@@ -2,6 +2,7 @@
 // nc-ui was created by Peter Semmelhack (https://psem.me/). MIT License.
 export * from "../dist/tokens.js";
 export * from "./color.js";
+export * from "./theme.js";
 export {
   applyAlias,
   entry,
