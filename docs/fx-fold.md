@@ -54,8 +54,7 @@ channels"). Not on the master.
 {
   type: "strip",
   /* … */
-  onRemove: (opener) => {},             // the × (the host confirms)
-  removeHelp: "Removes Bass from the Studio…",
+  onRemove: (opener) => {},             // the × (unchanged; the host confirms)
   folded: false,
   onFold: (folded) => {},
   foldHelp: "Minimizes this channel…",  // the −/+
@@ -63,8 +62,9 @@ channels"). Not on the master.
 }
 ```
 
-- The name row is `−  NAME  ×`: the −/+ (`.nc-hide[data-nc-strip-hide]`, `aria-expanded`, "Minimize Bass" /
-  "Show Bass") at its start and the × at its far end, so a minimize click can't land on remove.
+- The name row is `−   NAME ×`: the −/+ (`.nc-hide[data-nc-strip-hide]`, `aria-expanded`, "Minimize Bass" /
+  "Show Bass") at its start; the name and its × stay together as before, so the name always sits between the − and
+  the × and a minimize click can't land on remove.
 - Folded, the strip is `strip-fold-width` (40 px) on the same rows as the open strips, so meters still line up: the
   `+`; M and S stacked (still working); then one button (`.nc-ui-fx-fold.nc-strip-fold`, "Show Bass") holding a small
   mark in the fader cap's colour (`--nc-strip-cap`) and the name read bottom to top, beside a thin meter (bars

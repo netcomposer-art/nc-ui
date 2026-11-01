@@ -134,7 +134,6 @@ function stripControl(state) {
     onMute: () => state.ms.push("m"),
     onSolo: () => state.ms.push("s"),
     onRemove: () => state.removed++,
-    removeHelp: "Removes Bass from the Studio.",
     folded: state.folded,
     onFold: (folded) => state.folds.push(folded),
     foldHelp: "Minimizes this channel.",
@@ -142,7 +141,7 @@ function stripControl(state) {
   };
 }
 
-test("strip fold: − first and × last in the name row; folded keeps M, S, the meter and a name button", () => {
+test("strip fold: − first, the name between, × right after it; folded keeps M, S, the meter and a name button", () => {
   const state = { folded: false, folds: [], levels: [], ms: [], removed: 0 };
   let control = stripControl(state);
   const strip = renderControl(control, () => control);
@@ -155,7 +154,8 @@ test("strip fold: − first and × last in the name row; folded keeps M, S, the 
   assert.equal(hide.getAttribute("aria-expanded"), "true");
   assert.equal(hide.getAttribute("aria-label"), "Minimize Bass");
   assert.equal(hide.getAttribute("data-nc-help"), "Minimizes this channel.");
-  assert.equal(head.lastElementChild.getAttribute("data-nc-help"), "Removes Bass from the Studio.");
+  assert.equal(head.lastElementChild.hasAttribute("data-nc-help"), false, "the × is unchanged: no new words");
+  assert.equal(head.lastElementChild.previousElementSibling, head.querySelector(".nc-strip-name"), "× right after the name");
   const fold = strip.querySelector(".nc-strip-body > [data-nc-strip-fold]");
   assert.ok(fold);
   assert.equal(fold.hidden, true);
@@ -189,7 +189,8 @@ test("strip fold: never on the master; CSS is a narrow column of tokens with the
   assert.equal(strip.querySelector("[data-nc-strip-hide]"), null);
   assert.equal(strip.dataset.ncFolded, undefined);
   assert.match(css, /\.nc-strip\[data-nc-folded\] \{ width: var\(--nc-ui-strip-fold-width\); padding-inline: 0; align-content: start; \}/);
-  assert.match(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd \{\s*justify-content: space-between;/);
+  assert.match(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd \{\s*justify-content: flex-start;/);
+  assert.match(css, /\.nc-strip-hd > \[data-nc-strip-hide\] \{[^}]*margin-inline-end: auto;/);
   assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-row: 5;/);
   assert.match(css, /\.nc-strip-fold-cap \{[^}]*background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap\)\);/);
   const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));

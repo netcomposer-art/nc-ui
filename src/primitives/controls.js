@@ -1506,8 +1506,8 @@ function renderStrip(control, lookup) {
   name.className = "nc-strip-name";
   name.dataset.ncStripName = "";
   const foldable = !control.master && typeof control.onFold === "function";
-  // Minimize (onFold): the modules' −/+ at the start of the name row, the × at its far end, so a minimize click can
-  // never land on remove.
+  // Minimize (onFold): the modules' −/+ at the start of the name row; the × stays right after the name, so the name
+  // always sits between them and a minimize click can never land on remove.
   if (foldable) {
     strip.dataset.ncFoldable = "";
     const hide = document.createElement("button");
@@ -1828,7 +1828,6 @@ function patchStrip(node, control) {
     if (label && label.textContent !== control.label) label.textContent = control.label;
     setHelpWords(fold, control.foldedHelp ?? control.foldHelp);
   }
-  if (remove) setHelpWords(remove, control.removeHelp);
 }
 
 /** The meter handle of a strip control (for the host's per-frame update), from the module or strip element. */
