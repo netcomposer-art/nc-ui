@@ -355,6 +355,23 @@ export interface FxControl {
   maximize?: boolean;
   /** Hover words (data-nc-help) for the maximize button. */
   maxHelp?: string;
+  /**
+   * A small level meter beside the switch (and at the foot of the folded column): the signal going into the effect
+   * (left bar) and coming out (right bar), −48 to 0 dBFS with the strips' ballistics. Opened only while it is on
+   * screen; every meter on the page shares one loop. nc-fx's fxMeter(fx, id) is one. See docs/fx-level.md.
+   */
+  meter?: FxLevelSource;
+  /** Hover words (data-nc-help) for the meter; say what it shows (it is aria-hidden). */
+  meterHelp?: string;
+}
+/** What an FX card's meter reads: the latest sample peaks (1 = full scale), { in, out? }, or a bare number (input only). */
+export type FxLevelReading = { in: number; out?: number } | number | null | undefined;
+export interface FxLevelSource {
+  /** Called when the meter comes on screen; false: nothing to meter. */
+  open?(): unknown;
+  /** Called when it leaves the screen (or the page is hidden, or the card goes). */
+  close?(): void;
+  read(): FxLevelReading;
 }
 /** One band of an EQ graph, in engine units. */
 export interface EqGraphBand {
@@ -614,6 +631,17 @@ export interface ModuleHandle {
   redraw(): void;
 }
 
+/** The FX level meter's scale floor and where its clip colour starts (dBFS). */
+export const FX_LEVEL_FLOOR_DB: number;
+export const FX_LEVEL_CLIP_DB: number;
+/** A sample peak as a 0..1 position on the meter's −48..0 dBFS scale. */
+export function fxLevelPosition(peak: number): number;
+/** The meter element (two bars), for hosts that draw their own cards. */
+export function createFxLevel(doc?: Document): HTMLElement;
+/** Drive meter elements from a source; the shared loop opens it while any element is on screen. */
+export function bindFxLevel(els: HTMLElement | HTMLElement[], source: FxLevelSource | null | undefined): { set(source: FxLevelSource | null | undefined): void; destroy(): void };
+/** For tests. */
+export function fxLevelState(el: Element): { open: boolean; running: boolean; idle: boolean; meters: number; shown: number[] };
 export function readHidden(
   storage: Pick<Storage, "getItem"> | null | undefined,
   key?: string,

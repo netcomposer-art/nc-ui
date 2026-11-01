@@ -38,6 +38,14 @@ export {
   renderEqGraph,
   spectrumColumns,
 } from "./primitives/eq-graph.js";
+export {
+  FX_LEVEL_CLIP_DB,
+  FX_LEVEL_FLOOR_DB,
+  bindFxLevel,
+  createFxLevel,
+  fxLevelPosition,
+  fxLevelState,
+} from "./primitives/fx-level.js";
 export { GROUP_OPEN_KEY, readGroups, writeGroup } from "./primitives/group.js";
 export { LOG_STEPS, createSlider, fromPosition, sliderFactory, toPosition } from "./primitives/slider.js";
 export { DEFAULT_GESTURE, PadGesture, bindPadGesture } from "./primitives/gesture.js";

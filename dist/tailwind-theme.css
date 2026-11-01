@@ -43,6 +43,9 @@
   --color-nc-meter-hold-mark: var(--nc-ui-meter-hold-mark);
   --color-nc-meter-clip: var(--nc-ui-meter-clip);
   --color-nc-meter-track: var(--nc-ui-meter-track);
+  --color-nc-fx-level-in: var(--nc-ui-fx-level-in);
+  --color-nc-fx-level-out: var(--nc-ui-fx-level-out);
+  --color-nc-fx-level-hot: var(--nc-ui-fx-level-hot);
   --color-nc-fader-cap: var(--nc-ui-fader-cap);
   --color-nc-fader-cap-line: var(--nc-ui-fader-cap-line);
   --color-nc-fader-track: var(--nc-ui-fader-track);
@@ -97,6 +100,9 @@
   --spacing-nc-trace-stroke: var(--nc-ui-trace-stroke);
   --spacing-nc-grid-stroke: var(--nc-ui-grid-stroke);
   --spacing-nc-meter-width: var(--nc-ui-meter-width);
+  --spacing-nc-fx-level-bar: var(--nc-ui-fx-level-bar);
+  --spacing-nc-fx-level-height: var(--nc-ui-fx-level-height);
+  --spacing-nc-fx-level-fold-length: var(--nc-ui-fx-level-fold-length);
   --spacing-nc-fader-height: var(--nc-ui-fader-height);
   --spacing-nc-fader-cap-width: var(--nc-ui-fader-cap-width);
   --spacing-nc-fader-cap-height: var(--nc-ui-fader-cap-height);

@@ -2276,6 +2276,25 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   transition: none;
 }
 .nc-meter-hold[data-off="true"] { visibility: hidden; }
+/* An FX card's level meter (fx-level.js): two thin bars beside the switch, in (left) and out (right), on the card's own
+   divider. Fixed size, so it never moves the header; the loop writes transforms, so nothing transitions. A bypassed
+   card dims it by colour; the hot colour (ASTRID's title orange) shows only within 1 dB of full scale. Folded, it sits at the foot of the
+   column and gives way when there is no room. */
+.nc-fx-level { display: inline-flex; flex: none; align-items: stretch; gap: ${v("hairline")}; height: ${v("fx-level-height")}; }
+.nc-fx-level-bar { position: relative; width: ${v("fx-level-bar")}; overflow: hidden; background: ${v("divider")}; }
+.nc-fx-level[data-nc-rows="1"] > [data-nc-level="out"] { display: none; }
+.nc-fx-level-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: bottom;
+  transform: scaleY(0);
+  background: ${v("fx-level-in")};
+  transition: none;
+}
+[data-nc-level="out"] > .nc-fx-level-fill { background: ${v("fx-level-out")}; }
+[data-nc-dim="true"] .nc-fx-level-fill { background: ${v("text-sub")}; }
+.nc-fx-level-fill[data-clip="true"], [data-nc-dim="true"] .nc-fx-level-fill[data-clip="true"] { background: ${v("fx-level-hot")}; }
+.nc-ui-fx-fold > .nc-fx-level { margin-top: auto; height: auto; flex: 0 1 ${v("fx-level-fold-length")}; min-height: 0; }
 .nc-strip-db {
   min-width: 0;
   max-width: 100%;
