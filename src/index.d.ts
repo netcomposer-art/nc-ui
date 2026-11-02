@@ -557,6 +557,11 @@ export interface StripControl {
   hacks?: boolean;
   /** The Hacks button's text (default "Hacks"; the Studio says "Inserts"). */
   hacksLabel?: string;
+  /**
+   * The strip's stack has no effects: the Hacks button shows as its plain word, no outline (still a button, with its
+   * focus ring; pressed looks as before). Default false: the outlined button.
+   */
+  hacksEmpty?: boolean;
   /** Adds the M button. */
   onMute?: () => void;
   /** Adds the S button. */

@@ -2342,6 +2342,10 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 @media (pointer: coarse) {
   .nc-strip-ms { grid-auto-columns: minmax(0, 1fr); grid-template-rows: ${v("target-min")}; column-gap: 0; justify-self: stretch; }
 }
+/* M and S on a channel strip: the kit's outlined squares, their hairline the one for the strip's own shade
+   (strip-divider). The console's body hands its stack-1 hairline down, a near match for the light strip (gone there)
+   but lighter than the alternate one (a light box there), so M and S showed boxes on every other strip only. */
+.nc-strip:not([data-nc-master]) > .nc-strip-ms { ${prop("divider")}: ${v("strip-divider")}; }
 /* Hacks: a full-width toggle above M and S, in mixed case and a lighter grey (Peter); pressed while the console's fx area shows this strip's stack. */
 .nc-strip-hacks { display: flex; width: 100%; height: ${v("slider-pitch")}; }
 .nc-hacks-wrap { position: relative; flex: 1 1 auto; height: ${v("slider-pitch")}; }
@@ -2351,8 +2355,9 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   width: 100%;
   height: 100%;
   padding: 0;
-  /* A light outline at rest (Peter, 2026-10-31): the divider; text-sub on hover, so it still reads as a button. */
-  border: ${v("hairline")} solid ${v("divider")};
+  /* A light outline at rest, the same on every strip (Peter, 2026-11-01: the box only says the stack has effects):
+     text-sub at 50% over the strip hairline; text-sub on hover, so it still reads as a button. */
+  border: ${v("hairline")} solid color-mix(in oklab, ${v("text-sub")} 50%, ${v("strip-divider")});
   border-radius: ${v("slot-radius")};
   background: transparent;
   color: ${v("strip-hacks-text")};
@@ -2365,12 +2370,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   transition: none;
 }
 .nc-hacks:hover { color: ${v("text")}; border-color: ${v("text-sub")}; }
-/* On the darker alternate strips the divider outline nearly vanishes: text-sub at 50% there (still lighter than the
-   old outline); hover still takes it to text-sub. */
-.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) .nc-hacks:not([aria-pressed="true"]) {
-  border-color: color-mix(in oklab, ${v("text-sub")} 50%, ${v("divider")});
-}
-.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) .nc-hacks:not([aria-pressed="true"]):hover { border-color: ${v("text-sub")}; }
+/* hacksEmpty (no effects in the stack): the plain word, no box, hover too; still a button with its focus ring. */
+.nc-hacks[data-nc-empty]:not([aria-pressed="true"]) { border-color: transparent; }
 .nc-hacks[aria-pressed="true"] {
   background: ${v("fader-cap-master")};
   border-color: ${v("fader-cap-master")};
