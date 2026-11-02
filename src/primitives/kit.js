@@ -1287,6 +1287,40 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-fx-max:hover, .nc-fx-close:hover { color: ${v("text")}; }
 .nc-fx-max:focus-visible, .nc-fx-close:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
 .nc-fx-close { font-size: ${v("title-size")}; padding-inline: ${v("control-gap")}; }
+/* Remove (onRemove): a quiet × at the header's end, after maximize, sized like the header's other marks; text-sub,
+   ink on hover (the strip's × turns danger: here Undo follows, so it stays calm). Its hit area reaches past the glyph
+   to the right and a little up and down, never left over maximize. Not on a folded card (as a minimized strip),
+   nor beside the wide panel's own ×. */
+.nc-fx-remove {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin: 0;
+  padding: 0 ${v("hairline")};
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("body-size")};
+  line-height: 1;
+  cursor: pointer;
+}
+.nc-fx-remove::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(${v("control-gap")} * -1);
+  right: calc(${v("control-gap")} * -1);
+  height: max(100%, calc(${v("control-gap")} * 5));
+  transform: translateY(-50%);
+}
+.nc-fx-remove:hover { color: ${v("text")}; }
+.nc-fx-remove:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-fx-remove[hidden],
+.nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd > .nc-fx-remove,
+.nc-ui-fx[data-nc-max="over"] > .nc-ui-fx-hd > .nc-fx-remove { display: none; }
 .nc-fx-max-icon { position: relative; display: block; width: calc(${v("control-gap")} * 2.5); height: calc(${v("control-gap")} * 2.5); }
 .nc-fx-max-icon > i {
   position: absolute;
@@ -1687,6 +1721,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 @media (pointer: coarse) {
   .nc-ms-wrap { flex-basis: ${v("target-min")}; height: ${v("target-min")}; }
   .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: calc(${v("module-gap")} * -1); }
+  /* The ×'s touch target: target-min tall, out to the card's padding on the right; never over maximize. */
+  .nc-fx-remove::before { height: max(100%, ${v("target-min")}); right: calc(${v("control-gap")} * -3); }
   .nc-fold-toggle::before {
     content: "";
     position: absolute;

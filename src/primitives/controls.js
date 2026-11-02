@@ -2004,7 +2004,8 @@ function renderFx(control, lookup) {
   name.textContent = control.title;
   const foldable = typeof control.onFold === "function";
   const metered = !!control.meter;
-  if (control.on === undefined && !foldable && !maximizable(control) && !metered) card.append(name);
+  const removable = typeof control.onRemove === "function";
+  if (control.on === undefined && !foldable && !maximizable(control) && !metered && !removable) card.append(name);
   else {
     // fx-blocks' header: the name, then a real switch named by it. Off dims the card by colour.
     const head = document.createElement("div");
@@ -2026,6 +2027,7 @@ function renderFx(control, lookup) {
     }
     if (foldable) head.append(fxHide(card, lookup));
     if (maximizable(control)) head.append(fxMax(card, lookup));
+    if (removable) head.append(fxRemove(lookup));
     card.append(head);
   }
   // Folded (onFold / folded): one button over the whole card, the name read bottom to top and the on/off word. In a
@@ -2174,6 +2176,23 @@ function fxMax(card, lookup) {
     if (live?.type !== "fx") return;
     setMax(card, live, !MAXED.has(live.id));
     button.focus();
+  });
+  return button;
+}
+
+/**
+ * Remove (onRemove; Peter, 2026-11-01): a quiet × at the end of the header, after maximize, as on a strip. The host
+ * removes the effect (and offers Undo). Not on a folded card, as a minimized strip has none.
+ */
+function fxRemove(lookup) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "nc-fx-remove";
+  button.dataset.ncFxRemove = "";
+  button.textContent = "\u00d7";
+  button.addEventListener("click", () => {
+    const live = lookup(button);
+    if (live?.type === "fx") live.onRemove?.(button);
   });
   return button;
 }
@@ -2356,6 +2375,13 @@ function patchFx(node, control) {
     setHelpWords(hide, control.foldHelp);
   }
   syncMax(node, control);
+  const remove = node.querySelector(":scope > .nc-ui-fx-hd > [data-nc-fx-remove]");
+  if (remove instanceof HTMLElement) {
+    const words = control.removeLabel ?? `Remove ${control.title}`;
+    remove.hidden = folded;
+    remove.setAttribute("aria-label", words);
+    remove.title = words;
+  }
   const fold = node.querySelector(":scope > [data-nc-fx-fold]");
   if (fold instanceof HTMLElement) {
     const state = control.on === undefined ? "" : control.on ? "On" : "Off";

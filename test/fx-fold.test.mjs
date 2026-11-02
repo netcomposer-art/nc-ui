@@ -243,3 +243,61 @@ test("FX fold: foldSlim marks the card for the slim column (fx-fold-width-slim, 
   assert.match(tokensCss, /--nc-ui-fx-fold-width-slim: 60px;/);
   assert.match(tokensCss, /--nc-ui-fx-fold-width: 120px;/, "other folded cards keep 120 px");
 });
+
+test("FX remove: a × at the header's end calls onRemove with itself; named; hidden while folded; a shape change", () => {
+  const state = { on: true, folded: false, toggles: [], folds: [], removed: [] };
+  const removable = () => ({
+    ...foldable(state),
+    title: "2 · EQ",
+    removeLabel: "Remove EQ",
+    maximize: true,
+    onRemove: (opener) => state.removed.push(opener),
+  });
+  let control = removable();
+  const card = renderControl(control, () => control);
+  document.body.append(card);
+  const head = card.querySelector(":scope > .nc-ui-fx-hd");
+  const x = head.querySelector("[data-nc-fx-remove]");
+  assert.ok(x, "a remove button");
+  assert.equal(head.lastElementChild, x, "last in the header, after maximize");
+  assert.equal(x.previousElementSibling, head.querySelector("[data-nc-max-toggle]"));
+  assert.equal(x.tagName, "BUTTON");
+  assert.equal(x.getAttribute("type"), "button");
+  assert.equal(x.className, "nc-fx-remove");
+  assert.equal(x.textContent, "×");
+  assert.equal(x.getAttribute("aria-label"), "Remove EQ");
+  assert.equal(x.title, "Remove EQ");
+  assert.equal(x.hidden, false);
+  click(x);
+  assert.deepEqual(state.removed, [x]);
+  assert.deepEqual(state.folds, [], "remove never folds");
+  state.folded = true;
+  control = removable();
+  patchControl(card, control);
+  assert.equal(x.hidden, true, "no × on a folded card");
+  state.folded = false;
+  control = removable();
+  patchControl(card, control);
+  assert.equal(x.hidden, false);
+  card.remove();
+  // Without a removeLabel: "Remove <title>"; without onRemove: no ×.
+  const plain = { type: "fx", id: "d", title: "Drive", depth: 1, onRemove() {}, controls: [] };
+  const bare = renderControl(plain, () => plain);
+  assert.equal(bare.querySelector("[data-nc-fx-remove]").getAttribute("aria-label"), "Remove Drive");
+  const none = { type: "fx", id: "d2", title: "Drive", depth: 1, on: true, controls: [] };
+  assert.equal(renderControl(none, () => none).querySelector("[data-nc-fx-remove]"), null);
+  // Gaining or losing the × is a shape change (a rebuild), like the fold.
+  const def = (x) => ({ id: "mixr", title: "Mix", layout: "console", sections: [{ id: "fx", area: "fx", controls: [x ? plain : { ...plain, onRemove: undefined }] }] });
+  const mod = defineModule(def(false), "test.remove.hidden");
+  assert.equal(mod.el.querySelector("[data-nc-fx-remove]"), null);
+  mod.update(def(true));
+  assert.ok(mod.el.querySelector("[data-nc-fx-remove]"));
+});
+
+test("FX remove CSS: tokens only, text-sub to ink on hover, gone on folded cards and beside the wide panel's ×", () => {
+  const rule = css.slice(css.indexOf("\n.nc-fx-remove {"), css.indexOf("}", css.indexOf("\n.nc-fx-remove {")));
+  assert.match(rule, /color: var\(--nc-ui-text-sub\);/);
+  assert.doesNotMatch(rule, /#[0-9a-f]{3,8}\b|\d+px/i, "tokens only");
+  assert.match(css, /\.nc-fx-remove:hover \{ color: var\(--nc-ui-text\); \}/);
+  assert.match(css, /\.nc-ui-fx\[data-nc-folded\] > \.nc-ui-fx-hd > \.nc-fx-remove,\n\.nc-ui-fx\[data-nc-max="over"\] > \.nc-ui-fx-hd > \.nc-fx-remove \{ display: none; \}/);
+});
