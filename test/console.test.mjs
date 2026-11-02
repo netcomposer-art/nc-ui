@@ -300,11 +300,28 @@ test("strip sendsHidden: the sends row goes on every strip given it (rows still 
   assert.match(rule(".nc-strip[data-nc-sends-hidden] > .nc-strip-sends"), /display: none/);
   const rows = rule(".nc-strip[data-nc-sends-hidden]").match(/grid-template-rows:([^;]*)/)[1];
   const full = rule(".nc-strip").match(/grid-template-rows:([^;]*)/)[1];
-  const knobRows = (t) => t.split("calc(").length - 1;
+  const knobRows = (t) => t.split("var(--nc-strip-knob-row)").length - 1;
   assert.equal(knobRows(full), 2, "sends and pan rows");
   assert.equal(knobRows(rows), 1, "one knob row fewer: the sends'");
-  assert.match(rule(".nc-strip[data-nc-folded][data-nc-sends-hidden] > .nc-strip-body"), /grid-row: 5/);
+  // Every row named and every child placed by name: hiding the sends never leaves later rows to auto-placement.
+  const areas = (sel) => rule(sel).match(/grid-template-areas:([^;]*)/)[1].match(/"[^"]*"/g);
+  assert.deepEqual(areas(".nc-strip"), ['". hd ."', '". hacks ."', '"ms ms ms"', '". sends ."', '". pan ."', '". body ."', '". db ."']);
+  assert.deepEqual(areas(".nc-strip[data-nc-sends-hidden]"), ['". hd ."', '". hacks ."', '"ms ms ms"', '". pan ."', '". body ."', '". db ."']);
+  for (const [part, area] of [["hd", "hd"], ["hacks", "hacks"], ["ms", "ms"], ["sends", "sends"], ["pan", "pan"], ["body", "body"]])
+    assert.match(rule(`.nc-strip > .nc-strip-${part}`), new RegExp(`grid-area: ${area};`));
+  assert.doesNotMatch(css, /\.nc-strip(\[[^\]]*\])* > \.nc-strip-[a-z-]+ \{[^}]*grid-row:/, "no strip row placed by a row number");
   m.update(hide(consoleDef(state, calls), false));
   for (const s of m.el.querySelectorAll(".nc-strip")) assert.ok(!s.hasAttribute("data-nc-sends-hidden"));
   m.el.remove();
+});
+
+test("strip M and S: side by side inside the strip, no overlapping margins; on touch two target-min boxes across the full width", () => {
+  assert.match(rule(".nc-strip"), /grid-template-columns: var\(--nc-ui-control-gap\) minmax\(0, 1fr\) var\(--nc-ui-control-gap\);/);
+  assert.doesNotMatch(rule(".nc-strip"), /padding-inline/, "the gutters are columns, so M and S can span them");
+  assert.match(rule(".nc-strip-ms"), /display: grid;/);
+  assert.match(rule(".nc-strip > .nc-strip-ms > .nc-ms-wrap"), /margin: 0;/);
+  const coarse = [...css.matchAll(/@media \(pointer: coarse\) \{([^@]*)\}/g)].map((m) => m[1]).join("\n");
+  assert.match(coarse, /\.nc-strip \{ --nc-strip-ms-row: var\(--nc-ui-target-min\); \}/, "the M/S row is target-min tall on touch");
+  assert.match(coarse, /\.nc-strip-ms \{ grid-auto-columns: minmax\(0, 1fr\); grid-template-rows: var\(--nc-ui-target-min\); column-gap: 0; justify-self: stretch; \}/);
+  assert.doesNotMatch(css, /nc-strip[^{]*nc-ms-wrap[^{]*\{[^}]*margin-(top|inline-start): calc/, "no negative-margin overlap in a strip");
 });

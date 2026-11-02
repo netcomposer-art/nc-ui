@@ -1690,8 +1690,6 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
     height: max(100%, ${v("target-min")});
     transform: translate(-50%, -50%);
   }
-  .nc-strip[data-nc-folded] > .nc-strip-ms { gap: 0; }
-  .nc-strip[data-nc-folded] .nc-ms-wrap + .nc-ms-wrap { margin-inline-start: 0; margin-top: calc(${v("module-gap")} * -1); }
   .nc-ms {
     inset: calc((${v("target-min")} - ${v("slider-pitch")}) / 2);
     width: auto;
@@ -2072,22 +2070,41 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   white-space: nowrap;
 }
 /* One channel strip: name, M and S, sends, then the fader with its scale and meter, then the readout. Every strip
-   (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up. */
+   (the master too, with empty M/S and send rows) keeps the same row heights, so faders and ticks line up.
+   Every row is a named area and every child is placed by name (never by auto-placement), so a row taken out (the
+   sends, display: none) can't shift the rows after it, in any engine. Three columns: a control-gap gutter each side
+   of the content; only M and S span the gutters, so on touch two target-min boxes fit side by side inside the strip
+   (they overflowed it, and Safari drew S under the next strip; Peter, 2026-11-01). No negative margins. */
 .nc-strip {
+  /* The M/S row: the slider pitch; target-min on touch (the buttons' full boxes, so they never reach the pan row). */
+  --nc-strip-ms-row: ${v("slider-pitch")};
+  --nc-strip-knob-row: calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")});
   position: relative;
   flex: none;
   width: ${v("strip-width")};
   display: grid;
+  grid-template-columns: ${v("control-gap")} minmax(0, 1fr) ${v("control-gap")};
   /* Name, Inserts, M/S, sends, pan, the fader body, the readout. */
-  grid-template-rows: auto ${v("slider-pitch")} ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+  grid-template-rows: auto ${v("slider-pitch")} var(--nc-strip-ms-row) var(--nc-strip-knob-row) var(--nc-strip-knob-row) auto auto;
+  grid-template-areas: ". hd ." ". hacks ." "ms ms ms" ". sends ." ". pan ." ". body ." ". db .";
   justify-items: center;
   row-gap: ${v("module-gap")};
   min-width: 0;
-  padding-inline: ${v("control-gap")};
+}
+.nc-strip > .nc-strip-hd { grid-area: hd; }
+.nc-strip > .nc-strip-hacks { grid-area: hacks; }
+.nc-strip > .nc-strip-ms { grid-area: ms; }
+.nc-strip > .nc-strip-sends { grid-area: sends; }
+.nc-strip > .nc-strip-pan { grid-area: pan; }
+.nc-strip > .nc-strip-body { grid-area: body; }
+.nc-strip > .nc-strip-db, .nc-strip > .nc-strip-db-input { grid-area: db; }
+@media (pointer: coarse) {
+  .nc-strip { --nc-strip-ms-row: ${v("target-min")}; }
 }
 /* sendsHidden: no sends row (the host's "hide the sends"); give it to every strip so their rows still line up. */
 .nc-strip[data-nc-sends-hidden] {
-  grid-template-rows: auto ${v("slider-pitch")} ${v("slider-pitch")} calc(${v("knob-size")} + ${v("control-gap")} + ${v("label-size")} * ${v("label-leading")}) auto auto;
+  grid-template-rows: auto ${v("slider-pitch")} var(--nc-strip-ms-row) var(--nc-strip-knob-row) auto auto;
+  grid-template-areas: ". hd ." ". hacks ." "ms ms ms" ". pan ." ". body ." ". db .";
 }
 .nc-strip[data-nc-sends-hidden] > .nc-strip-sends { display: none; }
 .nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
@@ -2140,7 +2157,17 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 /* The triangle sits in the strip's top-left corner, above the name; folded, centred over the column. */
 .nc-strip > [data-nc-strip-hide] { position: absolute; top: ${v("control-gap")}; left: ${v("control-gap")}; z-index: 1; }
 .nc-strip[data-nc-folded] > [data-nc-strip-hide] { left: 50%; transform: translateX(-50%); }
-.nc-strip[data-nc-folded] { width: ${v("strip-fold-width")}; padding-inline: 0; align-content: start; }
+/* Folded: no gutters, and M and S take the Inserts, M/S and sends rows (sends hidden: the pan row) as one area, so the
+   two fit stacked at full size with the rows unchanged. */
+.nc-strip[data-nc-folded] {
+  width: ${v("strip-fold-width")};
+  align-content: start;
+  grid-template-columns: 0 minmax(0, 1fr) 0;
+  grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" ". pan ." ". body ." ". db .";
+}
+.nc-strip[data-nc-folded][data-nc-sends-hidden] {
+  grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" ". body ." ". db .";
+}
 .nc-strip[data-nc-folded] > .nc-strip-hd { justify-content: center; }
 /* The name stays in the row, unseen and zero wide, so the row keeps the open strips' height and the meters line up. */
 .nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-name { visibility: hidden; width: 0; flex: 0 0 0; }
@@ -2152,18 +2179,23 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 .nc-strip[data-nc-folded] > .nc-strip-db-input,
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-fader,
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-scale { display: none; }
-.nc-strip[data-nc-folded] > .nc-strip-ms { grid-row: 2 / span 2; flex-direction: column; height: auto; gap: ${v("module-gap")}; }
-.nc-strip[data-nc-folded] .nc-ms-wrap { width: ${v("slider-pitch")}; }
-/* Touch: each folded M and S a full target-min box (after the rule above, so it wins). */
+.nc-strip[data-nc-folded] > .nc-strip-ms {
+  grid-auto-flow: row;
+  grid-template-rows: none;
+  grid-auto-columns: ${v("slider-pitch")};
+  grid-auto-rows: ${v("slider-pitch")};
+  gap: ${v("module-gap")};
+  align-self: start;
+  justify-self: center;
+}
+/* Touch: each folded M and S as wide as the column and target-min tall, touching (after the rule above, so it wins). */
 @media (pointer: coarse) {
-  .nc-strip[data-nc-folded] .nc-ms-wrap { width: ${v("target-min")}; }
+  .nc-strip[data-nc-folded] > .nc-strip-ms { grid-auto-columns: minmax(0, 1fr); grid-auto-rows: ${v("target-min")}; gap: 0; justify-self: stretch; }
 }
 .nc-strip[data-nc-folded] > .nc-strip-body {
-  grid-row: 6;
   grid-template-columns: auto auto;
   column-gap: ${v("control-gap")};
 }
-.nc-strip[data-nc-folded][data-nc-sends-hidden] > .nc-strip-body { grid-row: 5; }
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-strip-fold { display: flex; grid-column: 1; grid-row: 1 / span 2; width: auto; }
 .nc-strip[data-nc-folded] .nc-strip-body > .nc-meter { grid-column: 2; }
 .nc-strip[data-nc-folded] .nc-meter-bar { width: ${v("control-gap")}; }
@@ -2195,7 +2227,22 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   height: ${v("control-gap")};
   background: var(--nc-strip-cap, ${v("fader-cap")});
 }
-.nc-strip-ms { display: flex; gap: ${v("control-gap")}; height: ${v("slider-pitch")}; }
+/* M and S: an explicit two-column grid (never flex with overlapping margins), centred at the slider pitch; on touch
+   it fills the strip's full width (the gutters too), two target-min boxes side by side, touching, nothing past the
+   strip's edges. The kit's hit pads take any width short of target-min (the divider hairline) outward. */
+.nc-strip-ms {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: ${v("slider-pitch")};
+  grid-template-rows: ${v("slider-pitch")};
+  column-gap: ${v("control-gap")};
+  justify-self: center;
+  align-self: start;
+}
+.nc-strip > .nc-strip-ms > .nc-ms-wrap { margin: 0; width: auto; }
+@media (pointer: coarse) {
+  .nc-strip-ms { grid-auto-columns: minmax(0, 1fr); grid-template-rows: ${v("target-min")}; column-gap: 0; justify-self: stretch; }
+}
 /* Hacks: a full-width toggle above M and S, in mixed case and a lighter grey (Peter); pressed while the console's fx area shows this strip's stack. */
 .nc-strip-hacks { display: flex; width: 100%; height: ${v("slider-pitch")}; }
 .nc-hacks-wrap { position: relative; flex: 1 1 auto; height: ${v("slider-pitch")}; }

@@ -187,10 +187,13 @@ test("strip fold: never on the master; CSS is a narrow column of tokens with the
   const strip = renderControl(control, () => control);
   assert.equal(strip.querySelector("[data-nc-strip-hide]"), null);
   assert.equal(strip.dataset.ncFolded, undefined);
-  assert.match(css, /\.nc-strip\[data-nc-folded\] \{ width: var\(--nc-ui-strip-fold-width\); padding-inline: 0; align-content: start; \}/);
+  assert.match(css, /\.nc-strip\[data-nc-folded\] \{\s*width: var\(--nc-ui-strip-fold-width\);\s*align-content: start;\s*grid-template-columns: 0 minmax\(0, 1fr\) 0;/);
+  // M and S stacked in one named area over the Inserts, M/S and sends (or pan) rows; the body keeps its own area.
+  assert.match(css, /\.nc-strip\[data-nc-folded\] \{[^}]*grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" ". pan ." ". body ." ". db .";/);
+  assert.match(css, /\.nc-strip\[data-nc-folded\]\[data-nc-sends-hidden\] \{\s*grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" ". body ." ". db .";/);
   assert.match(css, /\.nc-strip > \[data-nc-strip-hide\] \{ position: absolute; top: var\(--nc-ui-control-gap\); left: var\(--nc-ui-control-gap\);/);
   assert.doesNotMatch(css, /\.nc-strip\[data-nc-foldable\] > \.nc-strip-hd/, "the name row is untouched");
-  assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-row: 6;/);
+  assert.match(css, /\.nc-strip\[data-nc-folded\] > \.nc-strip-body \{\s*grid-template-columns: auto auto;/);
   assert.match(css, /\.nc-strip-fold-cap \{[^}]*background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap\)\);/);
   const reduced = css.slice(css.indexOf("@media (prefers-reduced-motion: reduce)"));
   assert.match(reduced, /\.nc-strip \{|\.nc-strip,|, \.nc-strip \{/);
