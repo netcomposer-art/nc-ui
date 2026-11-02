@@ -175,6 +175,7 @@ const semanticKinds = {
   "strip-hacks-text": "color",
   "strip-alt-bg": "color",
   "strip-bg": "color",
+  "strip-divider": "color",
   "page-title-size": "length",
   "page-title-tracking": "other",
   "page-sub-size": "length",

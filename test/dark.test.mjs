@@ -117,6 +117,10 @@ test('dividers stay subtle on the page, and no track disappears on a module', ()
     assert.ok(contrastRatio(d['surface-raised'], bg) >= 1.15, `surface-raised on module ${n}`);
     assert.ok(contrastRatio(d['eq-graph-bg'], bg) >= 1.15, `EQ graph plot on module ${n}`);
   }
+  // Console strips (modules 01 and 02): M and S outlines read the same on both shades, in light and dark.
+  for (const t of [semantic, d])
+    for (const bg of ['strip-bg', 'strip-alt-bg'])
+      assert.ok(contrastRatio(t['strip-divider'], t[bg]) >= 1.08, `strip-divider ${t['strip-divider']} on ${bg} ${t[bg]}`);
   // FX cards in the console (modules 02-04) keep the console's stack-1 hairline and track.
   for (const n of [2, 3, 4])
     assert.ok(contrastRatio(d['module-div-stack-1'], d[`module-bg-adjacent-${n}`]) >= 1.15, `fx card track on module ${n}`);

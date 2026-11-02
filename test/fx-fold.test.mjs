@@ -220,13 +220,50 @@ test("fold triangle: ◀ open, flipped to ▶ folded; text-sub, ink on hover; mo
   assert.match(reduced, /\.nc-fold-tri \{/);
 });
 
-test("Inserts button: a light divider outline at rest, text-sub on hover; pressed unchanged", () => {
+test("Inserts button: one outline on every strip, text-sub on hover; pressed unchanged; no even-strip rule", () => {
   const rule = (sel) => css.slice(css.indexOf(`\n${sel} {`), css.indexOf("}", css.indexOf(`\n${sel} {`)));
-  assert.match(rule(".nc-hacks"), /border: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\);/);
+  assert.match(
+    rule(".nc-hacks"),
+    /border: var\(--nc-ui-hairline\) solid color-mix\(in oklab, var\(--nc-ui-text-sub\) 50%, var\(--nc-ui-strip-divider\)\);/,
+  );
   assert.match(rule(".nc-hacks"), /color: var\(--nc-ui-strip-hacks-text\);/, "text as before");
   assert.match(css, /\.nc-hacks:hover \{ color: var\(--nc-ui-text\); border-color: var\(--nc-ui-text-sub\); \}/);
   assert.ok(css.indexOf('.nc-hacks[aria-pressed="true"] {') > css.indexOf(".nc-hacks:hover {"), "pressed wins over hover");
-  assert.match(css, /nth-child\(even of \.nc-strip:not\(\[data-nc-master\]\)\) \.nc-hacks:not\(\[aria-pressed="true"\]\) \{\s*border-color: color-mix\(in oklab, var\(--nc-ui-text-sub\) 50%, var\(--nc-ui-divider\)\);/);
+  // Peter, 2026-11-01: the box showed on every other strip. Nothing about the Hacks button (or M/S) follows the
+  // strip's place in the row; only the background alternates.
+  for (const m of css.matchAll(/nth-child\(even of \.nc-strip[^{]*\{/g))
+    assert.doesNotMatch(m[0], /nc-hacks|nc-ms/, m[0]);
+  assert.ok(
+    css.includes(".nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: var(--nc-ui-strip-alt-bg); }"),
+    "the backgrounds still alternate",
+  );
+});
+
+test("Inserts button: hacksEmpty draws the plain word (no outline, hover too), patched live; pressed and focus as before", () => {
+  let control = { ...stripControl({ folded: false, folds: [], levels: [], ms: [], removed: 0 }), onHacks() {}, hacksLabel: "Inserts" };
+  const strip = renderControl(control, () => control);
+  const button = strip.querySelector("[data-nc-hacks]");
+  assert.equal(button.textContent, "Inserts");
+  assert.equal(button.hasAttribute("data-nc-empty"), false, "no hacksEmpty: the outlined button, as before");
+  control = { ...control, hacksEmpty: true };
+  patchControl(strip, control);
+  assert.equal(button.hasAttribute("data-nc-empty"), true, "an empty stack: the plain word");
+  assert.equal(button.textContent, "Inserts", "the same word");
+  assert.equal(button.tagName, "BUTTON", "still a button");
+  control = { ...control, hacksEmpty: false };
+  patchControl(strip, control);
+  assert.equal(button.hasAttribute("data-nc-empty"), false, "an effect added: the box again");
+  const empty = '.nc-hacks[data-nc-empty]:not([aria-pressed="true"]) { border-color: transparent; }';
+  assert.ok(css.includes(empty), "no outline while empty and not pressed");
+  assert.ok(css.indexOf(empty) > css.indexOf(".nc-hacks:hover {"), "hover draws no box on the plain word");
+  assert.match(css, /\.nc-hacks:focus-visible \{ outline: var\(--nc-ui-focus-width\) solid var\(--nc-ui-focus-ring\);/);
+  assert.match(css, /\.nc-hacks\[aria-pressed="true"\] \{\s*background: var\(--nc-ui-fader-cap-master\);/);
+});
+
+test("strip M and S: every channel strip hands them its own hairline (strip-divider, div-0)", () => {
+  assert.ok(css.includes(".nc-strip:not([data-nc-master]) > .nc-strip-ms { --nc-ui-divider: var(--nc-ui-strip-divider); }"));
+  const tokensCss = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
+  assert.match(tokensCss, /--nc-ui-strip-divider: var\(--nc-ui-color-div-0\);/);
 });
 
 test("FX fold: foldSlim marks the card for the slim column (fx-fold-width-slim, 60 px; Peter: sends '50% thinner')", () => {

@@ -1926,6 +1926,7 @@ function patchStrip(node, control) {
     if (hacks.textContent !== text) hacks.textContent = text;
     hacks.setAttribute("aria-pressed", control.hacks === true ? "true" : "false");
     hacks.setAttribute("aria-label", `${text}: ${control.label}`);
+    hacks.toggleAttribute("data-nc-empty", control.hacksEmpty === true);
   }
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;

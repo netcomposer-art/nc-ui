@@ -343,6 +343,7 @@ export declare const semantic: {
   readonly "fader-cap-master": "#003153";
   readonly "strip-bg": "#F3F3F3";
   readonly "strip-alt-bg": "#EEEEEE";
+  readonly "strip-divider": "#DDDDDD";
   readonly "strip-hacks-text": "#8C8C8C";
   readonly "fader-track": "rgba(36,36,36,0.25)";
   readonly "strip-width": "88px";
@@ -762,6 +763,7 @@ export declare const vars: {
   readonly "fader-cap-master": "var(--nc-ui-fader-cap-master)";
   readonly "strip-bg": "var(--nc-ui-strip-bg)";
   readonly "strip-alt-bg": "var(--nc-ui-strip-alt-bg)";
+  readonly "strip-divider": "var(--nc-ui-strip-divider)";
   readonly "strip-hacks-text": "var(--nc-ui-strip-hacks-text)";
   readonly "fader-track": "var(--nc-ui-fader-track)";
   readonly "strip-width": "var(--nc-ui-strip-width)";
@@ -978,6 +980,7 @@ export declare const refs: {
   readonly "fader-cap-master": "color.accent";
   readonly "strip-bg": "color.shade-1";
   readonly "strip-alt-bg": "color.shade-2";
+  readonly "strip-divider": "color.div-0";
   readonly "strip-hacks-text": "color.hacks-grey";
   readonly "fader-track": null;
   readonly "strip-width": null;
@@ -1269,6 +1272,7 @@ export declare const themes: {
       readonly "fader-cap-master": "#003153";
       readonly "strip-bg": "#F3F3F3";
       readonly "strip-alt-bg": "#EEEEEE";
+      readonly "strip-divider": "#DDDDDD";
       readonly "strip-hacks-text": "#8C8C8C";
       readonly "fader-track": "rgba(36,36,36,0.25)";
       readonly "strip-width": "88px";
@@ -1618,6 +1622,7 @@ export declare const themes: {
       readonly "fader-cap-master": "#77B5E2";
       readonly "strip-bg": "#272625";
       readonly "strip-alt-bg": "#302F2E";
+      readonly "strip-divider": "#4F4E4D";
       readonly "strip-hacks-text": "#8C8C8C";
       readonly "fader-track": "rgba(232,231,230,0.25)";
       readonly "strip-width": "88px";
