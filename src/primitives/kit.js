@@ -1145,6 +1145,10 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-fx-fold > .nc-fold-tri { flex: none; color: ${v("text-sub")}; }
 .nc-ui-fx-fold:hover > .nc-fold-tri { color: ${v("text")}; }
 .nc-ui-fx-fold { display: none; }
+/* A folded card's column width: fx-fold-width, or fx-fold-width-slim for a card with foldSlim (the Studio's send
+   returns; Peter, 2026-11-01: "make send effect minimized state 50% thinner"). */
+.nc-ui-fx { --nc-fx-fold-w: ${v("fx-fold-width")}; }
+.nc-ui-fx[data-nc-fold-slim] { --nc-fx-fold-w: ${v("fx-fold-width-slim")}; }
 .nc-ui-fx[data-nc-folded] > :not(.nc-ui-fx-hd, .nc-token-probe) { display: none; }
 .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { margin-bottom: 0; }
 .nc-ui-fx-fold {
@@ -1186,6 +1190,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   white-space: nowrap;
 }
 .nc-ui-fx-fold:hover .nc-ui-fx-fold-state { color: ${v("text")}; }
+/* The slim column (fx-fold-width-slim): the same parts, the on/off word a step smaller so OFF fits with room. */
+.nc-ui-fx[data-nc-fold-slim] .nc-ui-fx-fold-state { font-size: ${v("scale-size")}; letter-spacing: 0; }
 .nc-ui-fx-visual { display: block; width: 100%; height: ${v("display-height")}; }
 /* EQ graph (eq-graph.js): a display at the top of an EQ card. A plot a touch off the card's shade, a hairline frame,
    the spectrum and curve canvases filling it, and one dot per band (its own colour) over them, each a 44 px target. */
@@ -1958,7 +1964,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx { flex: none; width: ${v("fx-card-width")}; }
   /* :has() counts its argument, so the folded card repeats it to win over the open cards' width. */
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-folded] {
-    width: ${v("fx-fold-width")};
+    width: var(--nc-fx-fold-w);
     padding-inline: 0;
   }
   .nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { display: none; }
@@ -1976,7 +1982,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]):has(> .nc-ui-fx-fold) {
     flex: none;
-    width: ${v("fx-fold-width")};
+    width: var(--nc-fx-fold-w);
     padding-inline: 0;
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]):has(> .nc-ui-fx-fold) > :not(.nc-ui-fx-fold, .nc-token-probe) { display: none; }
@@ -2020,8 +2026,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
     pointer-events: none;
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] > .nc-ui-fx[data-nc-off-page][data-nc-off-page][data-nc-off-page][data-nc-folded] {
-    width: ${v("fx-fold-width")};
-    margin-inline-end: calc(${v("fx-fold-width")} * -1);
+    width: var(--nc-fx-fold-w);
+    margin-inline-end: calc(var(--nc-fx-fold-w) * -1);
     padding-inline: 0;
   }
   /* A maximized card takes its page (its page-mates as fold columns beside it): the other pages stay out of it. */

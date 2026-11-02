@@ -2313,6 +2313,8 @@ function patchFx(node, control) {
   const folded = typeof control.onFold === "function" && control.folded === true;
   if (folded) node.dataset.ncFolded = "true";
   else delete node.dataset.ncFolded;
+  if (control.foldSlim === true) node.dataset.ncFoldSlim = "";
+  else delete node.dataset.ncFoldSlim;
   const hide = node.querySelector("[data-nc-fx-hide]");
   if (hide instanceof HTMLElement) {
     setFoldToggle(hide, folded, control.title);

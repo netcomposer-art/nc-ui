@@ -393,6 +393,11 @@ export interface FxControl {
   /** Hover words (data-nc-help) for the fold triangle and the folded column. */
   foldHelp?: string;
   /**
+   * Folded in a console row, a slim column (fx-fold-width-slim, half of fx-fold-width) with the same triangle, on/off
+   * word (a step smaller), name and meter (Peter, 2026-11-01: the Studio's send returns, "50% thinner").
+   */
+  foldSlim?: boolean;
+  /**
    * A maximize button in the header (on by default for a card holding an `eqGraph`; false turns it off). In a console
    * row the card takes three columns; elsewhere it opens as a panel three module widths wide over the modules beside
    * it; on phones it only grows taller. The button again, Escape or the panel's × restores it. The kit remembers it per

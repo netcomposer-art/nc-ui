@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { click, installDom } from "./helpers/dom.mjs";
 
@@ -110,7 +111,7 @@ test("FX fold in a module: folding is a patch (same nodes, so focus stays), not 
 
 test("FX fold CSS: tokens only, a narrow console column from 769 px, header row elsewhere, no motion", () => {
   assert.match(css, /\.nc-ui-fx\[data-nc-folded\] > :not\(\.nc-ui-fx-hd, \.nc-token-probe\) \{ display: none; \}/);
-  assert.match(css, /width: var\(--nc-ui-fx-fold-width\);/);
+  assert.match(css, /width: var\(--nc-fx-fold-w\);/);
   assert.match(css, /@media \(min-width: 769px\) \{\s*\.nc-module-body\[data-nc-layout="console"\] > \[data-nc-area="fx"\]:has\(> \.nc-ui-fx\[data-nc-folded\]\) \{\s*display: flex;/);
   const name = css.slice(css.indexOf("\n.nc-ui-fx-fold-name {"), css.indexOf("}", css.indexOf("\n.nc-ui-fx-fold-name {")));
   assert.match(name, /writing-mode: vertical-rl;/);
@@ -226,4 +227,19 @@ test("Inserts button: a light divider outline at rest, text-sub on hover; presse
   assert.match(css, /\.nc-hacks:hover \{ color: var\(--nc-ui-text\); border-color: var\(--nc-ui-text-sub\); \}/);
   assert.ok(css.indexOf('.nc-hacks[aria-pressed="true"] {') > css.indexOf(".nc-hacks:hover {"), "pressed wins over hover");
   assert.match(css, /nth-child\(even of \.nc-strip:not\(\[data-nc-master\]\)\) \.nc-hacks:not\(\[aria-pressed="true"\]\) \{\s*border-color: color-mix\(in oklab, var\(--nc-ui-text-sub\) 50%, var\(--nc-ui-divider\)\);/);
+});
+
+test("FX fold: foldSlim marks the card for the slim column (fx-fold-width-slim, 60 px; Peter: sends '50% thinner')", () => {
+  let control = { type: "fx", id: "s", title: "A · Reverb", depth: 1, on: true, folded: true, onFold: () => {}, foldSlim: true, controls: [] };
+  const card = renderControl(control, () => control);
+  assert.equal(card.dataset.ncFoldSlim, "");
+  control = { ...control, foldSlim: false };
+  patchControl(card, control);
+  assert.equal(card.dataset.ncFoldSlim, undefined, "off again on a patch");
+  assert.match(css, /\.nc-ui-fx \{ --nc-fx-fold-w: var\(--nc-ui-fx-fold-width\); \}/);
+  assert.match(css, /\.nc-ui-fx\[data-nc-fold-slim\] \{ --nc-fx-fold-w: var\(--nc-ui-fx-fold-width-slim\); \}/);
+  assert.match(css, /\.nc-ui-fx\[data-nc-fold-slim\] \.nc-ui-fx-fold-state \{ font-size: var\(--nc-ui-scale-size\); letter-spacing: 0; \}/);
+  const tokensCss = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
+  assert.match(tokensCss, /--nc-ui-fx-fold-width-slim: 60px;/);
+  assert.match(tokensCss, /--nc-ui-fx-fold-width: 120px;/, "other folded cards keep 120 px");
 });

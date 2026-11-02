@@ -347,6 +347,7 @@
   --nc-ui-eq-band-3: var(--nc-ui-color-petra-blue);
   --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
+  --nc-ui-fx-fold-width-slim: 60px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
   --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);

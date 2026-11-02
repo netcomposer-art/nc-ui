@@ -16,6 +16,7 @@ strips. First user: the Mix's A · Reverb, B · Delay and Insert · Drive (Peter
   folded: false,                        // folded now; the host keeps it
   onFold: (folded) => {},               // the triangle or the folded column was pressed
   foldHelp: "Folds this effect away…",  // optional hover words (data-nc-help) on both buttons
+  foldSlim: false,                      // optional: folded, a slim column (fx-fold-width-slim, 60 px)
   controls: [ /* … */ ],
 }
 ```
@@ -35,6 +36,8 @@ the browser, never in a document, scene or preset). Without `onFold` the card is
   shows the on/off word (on: `text` with the `accent` hairline, as the switch draws it) and the name read bottom
   to top (`writing-mode: vertical-rl`, turned 180°, like the Studio's instrument spine). Click, Enter or Space
   unfolds it, and focus moves to the card's triangle. The column shows the ▶ at its top too.
+- `foldSlim: true` makes the folded column `fx-fold-width-slim` (60 px, still wider than `target-min`): the same
+  triangle, on/off word (`scale-size`), name and meter (Peter, 2026-11-01: the Studio's send returns, "50% thinner").
 - With any card folded the fx area becomes a row of its cards' own widths (`fx-card-width` open, `fx-fold-width`
   folded); on tablets (769-1023 px) the open cards share what is left of the full-width row.
 - Everywhere else (phones, where the console stacks its cards; cards outside a console) a folded card keeps only
