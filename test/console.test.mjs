@@ -336,3 +336,15 @@ test("console fx area: as wide as its shown cards, no empty column held (Peter: 
   // A paged area still keeps three cards' width, so the strips never shift on a part-filled page.
   assert.match(css, /\[data-nc-paged\]:not\(:has\(> \.nc-ui-fx\[data-nc-folded\]:not\(\[data-nc-off-page\]\)\)\) \{\s*min-width: calc\(var\(--nc-ui-fx-card-width\) \* 3\);/);
 });
+
+test("console fx cards: never taller than the row from 1024 px; header and EQ graph pinned while the rest scrolls", () => {
+  const at = css.indexOf("@media (min-width: 1024px) {\n  .nc-module-body[data-nc-layout=\"console\"] > [data-nc-area=\"fx\"]:not(:has(> .nc-ui-fx[data-nc-max=\"row\"])) {");
+  assert.ok(at >= 0, "a desktop-only block, maximized rows left out");
+  const block = css.slice(at, css.indexOf("\n}\n", at));
+  assert.match(block, /height: 0;\s*min-height: 100%;\s*grid-auto-rows: minmax\(0, 1fr\);/, "the area adds no height of its own");
+  assert.match(block, /> \.nc-ui-fx:not\(\[data-nc-folded\]\) \{[^}]*padding-top: 0;[^}]*overflow-y: auto;[^}]*scroll-padding-top: var\(--nc-fx-pin-h/);
+  assert.match(block, /> :is\(\.nc-ui-fx-hd, \.nc-ui-fx-name\) \{\s*position: sticky;\s*top: 0;/);
+  assert.match(block, /> \.nc-eq \{\s*position: sticky;\s*top: var\(--nc-fx-hd-h, 0\);/);
+  assert.match(block, /background-attachment: local, scroll;/);
+  assert.doesNotMatch(block, /#[0-9a-f]{3,6}\b/i, "tokens only");
+});

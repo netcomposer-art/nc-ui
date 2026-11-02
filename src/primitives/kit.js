@@ -1947,9 +1947,9 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   ${prop("divider")}: inherit;
   ${prop("slider-track")}: inherit;
 }
-.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="1"] { background: ${v("module-bg-adjacent-2")}; }
-.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="2"] { background: ${v("module-bg-adjacent-3")}; }
-.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="3"] { background: ${v("module-bg-adjacent-4")}; }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="1"] { --nc-fx-card-bg: ${v("module-bg-adjacent-2")}; background: var(--nc-fx-card-bg); }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="2"] { --nc-fx-card-bg: ${v("module-bg-adjacent-3")}; background: var(--nc-fx-card-bg); }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="3"] { --nc-fx-card-bg: ${v("module-bg-adjacent-4")}; background: var(--nc-fx-card-bg); }
 /* In the console a card is a column: a select row gets the same space under it as a slider row. */
 .nc-module-body[data-nc-layout="console"] .nc-ui-fx { display: flex; flex-direction: column; gap: ${v("module-gap")}; }
 .nc-module-body[data-nc-layout="console"] .nc-ui-fx > .nc-field:not([data-nc-slider]) { padding-bottom: ${v("module-gap")}; }
@@ -1995,6 +1995,59 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] > .nc-ui-fx[data-nc-max="row"] { grid-column: span 3; }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-max="row"][data-nc-max="row"] {
     width: calc(${v("fx-card-width")} * 3);
+  }
+}
+/* An FX card never makes the console taller (Peter, 2026-11-01: "don't make the vertical version higher. Pin the
+   graphic at the top and scroll the freq controls behind it"). From 1024 px, where the fx area shares the strips'
+   row, the area takes the row's height (the strips, the master and the meters set it) and adds none of its own; a
+   card taller than that keeps its header (and an EQ graph under it) pinned at its top while the rest of its controls
+   scroll under them, with a soft shade at the foot while there is more below. Focus scrolls a control clear of the
+   pinned part (--nc-fx-pin-h, controls.js). A maximized card's row is unchanged (it has its one-line dial row);
+   tablets and phones, where the fx cards have their own row, are unchanged. */
+@media (min-width: 1024px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) {
+    height: 0;
+    min-height: 100%;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) > .nc-ui-fx:not([data-nc-folded]) {
+    min-height: 0;
+    /* The pinned header carries the top padding: a sticky box sticks inside the scroller's padding. */
+    padding-top: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    scroll-padding-top: var(--nc-fx-pin-h, ${v("module-gap")});
+    /* The foot shade (scroll) shows while there is more below; the card's own colour at the end of its content (local)
+       covers it once scrolled to the end, or when nothing overflows. */
+    background-image:
+      linear-gradient(transparent, var(--nc-fx-card-bg) 70%),
+      linear-gradient(transparent, ${v("divider")});
+    background-position: bottom, bottom;
+    background-size: 100% calc(${v("module-gap")} * 3), 100% ${v("module-gap")};
+    background-repeat: no-repeat;
+    background-attachment: local, scroll;
+  }
+  /* The pinned header (or bare name) holds the card's top padding, so nothing scrolls by above it; its fold triangle
+     keeps its corner (the header is its containing block now, edge to edge). */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) > .nc-ui-fx:not([data-nc-folded]) > :is(.nc-ui-fx-hd, .nc-ui-fx-name) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 calc(${v("module-pad")} * -1) calc(${v("module-gap")} * -1);
+    padding: ${v("stack-card-pad-y")} ${v("module-pad")} calc(${v("module-gap")} * 2);
+    background-color: var(--nc-fx-card-bg);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) > .nc-ui-fx:not([data-nc-folded]) > .nc-eq {
+    position: sticky;
+    top: var(--nc-fx-hd-h, 0);
+    z-index: 1;
+    margin-bottom: 0;
+    padding-bottom: ${v("control-gap")};
+    background-color: var(--nc-fx-card-bg);
+    /* The card's colour out to its edges beside the graph (no spread: nothing below it is covered). */
+    box-shadow: calc(${v("module-pad")} * -1) 0 0 var(--nc-fx-card-bg), ${v("module-pad")} 0 0 var(--nc-fx-card-bg);
   }
 }
 /* Pages (define-module.js, a section's pageSize; Peter, 2026-11-01: "don't push to a second row, create a second
