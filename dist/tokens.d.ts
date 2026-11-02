@@ -362,6 +362,7 @@ export declare const semantic: {
   readonly "eq-band-3": "#5AC4F7";
   readonly "eq-panel-layer": "10";
   readonly "fx-fold-width": "120px";
+  readonly "fx-fold-width-slim": "60px";
   readonly "head-margin-compact": "12px";
   readonly "scale-size": "9px";
   readonly "focus-width": "1px";
@@ -780,6 +781,7 @@ export declare const vars: {
   readonly "eq-band-3": "var(--nc-ui-eq-band-3)";
   readonly "eq-panel-layer": "var(--nc-ui-eq-panel-layer)";
   readonly "fx-fold-width": "var(--nc-ui-fx-fold-width)";
+  readonly "fx-fold-width-slim": "var(--nc-ui-fx-fold-width-slim)";
   readonly "head-margin-compact": "var(--nc-ui-head-margin-compact)";
   readonly "scale-size": "var(--nc-ui-scale-size)";
   readonly "focus-width": "var(--nc-ui-focus-width)";
@@ -995,6 +997,7 @@ export declare const refs: {
   readonly "eq-band-3": "color.petra-blue";
   readonly "eq-panel-layer": null;
   readonly "fx-fold-width": null;
+  readonly "fx-fold-width-slim": null;
   readonly "head-margin-compact": "space.12";
   readonly "scale-size": "font-size.3xs";
   readonly "focus-width": "border.hairline";
@@ -1285,6 +1288,7 @@ export declare const themes: {
       readonly "eq-band-3": "#5AC4F7";
       readonly "eq-panel-layer": "10";
       readonly "fx-fold-width": "120px";
+      readonly "fx-fold-width-slim": "60px";
       readonly "head-margin-compact": "12px";
       readonly "scale-size": "9px";
       readonly "focus-width": "1px";
@@ -1633,6 +1637,7 @@ export declare const themes: {
       readonly "eq-band-3": "#5AC4F7";
       readonly "eq-panel-layer": "10";
       readonly "fx-fold-width": "120px";
+      readonly "fx-fold-width-slim": "60px";
       readonly "head-margin-compact": "12px";
       readonly "scale-size": "9px";
       readonly "focus-width": "1px";

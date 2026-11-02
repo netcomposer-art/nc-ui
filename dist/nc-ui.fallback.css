@@ -349,6 +349,7 @@
   --nc-ui-eq-band-3: var(--nc-ui-color-petra-blue);
   --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
+  --nc-ui-fx-fold-width-slim: 60px;
   --nc-ui-head-margin-compact: var(--nc-ui-space-12);
   --nc-ui-scale-size: var(--nc-ui-font-size-3xs);
   --nc-ui-focus-width: var(--nc-ui-border-hairline);
@@ -1786,6 +1787,10 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-ui-fx-fold > .nc-fold-tri { flex: none; color: var(--nc-ui-text-sub); }
 .nc-ui-fx-fold:hover > .nc-fold-tri { color: var(--nc-ui-text); }
 .nc-ui-fx-fold { display: none; }
+/* A folded card's column width: fx-fold-width, or fx-fold-width-slim for a card with foldSlim (the Studio's send
+   returns; Peter, 2026-11-01: "make send effect minimized state 50% thinner"). */
+.nc-ui-fx { --nc-fx-fold-w: var(--nc-ui-fx-fold-width); }
+.nc-ui-fx[data-nc-fold-slim] { --nc-fx-fold-w: var(--nc-ui-fx-fold-width-slim); }
 .nc-ui-fx[data-nc-folded] > :not(.nc-ui-fx-hd, .nc-token-probe) { display: none; }
 .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { margin-bottom: 0; }
 .nc-ui-fx-fold {
@@ -1827,6 +1832,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   white-space: nowrap;
 }
 .nc-ui-fx-fold:hover .nc-ui-fx-fold-state { color: var(--nc-ui-text); }
+/* The slim column (fx-fold-width-slim): the same parts, the on/off word a step smaller so OFF fits with room. */
+.nc-ui-fx[data-nc-fold-slim] .nc-ui-fx-fold-state { font-size: var(--nc-ui-scale-size); letter-spacing: 0; }
 .nc-ui-fx-visual { display: block; width: 100%; height: var(--nc-ui-display-height); }
 /* EQ graph (eq-graph.js): a display at the top of an EQ card. A plot a touch off the card's shade, a hairline frame,
    the spectrum and curve canvases filling it, and one dot per band (its own colour) over them, each a 44 px target. */
@@ -2543,10 +2550,14 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   --nc-ui-divider: var(--nc-ui-module-div-stack-1);
   --nc-ui-slider-track: var(--nc-ui-module-div-stack-1);
 }
+/* The fx area is as wide as the cards it shows (Peter, 2026-11-01: "Weird empty slot next to Master slider"): one
+   column per shown card, none held empty, so the master sits right after the last card and the strips area (the
+   flexible column) takes the rest. A paged area keeps three cards' width (below). */
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
   grid-area: fx;
   display: grid;
-  grid-template-columns: repeat(3, var(--nc-ui-fx-card-width));
+  grid-auto-flow: column;
+  grid-auto-columns: var(--nc-ui-fx-card-width);
   align-items: stretch;
   padding-top: 0;
 }
@@ -2578,9 +2589,9 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   --nc-ui-divider: inherit;
   --nc-ui-slider-track: inherit;
 }
-.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="1"] { background: var(--nc-ui-module-bg-adjacent-2); }
-.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="2"] { background: var(--nc-ui-module-bg-adjacent-3); }
-.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="3"] { background: var(--nc-ui-module-bg-adjacent-4); }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="1"] { --nc-fx-card-bg: var(--nc-ui-module-bg-adjacent-2); background: var(--nc-fx-card-bg); }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="2"] { --nc-fx-card-bg: var(--nc-ui-module-bg-adjacent-3); background: var(--nc-fx-card-bg); }
+.nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-depth="3"] { --nc-fx-card-bg: var(--nc-ui-module-bg-adjacent-4); background: var(--nc-fx-card-bg); }
 /* In the console a card is a column: a select row gets the same space under it as a slider row. */
 .nc-module-body[data-nc-layout="console"] .nc-ui-fx { display: flex; flex-direction: column; gap: var(--nc-ui-module-gap); }
 .nc-module-body[data-nc-layout="console"] .nc-ui-fx > .nc-field:not([data-nc-slider]) { padding-bottom: var(--nc-ui-module-gap); }
@@ -2595,7 +2606,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx { flex: none; width: var(--nc-ui-fx-card-width); }
   /* :has() counts its argument, so the folded card repeats it to win over the open cards' width. */
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-folded] {
-    width: var(--nc-ui-fx-fold-width);
+    width: var(--nc-fx-fold-w);
     padding-inline: 0;
   }
   .nc-module-body[data-nc-layout="console"] .nc-ui-fx[data-nc-folded] > .nc-ui-fx-hd { display: none; }
@@ -2613,7 +2624,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]):has(> .nc-ui-fx-fold) {
     flex: none;
-    width: var(--nc-ui-fx-fold-width);
+    width: var(--nc-fx-fold-w);
     padding-inline: 0;
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-max="row"]) > .nc-ui-fx:not([data-nc-max]):has(> .nc-ui-fx-fold) > :not(.nc-ui-fx-fold, .nc-token-probe) { display: none; }
@@ -2626,6 +2637,59 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] > .nc-ui-fx[data-nc-max="row"] { grid-column: span 3; }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:has(> .nc-ui-fx[data-nc-folded]) > .nc-ui-fx[data-nc-max="row"][data-nc-max="row"] {
     width: calc(var(--nc-ui-fx-card-width) * 3);
+  }
+}
+/* An FX card never makes the console taller (Peter, 2026-11-01: "don't make the vertical version higher. Pin the
+   graphic at the top and scroll the freq controls behind it"). From 1024 px, where the fx area shares the strips'
+   row, the area takes the row's height (the strips, the master and the meters set it) and adds none of its own; a
+   card taller than that keeps its header (and an EQ graph under it) pinned at its top while the rest of its controls
+   scroll under them, with a soft shade at the foot while there is more below. Focus scrolls a control clear of the
+   pinned part (--nc-fx-pin-h, controls.js). A maximized card's row is unchanged (it has its one-line dial row);
+   tablets and phones, where the fx cards have their own row, are unchanged. */
+@media (min-width: 1024px) {
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) {
+    height: 0;
+    min-height: 100%;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) > .nc-ui-fx:not([data-nc-folded]) {
+    min-height: 0;
+    /* The pinned header carries the top padding: a sticky box sticks inside the scroller's padding. */
+    padding-top: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    scroll-padding-top: var(--nc-fx-pin-h, var(--nc-ui-module-gap));
+    /* The foot shade (scroll) shows while there is more below; the card's own colour at the end of its content (local)
+       covers it once scrolled to the end, or when nothing overflows. */
+    background-image:
+      linear-gradient(transparent, var(--nc-fx-card-bg) 70%),
+      linear-gradient(transparent, var(--nc-ui-divider));
+    background-position: bottom, bottom;
+    background-size: 100% calc(var(--nc-ui-module-gap) * 3), 100% var(--nc-ui-module-gap);
+    background-repeat: no-repeat;
+    background-attachment: local, scroll;
+  }
+  /* The pinned header (or bare name) holds the card's top padding, so nothing scrolls by above it; its fold triangle
+     keeps its corner (the header is its containing block now, edge to edge). */
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) > .nc-ui-fx:not([data-nc-folded]) > :is(.nc-ui-fx-hd, .nc-ui-fx-name) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 calc(var(--nc-ui-module-pad) * -1) calc(var(--nc-ui-module-gap) * -1);
+    padding: var(--nc-ui-stack-card-pad-y) var(--nc-ui-module-pad) calc(var(--nc-ui-module-gap) * 2);
+    background-color: var(--nc-fx-card-bg);
+  }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]:not(:has(> .nc-ui-fx[data-nc-max="row"])) > .nc-ui-fx:not([data-nc-folded]) > .nc-eq {
+    position: sticky;
+    top: var(--nc-fx-hd-h, 0);
+    z-index: 1;
+    margin-bottom: 0;
+    padding-bottom: var(--nc-ui-control-gap);
+    background-color: var(--nc-fx-card-bg);
+    /* The card's colour out to its edges beside the graph (no spread: nothing below it is covered). */
+    box-shadow: calc(var(--nc-ui-module-pad) * -1) 0 0 var(--nc-fx-card-bg), var(--nc-ui-module-pad) 0 0 var(--nc-fx-card-bg);
   }
 }
 /* Pages (define-module.js, a section's pageSize; Peter, 2026-11-01: "don't push to a second row, create a second
@@ -2657,8 +2721,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
     pointer-events: none;
   }
   .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"][data-nc-paged] > .nc-ui-fx[data-nc-off-page][data-nc-off-page][data-nc-off-page][data-nc-folded] {
-    width: var(--nc-ui-fx-fold-width);
-    margin-inline-end: calc(var(--nc-ui-fx-fold-width) * -1);
+    width: var(--nc-fx-fold-w);
+    margin-inline-end: calc(var(--nc-fx-fold-w) * -1);
     padding-inline: 0;
   }
   /* A maximized card takes its page (its page-mates as fold columns beside it): the other pages stay out of it. */
@@ -3186,7 +3250,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   }
 }
 @media (max-width: 1023px) {
-  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 /* Tablets (769-1023 px): the fx row is full width under the strips; with a card folded, the open ones share the rest. */
 @media (min-width: 769px) and (max-width: 1023px) {

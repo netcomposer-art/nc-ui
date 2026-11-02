@@ -1959,6 +1959,40 @@ export function stripMeter(root, id) {
   return meterHandle(strip?.querySelector(".nc-meter") ?? undefined);
 }
 
+/**
+ * The pinned top of an FX card (its header, or its name alone, and an EQ graph under it): a console row from 1024 px
+ * keeps it in view while the card's other controls scroll under it (Peter, 2026-11-01: "don't make the vertical
+ * version higher. Pin the graphic at the top and scroll the freq controls behind it"). The CSS needs its heights:
+ * `--nc-fx-hd-h` (the graph sticks under the header) and `--nc-fx-pin-h` (focus scrolls a control clear of it).
+ */
+const PIN = typeof ResizeObserver === "function" ? new ResizeObserver(pinResized) : null;
+
+function pinResized(entries) {
+  for (const entry of entries) {
+    if (!entry.target.isConnected) {
+      PIN.unobserve(entry.target);
+      continue;
+    }
+    const card = entry.target.parentElement;
+    if (card?.classList.contains("nc-ui-fx")) pinSizes(card);
+  }
+}
+
+function pinSizes(card) {
+  const head = card.querySelector(":scope > :is(.nc-ui-fx-hd, .nc-ui-fx-name)");
+  const eq = card.querySelector(":scope > .nc-eq");
+  const h = head instanceof HTMLElement ? head.offsetHeight : 0;
+  const graph = eq instanceof HTMLElement ? eq.offsetHeight : 0;
+  const gap = Number.parseFloat(getComputedStyle(card).rowGap) || 0;
+  card.style.setProperty("--nc-fx-hd-h", `${h}px`);
+  card.style.setProperty("--nc-fx-pin-h", `${h + graph + gap}px`);
+}
+
+function pinWatch(card) {
+  if (!PIN) return;
+  for (const el of card.querySelectorAll(":scope > :is(.nc-ui-fx-hd, .nc-ui-fx-name, .nc-eq)")) PIN.observe(el);
+}
+
 function renderFx(control, lookup) {
   const card = document.createElement("div");
   card.className = "nc-ui-fx";
@@ -2010,6 +2044,7 @@ function renderFx(control, lookup) {
   }
   card.append(probe());
   patchFx(card, control);
+  pinWatch(card);
   return card;
 }
 
@@ -2313,6 +2348,8 @@ function patchFx(node, control) {
   const folded = typeof control.onFold === "function" && control.folded === true;
   if (folded) node.dataset.ncFolded = "true";
   else delete node.dataset.ncFolded;
+  if (control.foldSlim === true) node.dataset.ncFoldSlim = "";
+  else delete node.dataset.ncFoldSlim;
   const hide = node.querySelector("[data-nc-fx-hide]");
   if (hide instanceof HTMLElement) {
     setFoldToggle(hide, folded, control.title);

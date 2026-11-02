@@ -143,6 +143,7 @@ const semanticKinds = {
   "scale-size": "length",
   "fx-card-width": "length",
   "fx-fold-width": "length",
+  "fx-fold-width-slim": "length",
   "eq-graph-height": "length",
   "eq-graph-height-max": "length",
   "eq-node-size": "length",

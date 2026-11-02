@@ -110,6 +110,7 @@
   --spacing-nc-strip-width-master: var(--nc-ui-strip-width-master);
   --spacing-nc-fx-card-width: var(--nc-ui-fx-card-width);
   --spacing-nc-fx-fold-width: var(--nc-ui-fx-fold-width);
+  --spacing-nc-fx-fold-width-slim: var(--nc-ui-fx-fold-width-slim);
   --spacing-nc-eq-graph-height: var(--nc-ui-eq-graph-height);
   --spacing-nc-eq-graph-height-max: var(--nc-ui-eq-graph-height-max);
   --spacing-nc-strip-fold-width: var(--nc-ui-strip-fold-width);

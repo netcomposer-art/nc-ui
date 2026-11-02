@@ -115,6 +115,7 @@ const theme = {
     "nc-strip-width-master": "var(--nc-ui-strip-width-master)",
     "nc-fx-card-width": "var(--nc-ui-fx-card-width)",
     "nc-fx-fold-width": "var(--nc-ui-fx-fold-width)",
+    "nc-fx-fold-width-slim": "var(--nc-ui-fx-fold-width-slim)",
     "nc-eq-graph-height": "var(--nc-ui-eq-graph-height)",
     "nc-eq-graph-height-max": "var(--nc-ui-eq-graph-height-max)",
     "nc-strip-fold-width": "var(--nc-ui-strip-fold-width)",
