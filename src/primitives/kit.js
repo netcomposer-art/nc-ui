@@ -1902,10 +1902,14 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   ${prop("divider")}: ${v("module-div-stack-1")};
   ${prop("slider-track")}: ${v("module-div-stack-1")};
 }
+/* The fx area is as wide as the cards it shows (Peter, 2026-11-01: "Weird empty slot next to Master slider"): one
+   column per shown card, none held empty, so the master sits right after the last card and the strips area (the
+   flexible column) takes the rest. A paged area keeps three cards' width (below). */
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] {
   grid-area: fx;
   display: grid;
-  grid-template-columns: repeat(3, ${v("fx-card-width")});
+  grid-auto-flow: column;
+  grid-auto-columns: ${v("fx-card-width")};
   align-items: stretch;
   padding-top: 0;
 }
@@ -2545,7 +2549,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   }
 }
 @media (max-width: 1023px) {
-  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"] { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 /* Tablets (769-1023 px): the fx row is full width under the strips; with a card folded, the open ones share the rest. */
 @media (min-width: 769px) and (max-width: 1023px) {

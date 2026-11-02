@@ -325,3 +325,14 @@ test("strip M and S: side by side inside the strip, no overlapping margins; on t
   assert.match(coarse, /\.nc-strip-ms \{ grid-auto-columns: minmax\(0, 1fr\); grid-template-rows: var\(--nc-ui-target-min\); column-gap: 0; justify-self: stretch; \}/);
   assert.doesNotMatch(css, /nc-strip[^{]*nc-ms-wrap[^{]*\{[^}]*margin-(top|inline-start): calc/, "no negative-margin overlap in a strip");
 });
+
+test("console fx area: as wide as its shown cards, no empty column held (Peter: 'Weird empty slot next to Master')", () => {
+  const fx = rule('.nc-module-body[data-nc-layout="console"] > [data-nc-area="fx"]');
+  assert.doesNotMatch(fx, /grid-template-columns/, "no fixed column count on wide screens");
+  assert.match(fx, /grid-auto-flow: column;/);
+  assert.match(fx, /grid-auto-columns: var\(--nc-ui-fx-card-width\);/);
+  // Tablets and phones keep their rows under the strips: thirds, then one column, flowing by row.
+  assert.match(css, /\[data-nc-area="fx"\] \{ grid-auto-flow: row; grid-template-columns: repeat\(3, minmax\(0, 1fr\)\); \}/);
+  // A paged area still keeps three cards' width, so the strips never shift on a part-filled page.
+  assert.match(css, /\[data-nc-paged\]:not\(:has\(> \.nc-ui-fx\[data-nc-folded\]:not\(\[data-nc-off-page\]\)\)\) \{\s*min-width: calc\(var\(--nc-ui-fx-card-width\) \* 3\);/);
+});
