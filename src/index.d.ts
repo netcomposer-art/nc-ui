@@ -407,6 +407,13 @@ export interface FxControl {
   /** Hover words (data-nc-help) for the maximize button. */
   maxHelp?: string;
   /**
+   * A quiet × at the end of the header (after maximize) that calls this with the button; the host removes the card
+   * (and, in the Studio, offers Undo). Hidden while the card is folded. Named `removeLabel`, else "Remove <title>".
+   */
+  onRemove?: (opener: HTMLElement) => void;
+  /** The ×'s aria-label and tooltip, e.g. "Remove EQ" (default "Remove <title>"). */
+  removeLabel?: string;
+  /**
    * A small level meter beside the switch (and at the foot of the folded column): the signal going into the effect
    * (left bar) and coming out (right bar), −48 to 0 dBFS with the strips' ballistics. Opened only while it is on
    * screen; every meter on the page shares one loop. nc-fx's fxMeter(fx, id) is one. See docs/fx-level.md.
