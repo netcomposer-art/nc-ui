@@ -426,6 +426,7 @@ test("Strip shade (Peter, 2026-11-04): data-nc-shade 1-8 in place of the alterna
   assert.ok(css.includes(".nc-strip:not([data-nc-master]) { --nc-strip-ground: var(--nc-strip-shade, var(--nc-ui-strip-bg)); background: var(--nc-strip-ground); }"));
   assert.equal((css.match(/radial-gradient\(closest-side, var\(--nc-strip-ground, var\(--nc-ui-surface-page\)\) 70%/g) ?? []).length, 2, "knob centres take the strip's grey");
   assert.ok(css.includes('.nc-strip[data-nc-shade]:not([data-nc-shade="1"]):not([data-nc-shade="2"]):not([data-nc-master]) > .nc-strip-ms { --nc-ui-divider: color-mix(in oklab, var(--nc-ui-text-sub) 30%, var(--nc-strip-shade)); }'), "M/S hairline from the strip's grey on 3-8");
+  assert.ok(css.includes('.nc-strip[data-nc-shade]:not([data-nc-shade="1"]):not([data-nc-shade="2"]):not([data-nc-master]) { --nc-ui-meter-track: color-mix(in oklab, var(--nc-ui-text-sub) 30%, var(--nc-strip-shade)); }'), "and the unlit track");
   assert.match(css, /\[data-nc-shade="5"\], \[data-nc-shade="6"\], \[data-nc-shade="7"\], \[data-nc-shade="8"\]\) \.nc-hacks:not\(\[aria-pressed="true"\]\) \{ color: var\(--nc-ui-text-sub\); \}/);
   const tokensCss = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
   assert.match(tokensCss, /--nc-ui-strip-shade-1: var\(--nc-ui-color-shade-1\);/, "1 is today's light grey");

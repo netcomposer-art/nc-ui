@@ -2894,6 +2894,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
    3-8 the M and S hairline is mixed from the strip's grey (strip-divider vanishes on the middle greys, and reads as a
    light box on the darkest). */
 .nc-strip[data-nc-shade]:not([data-nc-shade="1"]):not([data-nc-shade="2"]):not([data-nc-master]) > .nc-strip-ms { --nc-ui-divider: color-mix(in oklab, var(--nc-ui-text-sub) 30%, var(--nc-strip-shade)); }
+/* …and the knob rings' and the meter's unlit track, which (div-0) vanishes on the middle light greys. */
+.nc-strip[data-nc-shade]:not([data-nc-shade="1"]):not([data-nc-shade="2"]):not([data-nc-master]) { --nc-ui-meter-track: color-mix(in oklab, var(--nc-ui-text-sub) 30%, var(--nc-strip-shade)); }
 .nc-strip:is([data-nc-shade="5"], [data-nc-shade="6"], [data-nc-shade="7"], [data-nc-shade="8"]) .nc-hacks:not([aria-pressed="true"]) { color: var(--nc-ui-text-sub); }
 .nc-strip:is([data-nc-shade="5"], [data-nc-shade="6"], [data-nc-shade="7"], [data-nc-shade="8"]) .nc-hacks:not([aria-pressed="true"]):hover { color: var(--nc-ui-text); }
 /* The strip menu (onShade): a small sheet under the grip, or where the name was right-clicked: "Shade", a row of Auto
