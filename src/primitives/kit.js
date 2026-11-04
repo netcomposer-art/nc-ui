@@ -2263,7 +2263,8 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   position: absolute;
   top: ${v("control-gap")};
   right: ${v("control-gap")};
-  z-index: 1;
+  /* Over the next strip's fold triangle, whose touch target reaches back across the strips' edge. */
+  z-index: 2;
   display: inline-flex;
   margin: 0;
   padding: ${v("hairline")};
