@@ -562,6 +562,27 @@ export interface StripControl {
    * focus ring; pressed looks as before). Default false: the outlined button.
    */
   hacksEmpty?: boolean;
+  /**
+   * Adds a text button under the Hacks button, in the M/S row (meant for the master, which has no M or S): it shows or
+   * hides the console's send cards (the host decides what shows). It looks like the Hacks button: a box, or the plain
+   * word with sendsViewEmpty, and pressed with sendsView.
+   */
+  onSendsView?: () => void;
+  /** The send cards are showing: the button is pressed. */
+  sendsView?: boolean;
+  /** Nothing is sent (every send at its minimum): the plain word, no box (still a button with its focus ring). */
+  sendsViewEmpty?: boolean;
+  /** The button's text (default "Sends"). */
+  sendsViewLabel?: string;
+  /** Hover words for it. */
+  sendsViewHelp?: string;
+  /**
+   * Move (not on the master): adds a small grip in the strip's top-right corner, across from the fold triangle, that
+   * says the strip can be dragged (the host does the drag). As a button, ← and → (Alt too) call onMove(-1 | 1).
+   */
+  onMove?: (delta: -1 | 1) => void;
+  /** The grip's tooltip (default "Drag to move this channel"). */
+  moveHelp?: string;
   /** Adds the M button. */
   onMute?: () => void;
   /** Adds the S button. */

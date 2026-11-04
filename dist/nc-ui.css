@@ -2898,6 +2898,45 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 /* The triangle sits in the strip's top-left corner, above the name; folded, centred over the column. */
 .nc-strip > [data-nc-strip-hide] { position: absolute; top: var(--nc-ui-control-gap); left: var(--nc-ui-control-gap); z-index: 1; }
 .nc-strip[data-nc-folded] > [data-nc-strip-hide] { left: 50%; transform: translateX(-50%); }
+/* Move (onMove): a grip of six dots in the top-right corner, across from the triangle, in text-sub (ink on hover), so a
+   strip says it can be dragged. touch-action none: a drag from the grip moves the strip at once on touch, never the
+   page. Not on a folded strip (its column is the handle there). */
+.nc-strip > [data-nc-strip-grip] {
+  position: absolute;
+  top: var(--nc-ui-control-gap);
+  right: var(--nc-ui-control-gap);
+  /* Over the next strip's fold triangle, whose touch target reaches back across the strips' edge. */
+  z-index: 2;
+  display: inline-flex;
+  margin: 0;
+  padding: var(--nc-ui-hairline);
+  border: 0;
+  background: transparent;
+  color: var(--nc-ui-text-sub);
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+}
+.nc-strip > [data-nc-strip-grip]:hover { color: var(--nc-ui-text); }
+.nc-strip > [data-nc-strip-grip]:active { cursor: grabbing; }
+.nc-strip > [data-nc-strip-grip]:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
+.nc-strip-grip-dots {
+  display: block;
+  width: calc(var(--nc-ui-control-gap) * 1.5);
+  height: calc(var(--nc-ui-control-gap) * 2.25);
+  background: radial-gradient(circle, currentColor var(--nc-ui-hairline), transparent calc(var(--nc-ui-hairline) * 1.5)) 0 0 / calc(var(--nc-ui-control-gap) * 0.75) calc(var(--nc-ui-control-gap) * 0.75);
+}
+.nc-strip[data-nc-folded] > [data-nc-strip-grip] { display: none; }
+@media (pointer: coarse) {
+  .nc-strip > [data-nc-strip-grip]::before {
+    content: "";
+    position: absolute;
+    right: calc(var(--nc-ui-control-gap) * -1);
+    top: calc(var(--nc-ui-control-gap) * -1);
+    width: calc(var(--nc-ui-target-min) / 2);
+    height: calc(var(--nc-ui-target-min) / 2);
+  }
+}
 /* Folded: no gutters, and M and S take the Inserts, M/S and sends rows (sends hidden: the pan row) as one area, so the
    two fit stacked at full size with the rows unchanged. */
 .nc-strip[data-nc-folded] {
@@ -2981,6 +3020,10 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   align-self: start;
 }
 .nc-strip > .nc-strip-ms > .nc-ms-wrap { margin: 0; width: auto; }
+/* The master's Sends button (onSendsView): Inserts' twin in the M/S row, the strip's width, the slider pitch tall. */
+.nc-strip > .nc-strip-ms:has(> .nc-sends-view-wrap) { grid-auto-columns: minmax(0, 1fr); justify-self: stretch; }
+.nc-strip > .nc-strip-ms > .nc-sends-view-wrap { grid-column: 1 / -1; height: var(--nc-ui-slider-pitch); }
+.nc-strip > .nc-strip-ms > .nc-sends-view-wrap > .nc-sends-view { inset-inline: var(--nc-ui-control-gap); width: auto; }
 @media (pointer: coarse) {
   .nc-strip-ms { grid-auto-columns: minmax(0, 1fr); grid-template-rows: var(--nc-ui-target-min); column-gap: 0; justify-self: stretch; }
 }
