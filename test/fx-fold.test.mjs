@@ -338,3 +338,71 @@ test("FX remove CSS: tokens only, text-sub to ink on hover, gone on folded cards
   assert.match(css, /\.nc-fx-remove:hover \{ color: var\(--nc-ui-text\); \}/);
   assert.match(css, /\.nc-ui-fx\[data-nc-folded\] > \.nc-ui-fx-hd > \.nc-fx-remove,\n\.nc-ui-fx\[data-nc-max="over"\] > \.nc-ui-fx-hd > \.nc-fx-remove \{ display: none; \}/);
 });
+
+test("Master Sends button (onSendsView): Inserts' twin in the M/S row; a box only while something sends, pressed while shown", () => {
+  const calls = [];
+  let control = {
+    ...stripControl({ folded: false, folds: [], levels: [], ms: [], removed: 0 }),
+    master: true,
+    onMute: undefined,
+    onSolo: undefined,
+    onHacks() {},
+    hacksLabel: "Inserts",
+    onSendsView: () => calls.push("sends"),
+    sendsViewEmpty: true,
+    sendsViewHelp: "Shows or hides the send effects.",
+  };
+  const strip = renderControl(control, () => control);
+  const button = strip.querySelector(".nc-strip-ms > .nc-sends-view-wrap > [data-nc-sends-view]");
+  assert.ok(button, "in the M/S row, under Inserts");
+  assert.equal(button.tagName, "BUTTON");
+  assert.equal(button.textContent, "Sends");
+  assert.ok(button.classList.contains("nc-hacks"), "Inserts' own look");
+  assert.equal(button.hasAttribute("data-nc-empty"), true, "nothing sent: the plain word");
+  assert.equal(button.getAttribute("aria-pressed"), "false");
+  assert.equal(button.getAttribute("data-nc-help"), "Shows or hides the send effects.");
+  click(button.parentElement);
+  assert.deepEqual(calls, ["sends"]);
+  control = { ...control, sendsViewEmpty: false, sendsView: true };
+  patchControl(strip, control);
+  assert.equal(button.hasAttribute("data-nc-empty"), false, "a channel sends: the box");
+  assert.equal(button.getAttribute("aria-pressed"), "true", "shown: pressed");
+  assert.match(button.getAttribute("aria-label"), /hide the send effects/);
+  assert.equal(strip.querySelectorAll("[data-nc-ms]").length, 0, "the master still has no M or S");
+  const plain = { ...stripControl({ folded: false, folds: [], levels: [], ms: [], removed: 0 }) };
+  assert.equal(renderControl(plain, () => plain).querySelector("[data-nc-sends-view]"), null, "none without onSendsView");
+  assert.ok(css.includes(".nc-strip > .nc-strip-ms > .nc-sends-view-wrap { grid-column: 1 / -1; height: var(--nc-ui-slider-pitch); }"));
+});
+
+test("Strip grip (onMove): a button in the top-right corner, ← / → move one place, gone on the master and while folded", () => {
+  const moves = [];
+  let control = {
+    ...stripControl({ folded: false, folds: [], levels: [], ms: [], removed: 0 }),
+    onMove: (d) => moves.push(d),
+  };
+  const strip = renderControl(control, () => control);
+  const grip = strip.querySelector(":scope > [data-nc-strip-grip]");
+  assert.ok(grip, "a grip on the strip");
+  assert.equal(grip.tagName, "BUTTON");
+  assert.equal(grip.title, "Drag to move this channel");
+  assert.match(grip.getAttribute("aria-label"), /^Move /);
+  assert.equal(grip.getAttribute("aria-keyshortcuts"), "Alt+ArrowLeft Alt+ArrowRight");
+  const key = (k, extra = {}) => {
+    const e = Object.assign(new Event("keydown", { bubbles: true, cancelable: true }), { key: k, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, ...extra });
+    grip.dispatchEvent(e);
+    return e.defaultPrevented;
+  };
+  assert.equal(key("ArrowLeft"), true);
+  key("ArrowRight", { altKey: true });
+  key("ArrowRight", { shiftKey: true });
+  key("ArrowUp");
+  assert.deepEqual(moves, [-1, 1], "← and Alt+→ move; Shift and other keys don't");
+  control = { ...control, moveHelp: "Drag me" };
+  patchControl(strip, control);
+  assert.equal(grip.title, "Drag me");
+  const master = { ...control, master: true };
+  assert.equal(renderControl(master, () => master).querySelector("[data-nc-strip-grip]"), null, "never on the master");
+  assert.ok(css.includes(".nc-strip[data-nc-folded] > [data-nc-strip-grip] { display: none; }"));
+  assert.match(css, /\.nc-strip > \[data-nc-strip-grip\] \{[^}]*touch-action: none;/);
+  assert.match(css, /\.nc-strip > \[data-nc-strip-grip\] \{[^}]*color: var\(--nc-ui-text-sub\);/);
+});

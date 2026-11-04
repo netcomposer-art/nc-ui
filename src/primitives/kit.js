@@ -2256,6 +2256,44 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 /* The triangle sits in the strip's top-left corner, above the name; folded, centred over the column. */
 .nc-strip > [data-nc-strip-hide] { position: absolute; top: ${v("control-gap")}; left: ${v("control-gap")}; z-index: 1; }
 .nc-strip[data-nc-folded] > [data-nc-strip-hide] { left: 50%; transform: translateX(-50%); }
+/* Move (onMove): a grip of six dots in the top-right corner, across from the triangle, in text-sub (ink on hover), so a
+   strip says it can be dragged. touch-action none: a drag from the grip moves the strip at once on touch, never the
+   page. Not on a folded strip (its column is the handle there). */
+.nc-strip > [data-nc-strip-grip] {
+  position: absolute;
+  top: ${v("control-gap")};
+  right: ${v("control-gap")};
+  z-index: 1;
+  display: inline-flex;
+  margin: 0;
+  padding: ${v("hairline")};
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  line-height: 1;
+  cursor: grab;
+  touch-action: none;
+}
+.nc-strip > [data-nc-strip-grip]:hover { color: ${v("text")}; }
+.nc-strip > [data-nc-strip-grip]:active { cursor: grabbing; }
+.nc-strip > [data-nc-strip-grip]:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-strip-grip-dots {
+  display: block;
+  width: calc(${v("control-gap")} * 1.5);
+  height: calc(${v("control-gap")} * 2.25);
+  background: radial-gradient(circle, currentColor ${v("hairline")}, transparent calc(${v("hairline")} * 1.5)) 0 0 / calc(${v("control-gap")} * 0.75) calc(${v("control-gap")} * 0.75);
+}
+.nc-strip[data-nc-folded] > [data-nc-strip-grip] { display: none; }
+@media (pointer: coarse) {
+  .nc-strip > [data-nc-strip-grip]::before {
+    content: "";
+    position: absolute;
+    right: calc(${v("control-gap")} * -1);
+    top: calc(${v("control-gap")} * -1);
+    width: calc(${v("target-min")} / 2);
+    height: calc(${v("target-min")} / 2);
+  }
+}
 /* Folded: no gutters, and M and S take the Inserts, M/S and sends rows (sends hidden: the pan row) as one area, so the
    two fit stacked at full size with the rows unchanged. */
 .nc-strip[data-nc-folded] {
@@ -2339,6 +2377,10 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
   align-self: start;
 }
 .nc-strip > .nc-strip-ms > .nc-ms-wrap { margin: 0; width: auto; }
+/* The master's Sends button (onSendsView): Inserts' twin in the M/S row, the strip's width, the slider pitch tall. */
+.nc-strip > .nc-strip-ms:has(> .nc-sends-view-wrap) { grid-auto-columns: minmax(0, 1fr); justify-self: stretch; }
+.nc-strip > .nc-strip-ms > .nc-sends-view-wrap { grid-column: 1 / -1; height: ${v("slider-pitch")}; }
+.nc-strip > .nc-strip-ms > .nc-sends-view-wrap > .nc-sends-view { inset-inline: ${v("control-gap")}; width: auto; }
 @media (pointer: coarse) {
   .nc-strip-ms { grid-auto-columns: minmax(0, 1fr); grid-template-rows: ${v("target-min")}; column-gap: 0; justify-self: stretch; }
 }

@@ -1605,6 +1605,29 @@ function renderStrip(control, lookup) {
     });
   }
   head.append(name);
+  // Move (onMove, not on the master): a small grip of dots in the strip's top-right corner, across from the fold
+  // triangle, in text-sub. It says the strip can be dragged (the host does the drag, from the grip, the name row or the
+  // folded column); as a button, ← and → (Alt too) move the strip one place.
+  let grip = null;
+  if (!control.master && typeof control.onMove === "function") {
+    grip = document.createElement("button");
+    grip.type = "button";
+    grip.className = "nc-strip-grip";
+    grip.dataset.ncStripGrip = "";
+    grip.setAttribute("aria-keyshortcuts", "Alt+ArrowLeft Alt+ArrowRight");
+    const dots = document.createElement("span");
+    dots.className = "nc-strip-grip-dots";
+    dots.setAttribute("aria-hidden", "true");
+    grip.append(dots);
+    grip.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (event.ctrlKey || event.metaKey || event.shiftKey) return;
+      const live = lookup(strip);
+      if (live?.type !== "strip") return;
+      event.preventDefault();
+      live.onMove?.(event.key === "ArrowLeft" ? -1 : 1);
+    });
+  }
   // Remove (an instance of an instrument): a quiet × after the name, as on ASTRID's hack cards. The host confirms.
   if (control.onRemove) {
     const remove = document.createElement("button");
@@ -1638,6 +1661,23 @@ function renderStrip(control, lookup) {
   }
   const ms = document.createElement("div");
   ms.className = "nc-strip-ms";
+  // The sends' view (onSendsView, the master): a text button under Inserts, in the M/S row the master has free, that
+  // shows or hides the console's send cards. It looks like Inserts: a box only while sendsViewEmpty is not set (the
+  // host: some channel sends), pressed while the sends show.
+  if (control.onSendsView) {
+    const pad = document.createElement("span");
+    pad.className = "nc-hacks-wrap nc-sends-view-wrap";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nc-hacks nc-sends-view";
+    button.dataset.ncSendsView = "";
+    pad.append(button, hitPad());
+    pad.addEventListener("click", () => {
+      const live = lookup(strip);
+      if (live?.type === "strip") live.onSendsView?.();
+    });
+    ms.append(pad);
+  }
   for (const kind of ["mute", "solo"]) {
     const handler = kind === "mute" ? control.onMute : control.onSolo;
     if (!handler) continue;
@@ -1748,6 +1788,7 @@ function renderStrip(control, lookup) {
     if (live?.type === "strip") reset(live);
   });
   if (hide) strip.append(hide);
+  if (grip) strip.append(grip);
   strip.append(head, hacks, ms, sends, pan, body, readout, probe());
   patchStrip(strip, control);
   return strip;
@@ -1927,6 +1968,20 @@ function patchStrip(node, control) {
     hacks.setAttribute("aria-pressed", control.hacks === true ? "true" : "false");
     hacks.setAttribute("aria-label", `${text}: ${control.label}`);
     hacks.toggleAttribute("data-nc-empty", control.hacksEmpty === true);
+  }
+  const sendsView = node.querySelector("[data-nc-sends-view]");
+  if (sendsView) {
+    const text = control.sendsViewLabel ?? "Sends";
+    if (sendsView.textContent !== text) sendsView.textContent = text;
+    sendsView.setAttribute("aria-pressed", control.sendsView === true ? "true" : "false");
+    sendsView.setAttribute("aria-label", `${text}: ${control.sendsView === true ? "hide" : "show"} the send effects`);
+    sendsView.toggleAttribute("data-nc-empty", control.sendsViewEmpty === true);
+    setHelpWords(sendsView, control.sendsViewHelp);
+  }
+  const grip = node.querySelector("[data-nc-strip-grip]");
+  if (grip instanceof HTMLElement) {
+    grip.setAttribute("aria-label", `Move ${control.label}`);
+    grip.title = control.moveHelp ?? "Drag to move this channel";
   }
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;
