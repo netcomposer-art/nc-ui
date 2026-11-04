@@ -234,7 +234,7 @@ test("Inserts button: one outline on every strip, text-sub on hover; pressed unc
   for (const m of css.matchAll(/nth-child\(even of \.nc-strip[^{]*\{/g))
     assert.doesNotMatch(m[0], /nc-hacks|nc-ms/, m[0]);
   assert.ok(
-    css.includes(".nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: var(--nc-strip-shade, var(--nc-ui-strip-alt-bg)); }"),
+    css.includes(".nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { --nc-strip-ground: var(--nc-strip-shade, var(--nc-ui-strip-alt-bg)); }"),
     "the backgrounds still alternate",
   );
 });
@@ -423,7 +423,9 @@ test("Strip shade (Peter, 2026-11-04): data-nc-shade 1-8 in place of the alterna
   assert.equal(renderControl(master, () => master).dataset.ncShade, undefined, "never on the master");
   for (let n = 1; n <= 8; n++)
     assert.ok(css.includes(`.nc-strip[data-nc-shade="${n}"] { --nc-strip-shade: var(--nc-ui-strip-shade-${n}); }`), `shade ${n}`);
-  assert.ok(css.includes(".nc-strip:not([data-nc-master]) { background: var(--nc-strip-shade, var(--nc-ui-strip-bg)); }"));
+  assert.ok(css.includes(".nc-strip:not([data-nc-master]) { --nc-strip-ground: var(--nc-strip-shade, var(--nc-ui-strip-bg)); background: var(--nc-strip-ground); }"));
+  assert.equal((css.match(/radial-gradient\(closest-side, var\(--nc-strip-ground, var\(--nc-ui-surface-page\)\) 70%/g) ?? []).length, 2, "knob centres take the strip's grey");
+  assert.ok(css.includes('.nc-strip[data-nc-shade]:not([data-nc-shade="1"]):not([data-nc-shade="2"]):not([data-nc-master]) > .nc-strip-ms { --nc-ui-divider: color-mix(in oklab, var(--nc-ui-text-sub) 30%, var(--nc-strip-shade)); }'), "M/S hairline from the strip's grey on 3-8");
   assert.match(css, /\[data-nc-shade="5"\], \[data-nc-shade="6"\], \[data-nc-shade="7"\], \[data-nc-shade="8"\]\) \.nc-hacks:not\(\[aria-pressed="true"\]\) \{ color: var\(--nc-ui-text-sub\); \}/);
   const tokensCss = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
   assert.match(tokensCss, /--nc-ui-strip-shade-1: var\(--nc-ui-color-shade-1\);/, "1 is today's light grey");
