@@ -583,6 +583,16 @@ export interface StripControl {
   onMove?: (delta: -1 | 1) => void;
   /** The grip's tooltip (default "Drag to move this channel"). */
   moveHelp?: string;
+  /**
+   * The strip's shade, 1-8 (strip-shade-1..8: eight neutral greys), in place of the light / dark alternation; missing,
+   * 0 or anything else: the alternation ("Auto"). Not on the master. On 5-8 the Inserts word at rest is text-sub.
+   */
+  shade?: number;
+  /**
+   * Adds the strip menu: a click on the grip, or a right-click on the name (not a touch long press), opens "Shade"
+   * (Auto and 1-8; picks call onShade(null | 1..8)) and, with onMove, Move left / Move right.
+   */
+  onShade?: (shade: number | null) => void;
   /** Adds the M button. */
   onMute?: () => void;
   /** Adds the S button. */
@@ -822,6 +832,17 @@ export function meterHandle(el: Element | null | undefined): MeterHandle | undef
 export function cssSeconds(text: string | null | undefined, fallback: number): number;
 /** The meter of the strip control `id` inside `root` (a module element). */
 export function stripMeter(root: ParentNode | null | undefined, id: string): MeterHandle | undefined;
+/** How many shades a strip can take (8). */
+export const STRIP_SHADES: number;
+/** A strip control's picked shade, 1-8, or 0 (auto). */
+export function stripShade(control: Partial<StripControl> | null | undefined): number;
+/** Open a strip's menu (the kit does this from the grip and a right-click on the name). */
+export function openStripMenu(
+  strip: HTMLElement,
+  anchor: HTMLElement,
+  lookup: (el: HTMLElement) => unknown,
+  at?: { x: number; y: number },
+): { el: HTMLElement; close(): void } | null;
 /**
  * The horizontal-fold toggle (FX cards, console strips): a small solid triangle, ◀ while open, flipped to ▶ while
  * folded. −/+ (.nc-hide) stays the vertical hide. `setFoldToggle` sets aria-expanded and "Minimize/Expand <label>".

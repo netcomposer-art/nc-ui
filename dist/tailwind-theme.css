@@ -66,6 +66,14 @@
   --color-nc-fader-cap-master: var(--nc-ui-fader-cap-master);
   --color-nc-strip-hacks-text: var(--nc-ui-strip-hacks-text);
   --color-nc-strip-alt-bg: var(--nc-ui-strip-alt-bg);
+  --color-nc-strip-shade-1: var(--nc-ui-strip-shade-1);
+  --color-nc-strip-shade-2: var(--nc-ui-strip-shade-2);
+  --color-nc-strip-shade-3: var(--nc-ui-strip-shade-3);
+  --color-nc-strip-shade-4: var(--nc-ui-strip-shade-4);
+  --color-nc-strip-shade-5: var(--nc-ui-strip-shade-5);
+  --color-nc-strip-shade-6: var(--nc-ui-strip-shade-6);
+  --color-nc-strip-shade-7: var(--nc-ui-strip-shade-7);
+  --color-nc-strip-shade-8: var(--nc-ui-strip-shade-8);
   --color-nc-strip-bg: var(--nc-ui-strip-bg);
   --color-nc-strip-divider: var(--nc-ui-strip-divider);
   --color-nc-filter-lowpass: var(--nc-ui-filter-lowpass);

@@ -65,3 +65,23 @@ test('surpriseFillStyle sets the runtime tokens; null means defaults', () => {
   assert.deepEqual(Object.keys(s), ['--nc-ui-surprise-fill', '--nc-ui-surprise-ink', '--nc-ui-surprise-on', '--nc-ui-surprise-on-ink']);
   assert.equal(s['--nc-ui-surprise-ink'], INK_DARK);
 });
+
+test("Mix strip shades (Peter, 2026-11-04): text and secondary text keep AA on all eight, light and dark; neutral greys", () => {
+  const light = ["#F3F3F3", "#EEEEEE", "#E9E9E9", "#E4E4E4", "#DFDFDF", "#DADADA", "#D5D5D5", "#D0D0D0"];
+  const dark = ["#272625", "#302F2E", "#343332", "#373635", "#3A3938", "#3D3C3B", "#403F3E", "#434241"];
+  const tokens = JSON.parse(readFileSync(new URL("../dist/tokens.resolved.json", import.meta.url), "utf8"));
+  const css = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
+  for (let n = 3; n <= 8; n++) {
+    assert.match(css, new RegExp(`--nc-ui-color-strip-${n}: ${light[n - 1]};`), `light ${n}`);
+    assert.match(css, new RegExp(`--nc-ui-color-strip-${n}: ${dark[n - 1]};`), `dark ${n}`);
+  }
+  for (const [mode, shades, text, sub] of [["light", light, "#242424", "#595959"], ["dark", dark, "#E8E7E6", "#AFAEAD"]]) {
+    shades.forEach((bg, i) => {
+      assert.ok(contrastRatio(text, bg) >= 7, `${mode} ${i + 1}: text ${contrastRatio(text, bg)}`);
+      assert.ok(contrastRatio(sub, bg) >= 4.5, `${mode} ${i + 1}: secondary ${contrastRatio(sub, bg)}`);
+      const [r, g, b] = [1, 3, 5].map((k) => parseInt(bg.slice(k, k + 2), 16));
+      assert.ok(Math.max(r, g, b) - Math.min(r, g, b) <= 2, `${mode} ${i + 1}: neutral grey`);
+    });
+  }
+  assert.ok(tokens);
+});
