@@ -2374,6 +2374,25 @@ ${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `.nc-strip[data-nc-shade="${n}"] { --nc-st
 .nc-strip[data-nc-folded][data-nc-sends-hidden] {
   grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" ". body ." ". db .";
 }
+/* Trim (a strip's trim, or the master's trimRow): a knob row at the top, under the name, before the Inserts; every row
+   still named. trimHidden (the host's phones) takes the row out, the knob kept unseen. Folded, the trim row joins the
+   M and S area. */
+.nc-strip > .nc-strip-trim { grid-area: trim; display: flex; justify-content: center; align-items: flex-start; }
+.nc-strip:not([data-nc-trim]) > .nc-strip-trim, .nc-strip[data-nc-folded] > .nc-strip-trim { display: none; }
+.nc-strip[data-nc-trim] {
+  grid-template-rows: auto var(--nc-strip-knob-row) ${v("slider-pitch")} var(--nc-strip-ms-row) var(--nc-strip-knob-row) var(--nc-strip-knob-row) auto auto;
+  grid-template-areas: ". hd ." ". trim ." ". hacks ." "ms ms ms" ". sends ." ". pan ." ". body ." ". db .";
+}
+.nc-strip[data-nc-trim][data-nc-sends-hidden] {
+  grid-template-rows: auto var(--nc-strip-knob-row) ${v("slider-pitch")} var(--nc-strip-ms-row) var(--nc-strip-knob-row) auto auto;
+  grid-template-areas: ". hd ." ". trim ." ". hacks ." "ms ms ms" ". pan ." ". body ." ". db .";
+}
+.nc-strip[data-nc-folded][data-nc-trim] {
+  grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" "ms ms ms" ". pan ." ". body ." ". db .";
+}
+.nc-strip[data-nc-folded][data-nc-trim][data-nc-sends-hidden] {
+  grid-template-areas: ". hd ." "ms ms ms" "ms ms ms" "ms ms ms" "ms ms ms" ". body ." ". db .";
+}
 .nc-strip[data-nc-folded] > .nc-strip-hd { justify-content: center; }
 /* The name stays in the row, unseen and zero wide, so the row keeps the open strips' height and the meters line up. */
 .nc-strip[data-nc-folded] > .nc-strip-hd > .nc-strip-name { visibility: hidden; width: 0; flex: 0 0 0; }
