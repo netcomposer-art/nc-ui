@@ -184,6 +184,8 @@ export interface KnobControl {
    * the value text shows in place of the label while the knob is hovered, focused or dragged.
    */
   bipolar?: boolean;
+  /** Bipolar only: the value the ring fills from (a trim's 0 dB); default the middle of the travel. */
+  origin?: number;
   /** Hover words (data-nc-help) on the knob's field (label and knob). */
   help?: string;
   /** How the turn maps to the value (taper.js); linear by default. */
@@ -630,6 +632,35 @@ export interface StripControl {
     /** Hover words for the pan knob. */
     help?: string;
   };
+  /**
+   * A trim (not on the master): the channel's input gain as a console has it, a compact knob in its own row at the top
+   * of the strip (under the name, before Inserts), labelled "Trim" and read out as "0 dB", "+12 dB", "−3.5 dB"
+   * (trimText) on hover, focus or drag. Its ring fills from 0 dB either way; double-click returns to `defaultValue`
+   * (0 dB); arrows move a `step` (0.5 dB). dB in, dB out: −12 .. +24 by default.
+   */
+  trim?: {
+    id: string;
+    value: number;
+    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    defaultValue?: number;
+    /** "Trim" by default. */
+    label?: string;
+    /** "<strip label> trim" by default. */
+    ariaLabel?: string;
+    /** trimText(value) by default. */
+    valueText?: string;
+    help?: string;
+  };
+  /** An empty trim row (the master beside trimmed channels), so the faders line up. */
+  trimRow?: boolean;
+  /**
+   * The trim row is hidden (view only: the knob stays, unseen). Give it to every strip in a console, the master too, so
+   * their rows still line up. A host's phones: Trim on demand.
+   */
+  trimHidden?: boolean;
   /** Minimized now (only with `onFold`). */
   folded?: boolean;
   /** Hover words for the triangle (and the folded column, unless `foldedHelp`). */
@@ -849,6 +880,8 @@ export function openStripMenu(
  */
 /** A pan as a mixer reads it: "C", "L 30", "R 45" (percent of the way to the side). */
 export function panText(value: number): string;
+/** "0 dB", "+12 dB", "−3.5 dB": a strip trim's readout. */
+export function trimText(db: number): string;
 export function foldToggle(): HTMLButtonElement;
 export function setFoldToggle(button: HTMLElement, folded: boolean, label: string): void;
 

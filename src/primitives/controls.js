@@ -530,10 +530,15 @@ function paintKnob(knob, control) {
   markModulated(knob, control.modulated === true);
   const turn = Math.round(t * 270);
   knob.style.setProperty("--knob-turn", String(turn));
-  // Bipolar (a pan): the ring fills from its top (the centre of the travel) to the value, either way.
+  // Bipolar (a pan): the ring fills from its top (the centre of the travel) to the value, either way; with an origin
+  // (a trim's 0 dB), from where the origin sits.
   if (control.bipolar) {
-    knob.style.setProperty("--knob-from", String(Math.min(turn, 135)));
-    knob.style.setProperty("--knob-to", String(Math.max(turn, 135)));
+    const from =
+      typeof control.origin === "number" && Number.isFinite(control.origin)
+        ? Math.round(taperToUnit(control.taper, control.min, control.max, control.origin) * 270)
+        : 135;
+    knob.style.setProperty("--knob-from", String(Math.min(turn, from)));
+    knob.style.setProperty("--knob-to", String(Math.max(turn, from)));
   }
   knob.setAttribute("role", "slider");
   knob.setAttribute("aria-valuemin", String(control.min));
@@ -1801,9 +1806,14 @@ function renderStrip(control, lookup) {
     const live = lookup(strip);
     if (live?.type === "strip") reset(live);
   });
+  // Trim (a channel's input gain, as a console's): a compact knob at the top, under the name, before the Inserts. Only
+  // a strip with `trim` or `trimRow` has the row (the master gets an empty one, so the faders line up).
+  const trim = document.createElement("div");
+  trim.className = "nc-strip-trim";
+  if (control.trim) trim.append(renderControl(trimKnob(control), lookup));
   if (hide) strip.append(hide);
   if (grip) strip.append(grip);
-  strip.append(head, hacks, ms, sends, pan, body, readout, probe());
+  strip.append(head, trim, hacks, ms, sends, pan, body, readout, probe());
   patchStrip(strip, control);
   return strip;
 }
@@ -1827,6 +1837,41 @@ export function panKnob(control) {
     help: pan.help,
     onChange: (value) => pan.onChange(value),
   };
+}
+
+/**
+ * A strip's trim as the kit knob: compact, its ring filled from 0 dB (the origin) either way, −12 .. +24 dB by
+ * default, 0.5 dB a step; double-click back to 0 dB.
+ */
+export function trimKnob(control) {
+  const trim = control.trim;
+  const min = trim.min ?? -12;
+  const max = trim.max ?? 24;
+  return {
+    type: "knob",
+    id: trim.id,
+    label: trim.label ?? "Trim",
+    ariaLabel: trim.ariaLabel ?? `${control.label} trim`,
+    min,
+    max,
+    step: trim.step ?? 0.5,
+    value: trim.value,
+    valueText: trim.valueText ?? trimText(trim.value),
+    defaultValue: trim.defaultValue ?? 0,
+    origin: 0,
+    compact: true,
+    bipolar: true,
+    help: trim.help,
+    onChange: (value) => trim.onChange(value),
+  };
+}
+
+/** "0 dB", "+12 dB", "−3.5 dB": a trim as a console reads it out (to a tenth, whole numbers without one). */
+export function trimText(db) {
+  const n = Math.round((Number(db) || 0) * 10) / 10;
+  if (n === 0) return "0 dB";
+  const abs = Number.isInteger(n) ? String(Math.abs(n)) : Math.abs(n).toFixed(1);
+  return `${n > 0 ? "+" : "\u2212"}${abs} dB`;
 }
 
 /** "C", "L 30", "R 45": the pan as a mixer reads it out (percent of the way to the side). */
@@ -2003,6 +2048,13 @@ function patchStrip(node, control) {
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;
   delete node.dataset.ncIdentity;
+  // The trim row: with `trim` (or `trimRow`, the master's empty row), unless `trimHidden` (view only: the knob stays).
+  if ((control.trim || control.trimRow) && !control.trimHidden) node.dataset.ncTrim = "";
+  else delete node.dataset.ncTrim;
+  if (control.trim) {
+    const knob = node.querySelector(`.nc-strip-trim [data-nc-id="${cssEscape(control.trim.id)}"]`);
+    if (knob) patchControl(knob, trimKnob(control));
+  }
   if (control.pan) {
     node.style.setProperty("--nc-strip-pan", String(control.pan.value));
     const knob = node.querySelector(`.nc-strip-pan [data-nc-id="${cssEscape(control.pan.id)}"]`);
