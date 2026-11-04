@@ -2209,8 +2209,70 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 .nc-strip + .nc-strip { border-inline-start: ${v("hairline")} solid ${v("divider")}; }
 /* Channel strips alternate light and dark grey, full height, so a row of identical strips reads apart (Peter,
    2026-10-30); the master keeps the module's shade. */
-.nc-strip:not([data-nc-master]) { background: ${v("strip-bg")}; }
-.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: ${v("strip-alt-bg")}; }
+.nc-strip:not([data-nc-master]) { background: var(--nc-strip-shade, ${v("strip-bg")}); }
+.nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: var(--nc-strip-shade, ${v("strip-alt-bg")}); }
+/* A shade a player picked (shade, 1-8; Peter, 2026-11-04): one of eight neutral greys (strip-shade-1..8), in place of
+   the alternation. 1 and 2 are the alternation's own greys. On the darker four (5-8) the Inserts word at rest takes
+   text-sub, so it keeps its contrast (the lighter hacks grey falls to 2.2:1 there). */
+${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `.nc-strip[data-nc-shade="${n}"] { --nc-strip-shade: ${v(`strip-shade-${n}`)}; }`).join("\n")}
+.nc-strip:is([data-nc-shade="5"], [data-nc-shade="6"], [data-nc-shade="7"], [data-nc-shade="8"]) .nc-hacks:not([aria-pressed="true"]) { color: ${v("text-sub")}; }
+.nc-strip:is([data-nc-shade="5"], [data-nc-shade="6"], [data-nc-shade="7"], [data-nc-shade="8"]) .nc-hacks:not([aria-pressed="true"]):hover { color: ${v("text")}; }
+/* The strip menu (onShade): a small sheet under the grip, or where the name was right-clicked: "Shade", a row of Auto
+   and the eight swatches (the picked one ringed in ink), then Move left / Move right with their keys. Over the page,
+   so it never shifts the layout; page ground and a hairline (the kit draws no shadows). */
+.nc-strip-menu {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: ${v("control-gap")};
+  min-width: calc(${v("strip-width")} * 2.5);
+  padding: calc(${v("control-gap")} * 2) calc(${v("control-gap")} * 2.5);
+  border: ${v("hairline")} solid ${v("divider")};
+  border-radius: ${v("slot-radius")};
+  background: ${v("surface-page")};
+  color: ${v("text")};
+  font-size: ${v("label-size")};
+}
+.nc-strip-menu-title { color: ${v("text-sub")}; font-weight: ${v("label-weight")}; letter-spacing: ${v("label-tracking")}; text-transform: uppercase; }
+.nc-strip-menu-shades { display: flex; gap: ${v("control-gap")}; margin-bottom: ${v("control-gap")}; }
+.nc-strip-menu-shades > button {
+  flex: none;
+  min-width: calc(${v("control-gap")} * 4.5);
+  height: calc(${v("control-gap")} * 4.5);
+  margin: 0;
+  padding: 0 ${v("hairline")};
+  border: ${v("hairline")} solid ${v("divider")};
+  border-radius: ${v("slot-radius")};
+  background: var(--nc-swatch, transparent);
+  color: ${v("text-sub")};
+  font: inherit;
+  font-size: ${v("scale-size")};
+  cursor: pointer;
+}
+.nc-strip-menu-shades > button[aria-checked="true"] { outline: calc(${v("hairline")} * 2) solid ${v("text")}; outline-offset: ${v("hairline")}; color: ${v("text")}; }
+.nc-strip-menu-shades > button:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-strip-menu-item {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(${v("control-gap")} * 3);
+  margin: 0;
+  padding: ${v("control-gap")} 0;
+  border: 0;
+  border-top: ${v("hairline")} solid ${v("divider")};
+  background: transparent;
+  color: ${v("text")};
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.nc-strip-menu-item:disabled { color: ${v("text-sub")}; cursor: default; }
+.nc-strip-menu-item > kbd { font: inherit; color: ${v("text-sub")}; }
+.nc-strip-menu-item:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+@media (pointer: coarse) {
+  .nc-strip-menu-shades > button { min-width: calc(${v("target-min")} * 0.7); height: calc(${v("target-min")} * 0.7); }
+  .nc-strip-menu-item { min-height: ${v("target-min")}; align-items: center; }
+}
 .nc-module-body[data-nc-layout="console"] > [data-nc-area="strips"] > .nc-strip {
   align-self: stretch;
   padding-block: ${v("stack-card-pad-y")} ${v("module-pad")};

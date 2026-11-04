@@ -234,7 +234,7 @@ test("Inserts button: one outline on every strip, text-sub on hover; pressed unc
   for (const m of css.matchAll(/nth-child\(even of \.nc-strip[^{]*\{/g))
     assert.doesNotMatch(m[0], /nc-hacks|nc-ms/, m[0]);
   assert.ok(
-    css.includes(".nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: var(--nc-ui-strip-alt-bg); }"),
+    css.includes(".nc-strip:not([data-nc-master]):nth-child(even of .nc-strip:not([data-nc-master])) { background: var(--nc-strip-shade, var(--nc-ui-strip-alt-bg)); }"),
     "the backgrounds still alternate",
   );
 });
@@ -405,4 +405,86 @@ test("Strip grip (onMove): a button in the top-right corner, ← / → move one 
   assert.ok(css.includes(".nc-strip[data-nc-folded] > [data-nc-strip-grip] { display: none; }"));
   assert.match(css, /\.nc-strip > \[data-nc-strip-grip\] \{[^}]*touch-action: none;/);
   assert.match(css, /\.nc-strip > \[data-nc-strip-grip\] \{[^}]*color: var\(--nc-ui-text-sub\);/);
+});
+
+test("Strip shade (Peter, 2026-11-04): data-nc-shade 1-8 in place of the alternation, never on the master; Inserts text-sub on 5-8", () => {
+  let control = { ...stripControl({ folded: false, folds: [], levels: [], ms: [], removed: 0 }), shade: 6 };
+  const strip = renderControl(control, () => control);
+  assert.equal(strip.dataset.ncShade, "6");
+  for (const bad of [0, 9, 2.5, "3", null, undefined]) {
+    control = { ...control, shade: bad };
+    patchControl(strip, control);
+    assert.equal(strip.dataset.ncShade, undefined, `shade ${bad}: auto`);
+  }
+  control = { ...control, shade: 1 };
+  patchControl(strip, control);
+  assert.equal(strip.dataset.ncShade, "1");
+  const master = { ...control, master: true, shade: 3 };
+  assert.equal(renderControl(master, () => master).dataset.ncShade, undefined, "never on the master");
+  for (let n = 1; n <= 8; n++)
+    assert.ok(css.includes(`.nc-strip[data-nc-shade="${n}"] { --nc-strip-shade: var(--nc-ui-strip-shade-${n}); }`), `shade ${n}`);
+  assert.ok(css.includes(".nc-strip:not([data-nc-master]) { background: var(--nc-strip-shade, var(--nc-ui-strip-bg)); }"));
+  assert.match(css, /\[data-nc-shade="5"\], \[data-nc-shade="6"\], \[data-nc-shade="7"\], \[data-nc-shade="8"\]\) \.nc-hacks:not\(\[aria-pressed="true"\]\) \{ color: var\(--nc-ui-text-sub\); \}/);
+  const tokensCss = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
+  assert.match(tokensCss, /--nc-ui-strip-shade-1: var\(--nc-ui-color-shade-1\);/, "1 is today's light grey");
+  assert.match(tokensCss, /--nc-ui-strip-shade-2: var\(--nc-ui-color-shade-2\);/, "2 is today's darker grey");
+  assert.match(tokensCss, /--nc-ui-strip-shade-8: var\(--nc-ui-color-strip-8\);/);
+});
+
+test("Strip menu: the grip's click opens Shade (Auto + 1-8) and Move left / right; a pick calls onShade and closes; Escape closes to the grip", () => {
+  const calls = [];
+  const row = document.createElement("div");
+  document.body.append(row);
+  const make = (id, extra = {}) => {
+    let c = {
+      ...stripControl({ folded: false, folds: [], levels: [], ms: [], removed: 0 }),
+      id,
+      label: id,
+      onMove: (d) => calls.push(["move", id, d]),
+      onShade: (n) => calls.push(["shade", id, n]),
+      ...extra,
+    };
+    const el = renderControl(c, () => c);
+    row.append(el);
+    return { el, set: (x) => { c = { ...c, ...x }; patchControl(el, c); } };
+  };
+  const a = make("a", { shade: 3 });
+  make("b");
+  const grip = a.el.querySelector("[data-nc-strip-grip]");
+  assert.equal(grip.getAttribute("aria-haspopup"), "dialog");
+  click(grip);
+  const menu = document.querySelector("[data-nc-strip-menu]");
+  assert.ok(menu, "open");
+  assert.equal(menu.getAttribute("role"), "dialog");
+  const choices = [...menu.querySelectorAll("[data-nc-shade-choice]")];
+  assert.deepEqual(choices.map((b) => b.textContent), ["Auto", "1", "2", "3", "4", "5", "6", "7", "8"]);
+  assert.deepEqual(choices.map((b) => b.getAttribute("aria-checked")), ["false", "false", "false", "true", "false", "false", "false", "false", "false"]);
+  assert.equal(choices[3].getAttribute("tabindex"), "0", "the picked one is the tab stop");
+  assert.equal(choices[5].style.getPropertyValue("--nc-swatch"), "var(--nc-ui-strip-shade-5)");
+  const moves = [...menu.querySelectorAll("[data-nc-strip-move]")];
+  assert.deepEqual(moves.map((m) => [m.dataset.ncStripMove, m.disabled]), [["left", true], ["right", false]], "first: no Move left");
+  click(choices[6]);
+  assert.deepEqual(calls.at(-1), ["shade", "a", 6]);
+  assert.equal(document.querySelector("[data-nc-strip-menu]"), null, "a pick closes it");
+  click(grip);
+  click(document.querySelector("[data-nc-shade-choice='0']"));
+  assert.deepEqual(calls.at(-1), ["shade", "a", null], "Auto");
+  click(grip);
+  click(document.querySelector("[data-nc-strip-move='right']"));
+  assert.deepEqual(calls.at(-1), ["move", "a", 1]);
+  click(grip);
+  const esc = Object.assign(new Event("keydown", { bubbles: true, cancelable: true }), { key: "Escape" });
+  document.dispatchEvent(esc);
+  assert.equal(document.querySelector("[data-nc-strip-menu]"), null, "Escape closes it");
+  // A right-click on the name opens it; a touch long press (the host's drag) does not.
+  const ctx = (pointerType) => Object.assign(new Event("contextmenu", { bubbles: true, cancelable: true }), { pointerType, clientX: 5, clientY: 5 });
+  a.el.querySelector(".nc-strip-name").dispatchEvent(ctx("touch"));
+  assert.equal(document.querySelector("[data-nc-strip-menu]"), null, "not from a touch long press");
+  const e = ctx("mouse");
+  a.el.querySelector(".nc-strip-name").dispatchEvent(e);
+  assert.ok(document.querySelector("[data-nc-strip-menu]"), "a right-click opens it");
+  assert.equal(e.defaultPrevented, true, "instead of the browser's menu");
+  document.body.dispatchEvent(Object.assign(new Event("pointerdown", { bubbles: true }), {}));
+  assert.equal(document.querySelector("[data-nc-strip-menu]"), null, "a press outside closes it");
+  row.remove();
 });

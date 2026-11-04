@@ -1628,6 +1628,20 @@ function renderStrip(control, lookup) {
       live.onMove?.(event.key === "ArrowLeft" ? -1 : 1);
     });
   }
+  // The strip menu (onShade): a click on the grip (a press that never became a drag: the host swallows that click),
+  // or a right-click on the name (not a touch long press: that is the host's drag).
+  if (grip && typeof control.onShade === "function") {
+    grip.setAttribute("aria-haspopup", "dialog");
+    grip.addEventListener("click", () => openStripMenu(strip, grip, lookup));
+  }
+  if (!control.master && typeof control.onShade === "function") {
+    head.addEventListener("contextmenu", (event) => {
+      if (event.pointerType === "touch" || event.pointerType === "pen") return;
+      if (event.target instanceof Element && event.target.closest("input, .nc-strip-remove")) return;
+      event.preventDefault();
+      openStripMenu(strip, head, lookup, { x: event.clientX, y: event.clientY });
+    });
+  }
   // Remove (an instance of an instrument): a quiet × after the name, as on ASTRID's hack cards. The host confirms.
   if (control.onRemove) {
     const remove = document.createElement("button");
@@ -1983,6 +1997,9 @@ function patchStrip(node, control) {
     grip.setAttribute("aria-label", `Move ${control.label}`);
     grip.title = control.moveHelp ?? "Drag to move this channel";
   }
+  const shade = stripShade(control);
+  if (shade) node.dataset.ncShade = String(shade);
+  else delete node.dataset.ncShade;
   if (control.silent) node.dataset.silent = "true";
   else delete node.dataset.silent;
   delete node.dataset.ncIdentity;
@@ -2007,6 +2024,164 @@ function patchStrip(node, control) {
     if (label && label.textContent !== control.label) label.textContent = control.label;
     setHelpWords(fold, control.foldedHelp ?? control.foldHelp);
   }
+}
+
+/** A strip's picked shade, 1-8, or 0 (auto: the alternation). Never on the master. */
+export function stripShade(control) {
+  const n = control?.shade;
+  return !control?.master && Number.isInteger(n) && n >= 1 && n <= STRIP_SHADES ? n : 0;
+}
+
+/** How many shades a strip can take (strip-shade-1..8). */
+export const STRIP_SHADES = 8;
+
+/** The one open strip menu, if any: its close function. */
+let stripMenuClose = null;
+
+/**
+ * The strip menu (Peter, 2026-11-04): "Shade" with Auto and the eight swatches (a radio group: ← → move, Enter or a
+ * click picks and closes), then Move left / Move right (disabled at either end). It opens under `anchor` (or at
+ * `at`, a right-click), over the page; Escape, a pick, a move or a press outside closes it, and the focus goes back
+ * to the grip (or the strip's name row) when it was inside.
+ */
+export function openStripMenu(strip, anchor, lookup, at) {
+  stripMenuClose?.();
+  const live = lookup(strip);
+  if (live?.type !== "strip") return null;
+  const doc = strip.ownerDocument;
+  const win = doc.defaultView ?? globalThis;
+  const menu = doc.createElement("div");
+  menu.className = "nc-strip-menu";
+  menu.dataset.ncStripMenu = "";
+  menu.setAttribute("role", "dialog");
+  menu.setAttribute("aria-label", `${live.label}: shade and place`);
+  const title = doc.createElement("div");
+  title.className = "nc-strip-menu-title";
+  title.id = `nc-strip-menu-title-${String(live.id).replace(/[^\w-]/g, "")}`;
+  title.textContent = "Shade";
+  const row = doc.createElement("div");
+  row.className = "nc-strip-menu-shades";
+  row.setAttribute("role", "radiogroup");
+  row.setAttribute("aria-labelledby", title.id);
+  const current = stripShade(live);
+  const focusBack = strip.querySelector("[data-nc-strip-grip]") ?? anchor;
+  const close = (focus = false) => {
+    if (stripMenuClose !== close) return;
+    stripMenuClose = null;
+    const inside = menu.contains(doc.activeElement);
+    menu.remove();
+    doc.removeEventListener("keydown", onKey, true);
+    doc.removeEventListener("pointerdown", onOutside, true);
+    win.removeEventListener("resize", onResize);
+    if ((focus || inside) && focusBack?.isConnected) focusBack.focus?.({ preventScroll: true });
+  };
+  const choices = [0, ...Array.from({ length: STRIP_SHADES }, (_, i) => i + 1)].map((n) => {
+    const b = doc.createElement("button");
+    b.type = "button";
+    b.setAttribute("role", "radio");
+    b.setAttribute("aria-checked", n === current ? "true" : "false");
+    b.setAttribute("tabindex", n === current ? "0" : "-1");
+    b.dataset.ncShadeChoice = String(n);
+    if (n === 0) {
+      b.textContent = "Auto";
+      b.setAttribute("aria-label", "Auto: alternate light and dark");
+      b.title = "Auto: alternate light and dark";
+    } else {
+      b.textContent = String(n);
+      b.setAttribute("aria-label", `Shade ${n}`);
+      b.style.setProperty("--nc-swatch", `var(--nc-ui-strip-shade-${n})`);
+    }
+    b.addEventListener("click", () => {
+      const now = lookup(strip);
+      close(true);
+      if (now?.type === "strip") now.onShade?.(n === 0 ? null : n);
+    });
+    return b;
+  });
+  row.append(...choices);
+  row.addEventListener("keydown", (event) => {
+    const i = choices.indexOf(doc.activeElement);
+    if (i < 0) return;
+    let j = -1;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") j = (i + 1) % choices.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") j = (i - 1 + choices.length) % choices.length;
+    else if (event.key === "Home") j = 0;
+    else if (event.key === "End") j = choices.length - 1;
+    if (j < 0) return;
+    event.preventDefault();
+    choices[i].setAttribute("tabindex", "-1");
+    choices[j].setAttribute("tabindex", "0");
+    choices[j].focus();
+  });
+  menu.append(title, row);
+  if (typeof live.onMove === "function") {
+    const siblings = [...(strip.parentElement?.children ?? [])].filter(
+      (el) => el.classList?.contains("nc-strip") && !el.hasAttribute("data-nc-master"),
+    );
+    const at0 = siblings.indexOf(strip);
+    for (const [delta, words, key] of [
+      [-1, "Move left", "Alt \u2190"],
+      [1, "Move right", "Alt \u2192"],
+    ]) {
+      const item = doc.createElement("button");
+      item.type = "button";
+      item.className = "nc-strip-menu-item";
+      item.dataset.ncStripMove = delta < 0 ? "left" : "right";
+      const span = doc.createElement("span");
+      span.textContent = words;
+      const kbd = doc.createElement("kbd");
+      kbd.textContent = key;
+      kbd.setAttribute("aria-hidden", "true");
+      item.append(span, kbd);
+      item.disabled = delta < 0 ? at0 <= 0 : at0 < 0 || at0 >= siblings.length - 1;
+      item.addEventListener("click", () => {
+        const now = lookup(strip);
+        close(true);
+        if (now?.type === "strip") now.onMove?.(delta);
+      });
+      menu.append(item);
+    }
+  }
+  doc.body.append(menu);
+  // Under the anchor (or at the right-click), kept inside the window.
+  const place = () => {
+    const r = anchor.getBoundingClientRect?.() ?? { left: 0, bottom: 0, right: 0 };
+    const w = menu.offsetWidth;
+    const h = menu.offsetHeight;
+    const vw = win.innerWidth || doc.documentElement.clientWidth || w;
+    const vh = win.innerHeight || doc.documentElement.clientHeight || h;
+    let x = at ? at.x : r.right - w;
+    let y = at ? at.y : r.bottom + 4;
+    x = Math.max(4, Math.min(x, vw - w - 4));
+    if (y + h > vh - 4) y = Math.max(4, (at ? at.y : r.top) - h - 4);
+    menu.style.left = `${Math.round(x)}px`;
+    menu.style.top = `${Math.round(y)}px`;
+  };
+  place();
+  const onKey = (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      close(true);
+    } else if (event.key === "Tab" && menu.contains(doc.activeElement)) {
+      // Keep Tab inside the menu while it is open.
+      const stops = [...menu.querySelectorAll("button:not([disabled])")].filter((b) => b.getAttribute("tabindex") !== "-1");
+      const i = stops.indexOf(doc.activeElement);
+      const j = (i + (event.shiftKey ? -1 : 1) + stops.length) % stops.length;
+      event.preventDefault();
+      stops[j]?.focus();
+    }
+  };
+  const onOutside = (event) => {
+    if (!menu.contains(event.target)) close(false);
+  };
+  const onResize = () => close(false);
+  doc.addEventListener("keydown", onKey, true);
+  doc.addEventListener("pointerdown", onOutside, true);
+  win.addEventListener("resize", onResize);
+  stripMenuClose = close;
+  (choices.find((b) => b.getAttribute("tabindex") === "0") ?? choices[0]).focus({ preventScroll: true });
+  return { el: menu, close: () => close(false) };
 }
 
 /** The meter handle of a strip control (for the host's per-frame update), from the module or strip element. */

@@ -20,7 +20,7 @@ export { ask } from "./primitives/ask.js";
 export { createSwitch } from "./primitives/switch.js";
 export { createFader, faderHandle } from "./primitives/fader.js";
 export { createMeter, cssSeconds, meterHandle } from "./primitives/meter.js";
-export { foldToggle, panText, setFoldToggle, stripMeter } from "./primitives/controls.js";
+export { foldToggle, openStripMenu, panText, setFoldToggle, STRIP_SHADES, stripMeter, stripShade } from "./primitives/controls.js";
 export {
   EQ_MAX_HZ,
   EQ_MIN_HZ,
