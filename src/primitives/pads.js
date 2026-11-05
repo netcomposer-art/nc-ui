@@ -288,9 +288,12 @@ export function patchPadGrid(node, control) {
     } else {
       delete pad.dataset.empty;
       if (name) name.textContent = cell.label;
-      if (hint) hint.textContent = "";
+      // A filled pad's own short line under its name (NYX: "tuned · CALLIOPE"), when the host gives one.
+      if (hint) hint.textContent = cell.hint ?? "";
       path?.setAttribute("d", padWavePath(cell.peaks));
     }
+    if (!cell.empty && cell.hint) pad.dataset.hint = "true";
+    else delete pad.dataset.hint;
     if (cell.lane) pad.dataset.ncLane = String(cell.lane);
     else delete pad.dataset.ncLane;
     const selected = control.selected === index;
@@ -303,7 +306,7 @@ export function patchPadGrid(node, control) {
       "aria-label",
       cell.empty
         ? `Pad ${index + 1}, empty: load a sample`
-        : `Pad ${index + 1}, ${cell.label}${cell.badgeLabel ? `, ${cell.badgeLabel}` : ""}${selected ? ", selected" : ""}`,
+        : `Pad ${index + 1}, ${cell.label}${cell.hint ? `, ${cell.hint}` : ""}${cell.badgeLabel ? `, ${cell.badgeLabel}` : ""}${selected ? ", selected" : ""}`,
     );
   });
 }
