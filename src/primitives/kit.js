@@ -1661,6 +1661,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 }
 .nc-padgrid-pad[data-empty="true"] .nc-padgrid-pad-name { font-weight: inherit; font-size: ${v("body-size")}; }
 .nc-padgrid-pad[data-empty="true"] .nc-padgrid-pad-hint { display: block; }
+.nc-padgrid-pad[data-hint="true"] .nc-padgrid-pad-hint { display: block; justify-self: start; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nc-padgrid-pad[data-empty="true"] :is(.nc-padgrid-pad-bar, .nc-padgrid-pad-wave) { display: none; }
 .nc-padgrid-pad:hover { border-color: ${v("text")}; }
 .nc-padgrid-pad[data-selected="true"] { border-color: ${v("accent")}; box-shadow: inset 0 0 0 ${v("hairline")} ${v("accent")}; }

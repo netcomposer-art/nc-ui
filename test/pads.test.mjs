@@ -40,3 +40,37 @@ test("rename opens only from a double-click on the pad's name, not anywhere on t
     Object.assign(globalThis, saved);
   }
 });
+
+test("a filled pad shows its hint under the name (and says it); an empty pad keeps Load and tap or drop", async () => {
+  const { parseHTML } = await import("linkedom");
+  const { document, window } = parseHTML("<html><body></body></html>");
+  const saved = { document: globalThis.document, window: globalThis.window, HTMLButtonElement: globalThis.HTMLButtonElement, HTMLElement: globalThis.HTMLElement, Element: globalThis.Element };
+  Object.assign(globalThis, { document, window, HTMLButtonElement: window.HTMLButtonElement, HTMLElement: window.HTMLElement, Element: window.Element });
+  try {
+    const { renderPadGrid, patchPadGrid } = await import("../src/primitives/pads.js");
+    const control = {
+      type: "padGrid",
+      id: "pads",
+      pads: [
+        { label: "Rhodes C3", empty: false, peaks: [0.2, -0.2], hint: "tuned · CALLIOPE" },
+        { label: "", empty: true },
+        { label: "Kick", empty: false, peaks: [0.2, -0.2] },
+      ],
+    };
+    const wrap = renderPadGrid(control, () => control);
+    patchPadGrid(wrap, control);
+    const pads = wrap.querySelectorAll(".nc-padgrid-pad");
+    assert.equal(pads[0].querySelector(".nc-padgrid-pad-hint").textContent, "tuned · CALLIOPE");
+    assert.equal(pads[0].dataset.hint, "true");
+    assert.match(pads[0].getAttribute("aria-label"), /Rhodes C3, tuned · CALLIOPE/);
+    assert.equal(pads[1].querySelector(".nc-padgrid-pad-hint").textContent, "tap or drop");
+    assert.equal(pads[1].dataset.hint, undefined);
+    assert.equal(pads[2].querySelector(".nc-padgrid-pad-hint").textContent, "");
+    assert.equal(pads[2].dataset.hint, undefined);
+    control.pads[0] = { ...control.pads[0], hint: undefined };
+    patchPadGrid(wrap, control);
+    assert.equal(pads[0].dataset.hint, undefined, "the hint goes when the host drops it");
+  } finally {
+    Object.assign(globalThis, saved);
+  }
+});

@@ -300,6 +300,8 @@ export interface PadCell {
   /** A short tag in the pad's corner (NYX: its choke group, "A"); `badgeLabel` is what a screen reader says. */
   badge?: string;
   badgeLabel?: string;
+  /** A filled pad's short line under its name (NYX: "tuned · CALLIOPE"); a screen reader says it after the name. */
+  hint?: string;
 }
 export interface PadGridControl {
   type: "padGrid";
