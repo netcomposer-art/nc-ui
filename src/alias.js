@@ -171,6 +171,7 @@ const semanticKinds = {
   "instrument-olive": "color",
   "instrument-lucy": "color",
   "instrument-nyx": "color",
+  "instrument-calliope": "color",
   "fader-cap-master": "color",
   "strip-hacks-text": "color",
   "strip-alt-bg": "color",
