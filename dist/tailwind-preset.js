@@ -66,6 +66,7 @@ const theme = {
     "nc-instrument-olive": "var(--nc-ui-instrument-olive)",
     "nc-instrument-lucy": "var(--nc-ui-instrument-lucy)",
     "nc-instrument-nyx": "var(--nc-ui-instrument-nyx)",
+    "nc-instrument-calliope": "var(--nc-ui-instrument-calliope)",
     "nc-fader-cap-master": "var(--nc-ui-fader-cap-master)",
     "nc-strip-hacks-text": "var(--nc-ui-strip-hacks-text)",
     "nc-strip-alt-bg": "var(--nc-ui-strip-alt-bg)",
