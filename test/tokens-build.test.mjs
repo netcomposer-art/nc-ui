@@ -130,6 +130,7 @@ test("instrument identity colours (Peter, 2026-10-29): ASTRID, PETRA, OLIVE; OLI
   assert.equal(semantic["instrument-astrid"].toUpperCase(), "#EB512E");
   assert.equal(semantic["instrument-petra"].toUpperCase(), "#5AC4F7");
   assert.equal(semantic["instrument-olive"].toUpperCase(), "#9CA536");
+  assert.equal(semantic["instrument-calliope"].toUpperCase(), "#FD7CBD", "CALLIOPE's pink (Peter, 2026-11-05)");
   const { findGreen, IDENTITY_COLOURS } = await import("../scripts/lint-ui.mjs");
   assert.deepEqual([...IDENTITY_COLOURS], ["#9ca536"]);
   assert.equal(findGreen("color: #9CA536;").length, 0);

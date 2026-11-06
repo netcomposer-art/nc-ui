@@ -34,7 +34,7 @@ test('light values are untouched; dark resolves through the same refs', () => {
   assert.equal(dc.rhythm['velocity-max'], dk.accent);
   assert.equal(d['label-on-fill-dark'], '#242424', 'the label on a bright Surprise fill stays dark');
   assert.equal(d['label-on-fill-light'], '#FFFFFF');
-  for (const n of ['instrument-astrid', 'instrument-petra', 'instrument-olive', 'instrument-nyx'])
+  for (const n of ['instrument-astrid', 'instrument-petra', 'instrument-olive', 'instrument-nyx', 'instrument-calliope'])
     assert.equal(d[n], semantic[n], `${n} keeps its colour`);
 });
 
@@ -80,6 +80,8 @@ const PAIRS = [
   ['instrument-olive', 'page-head-bg', 4.5, 'OLIVE title'],
   ['instrument-lucy', 'page-head-bg', 4.5, 'LUCY title (lighter purple in dark)'],
   ['instrument-nyx', 'page-head-bg', 4.5, 'NYX title'],
+  ['instrument-calliope', 'page-head-bg', 4.5, 'CALLIOPE title'],
+  ['instrument-calliope', 'surface-page', 3, 'CALLIOPE active pad edge, tab and chip dot'],
   ['strip-hacks-text', 'module-bg-stack-1', 3, 'Hacks label (3:1 by request, as in light)'],
   ['fader-cap', 'strip-bg', 3, 'fader cap'],
   ['fader-cap-master', 'strip-bg', 3, 'master fader cap'],
