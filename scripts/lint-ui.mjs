@@ -79,11 +79,11 @@ export function isGreen([r, g, b]) {
 }
 
 /**
- * Identity colours (Peter, 2026-10-29): each instrument's name colour. OLIVE's is olive (#9CA536), which the green
- * rule would flag. It is allowed as that one literal, for the instrument's name only (`instrument-olive`), never
- * for state, controls or fills, which stay non-green.
+ * Identity colours (Peter, 2026-10-29): each instrument's name colour. OLIVE's is olive (#9CA536 dark, #8A9230 light
+ * from 2026-11-06), which the green rule would flag. They are allowed as those literals, for the instrument's name
+ * only (`instrument-olive`), never for state, controls or fills, which stay non-green.
  */
-export const IDENTITY_COLOURS = new Set(["#9ca536"]);
+export const IDENTITY_COLOURS = new Set(["#9ca536", "#8a9230"]);
 
 const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 

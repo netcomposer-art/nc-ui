@@ -25,9 +25,9 @@ CI runs `npm ci`, `npm run lint`, `npm test`, then `git diff --exit-code` (gener
 
 - **Tokens only.** Never put a colour, font, size, spacing, duration or opacity in kit or app code: add or change
   a token in `tokens/tokens.json` and use it through `v("name")` / `var(--nc-ui-name)`.
-- **Colour rule (Peter):** accent colours come only from the instrument title colours: ASTRID #EB512E,
-  PETRA #5AC4F7, OLIVE #9CA536, LUCY #9B30FF, NYX #FEAA02, CALLIOPE #FC409F (light) / #FD7CBD (dark).
-  Any other accent: stop and ask Peter. No green.
+- **Colour rule (Peter):** accent colours come only from the instrument title colours, light / dark
+  (Peter, 2026-11-06): ASTRID #EB512E / #EB512E, PETRA #0A94D6 / #5AC4F7, OLIVE #8A9230 / #9CA536,
+  LUCY #9B30FF / #B566FF, NYX #BF8001 / #FEAA02, CALLIOPE #FC409F / #FD7CBD. Any other accent: stop and ask Peter. No green.
 - **Every colour has a dark value**, and contrast pairs are tested (`test/contrast.test.mjs`, `test/dark.test.mjs`).
 - **Never edit generated files** (`dist/`, `src/tokens.ts`): edit the source and run `npm run build`.
 - **Peter's UI rules:** ultra-minimal; hide rather than delete; no slider animation; rows stay on one line down to

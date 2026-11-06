@@ -94,3 +94,17 @@ test("CALLIOPE's pink (Peter, 2026-11-06): its pad edges and dots clear 3:1 on t
   const d = themes.dark.semantic;
   assert.ok(contrastRatio(d['instrument-calliope'], d['page-head-bg']) >= 4.5);
 });
+
+test("accents (Peter, 2026-11-06): each light value clears 3:1 on the lightest light module, each dark value 4.5:1 on the dark title band", async () => {
+  const { semantic, themes } = await import('../dist/tokens.js');
+  const d = themes.dark.semantic;
+  assert.equal(semantic['module-bg-adjacent-1'], '#F3F3F3');
+  for (const n of ['astrid', 'petra', 'olive', 'lucy', 'nyx']) {
+    const t = `instrument-${n}`;
+    assert.ok(contrastRatio(semantic[t], semantic['module-bg-adjacent-1']) >= 3, `${n} light ${contrastRatio(semantic[t], '#F3F3F3')}`);
+    assert.ok(contrastRatio(d[t], d['page-head-bg']) >= 4.5, `${n} dark`);
+  }
+  // CALLIOPE's light pink is Peter's pick before this rule (2026-11-06): 2.97:1 on module 01, 3:1 on the page.
+  assert.ok(contrastRatio(semantic['instrument-calliope'], '#F3F3F3') >= 2.95);
+  assert.ok(contrastRatio(d['instrument-calliope'], d['page-head-bg']) >= 4.5);
+});

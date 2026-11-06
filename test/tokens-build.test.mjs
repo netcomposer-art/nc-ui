@@ -128,11 +128,14 @@ test('CSS is one :root block (then the dark blocks), prefixed, no duplicates', (
 test("instrument identity colours (Peter, 2026-10-29): ASTRID, PETRA, OLIVE; OLIVE's green is the lint's one named exception", async () => {
   const { semantic } = await import("../dist/tokens.js");
   assert.equal(semantic["instrument-astrid"].toUpperCase(), "#EB512E");
-  assert.equal(semantic["instrument-petra"].toUpperCase(), "#5AC4F7");
-  assert.equal(semantic["instrument-olive"].toUpperCase(), "#9CA536");
+  assert.equal(semantic["instrument-petra"].toUpperCase(), "#0A94D6", "light (Peter, 2026-11-06)");
+  assert.equal(semantic["instrument-olive"].toUpperCase(), "#8A9230", "light (Peter, 2026-11-06)");
+  assert.equal(semantic["instrument-lucy"].toUpperCase(), "#9B30FF");
+  assert.equal(semantic["instrument-nyx"].toUpperCase(), "#BF8001", "light (Peter, 2026-11-06)");
   assert.equal(semantic["instrument-calliope"].toUpperCase(), "#FC409F", "CALLIOPE's pink in light (Peter, 2026-11-06)");
   const { findGreen, IDENTITY_COLOURS } = await import("../scripts/lint-ui.mjs");
-  assert.deepEqual([...IDENTITY_COLOURS], ["#9ca536"]);
+  assert.deepEqual([...IDENTITY_COLOURS], ["#9ca536", "#8a9230"]);
   assert.equal(findGreen("color: #9CA536;").length, 0);
+  assert.equal(findGreen("color: #8A9230;").length, 0, "OLIVE's light value");
   assert.equal(findGreen("color: #9CA537;").length, 1, "only that exact olive, not greens near it");
 });
