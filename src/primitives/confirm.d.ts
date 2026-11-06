@@ -3,6 +3,12 @@ export interface ConfirmOptions {
   title: string;
   /** One line saying what happens. The dialog's accessible description. */
   body: string;
+  /** More lines under the body, in order; `tone: "danger"` paints one in the danger colour (a warning). They join the
+   * accessible description. Default none. */
+  lines?: Array<string | { text: string; tone?: "danger" }>;
+  /** A third action, a text button above Cancel and the action (e.g. "Save Scene first"): `onAction` runs and the
+   * dialog stays open. Tab reaches it before Cancel; Enter on it runs it (never the action). Default none. */
+  extra?: { label: string; onAction: () => void };
   /** The action button. Default "Confirm". */
   confirmLabel?: string;
   /** The way out. Default "Cancel". It has focus when the dialog opens. */

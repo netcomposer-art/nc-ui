@@ -13,6 +13,9 @@ const ok = await confirm({
   body: 'Clears the pattern.',     // required; one line, the accessible description
   confirmLabel: 'Reset',           // optional; default 'Confirm'
   cancelLabel: 'Cancel',           // optional; default 'Cancel'
+  lines: ['Kept: your samples.',   // optional; more lines under the body, in order
+    { text: "Your take isn't saved.", tone: 'danger' }],   // a warning in the danger colour
+  extra: { label: 'Save first', onAction: save },          // optional third action (a text button); stays open
   danger: true,                    // optional; default false: the action fills with `danger`
   root: document.body,             // optional mount point; default document.body
   returnFocus: resetButton,        // optional; focused on close; default whatever had focus when it opened
@@ -49,6 +52,18 @@ if (ok) reset();
   35%), `dialog-width` (320px), `dialog-pad`, `dialog-gap`, `dialog-button-gap`, `dialog-radius`, `dialog-leading` (`leading.readout`, 1.35),
   `on-danger` (paper; 5.27:1 on `danger`), plus `surface-page`, `text`, `text-sub`, `divider`, `danger`,
   `focus-ring`, `focus-width-strong`, `target-min`, `title-size-slim`, `body-size`, `readout-size`, `label-tracking`.
+
+## More lines and a third action
+
+`lines` puts more lines under the body (`.nc-ui-confirm-body`, `text-sub`), in order; `{ text, tone: "danger" }`
+paints one in `danger` (`[data-tone="danger"]`: a warning that only sometimes applies). Every line joins
+`aria-describedby`.
+
+`extra: { label, onAction }` adds a third action, a quiet text button (`.nc-ui-confirm-extra`,
+`[data-nc-confirm="extra"]`) above Cancel and the action: `accent`, the readout size in capitals, `target-min` tall,
+`focus-ring` on focus. `onAction` runs and the dialog stays open, so the question is still there after it (the
+Studio's Reset: "Save Scene first" downloads the Scene, then the player resets or cancels). Tab reaches it before
+Cancel; Enter on it runs it, never the action. Cancel still has the focus when the dialog opens.
 
 ## ask(): one text field
 

@@ -33,7 +33,7 @@ export function confirm(opts) {
 
 // ask.js: field(make, ok) gives [row, input].
 export function dialog(
-  { title, body, confirmLabel = "Confirm", cancelLabel = "Cancel", danger = false, root, returnFocus, signal },
+  { title, body, lines = [], extra, confirmLabel = "Confirm", cancelLabel = "Cancel", danger = false, root, returnFocus, signal },
   field,
 ) {
   if (open || signal?.aborted) return Promise.resolve({});
@@ -54,11 +54,26 @@ export function dialog(
   box.setAttribute("role", "alertdialog");
   box.setAttribute("aria-modal", "true");
   box.setAttribute("aria-labelledby", `${id}-t`);
-  box.setAttribute("aria-describedby", `${id}-b`);
+
   const head = make("h2", "-title", title);
   head.id = `${id}-t`;
   const line = make("p", "-body", body);
   line.id = `${id}-b`;
+  // More lines under the body (a danger one in the danger colour); all of them describe the dialog.
+  const notes = lines.map((l, i) => {
+    const p = make("p", "-body", l?.text ?? l);
+    p.id = `${id}-b${i}`;
+    if (l?.tone === "danger") p.dataset.tone = "danger";
+    return p;
+  });
+  box.setAttribute("aria-describedby", [line, ...notes].map((p) => p.id).join(" "));
+  // A third action as a text button above the two (e.g. "Save Scene first"): it runs and the dialog stays open.
+  const more = extra && make("button", "-extra", extra.label);
+  if (more) {
+    more.type = "button";
+    more.dataset.ncConfirm = "extra";
+    more.addEventListener("click", () => extra.onAction?.());
+  }
   const row = make("div", "-actions");
   const button = (label, value) => {
     const b = make("button", "-btn", label);
@@ -72,8 +87,8 @@ export function dialog(
   if (danger) ok.dataset.danger = "true";
   row.append(cancel, ok);
   const [wrap, input] = field?.(make, ok) ?? [];
-  box.append(head, line, ...(wrap ? [wrap] : []), row);
-  const order = [input, cancel, ok].filter(Boolean);
+  box.append(head, line, ...notes, ...(wrap ? [wrap] : []), ...(more ? [more] : []), row);
+  const order = [input, more, cancel, ok].filter(Boolean);
   layer.append(box);
 
   const state = { layer };
@@ -122,7 +137,8 @@ export function dialog(
       live[(live.indexOf(doc.activeElement) + (e.shiftKey ? n - 1 : 1)) % n].focus();
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (doc.activeElement === cancel) done(false);
+      if (doc.activeElement === more) more.click();
+      else if (doc.activeElement === cancel) done(false);
       else if (!ok.disabled) done(true);
     }
   };
