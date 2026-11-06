@@ -4,6 +4,7 @@ import { VELOCITY_RAMPS, surpriseColor, surpriseFillStyle, velocityFillStyle } f
 import { currentTheme, onThemeChange } from "../theme.js";
 import { paintCanvas } from "./canvas.js";
 import { overPanelBox, paintEqGraph, patchEqGraph, renderEqGraph } from "./eq-graph.js";
+import { patchLevelSteps, renderLevelSteps } from "./level-steps.js";
 import { createFader, faderHandle } from "./fader.js";
 import { bindFxLevel, createFxLevel } from "./fx-level.js";
 import { bindPadGesture } from "./gesture.js";
@@ -150,6 +151,8 @@ export function renderControl(control, lookup) {
       return renderFx(control, lookup);
     case "eqGraph":
       return renderEqGraph(control, lookup);
+    case "levelSteps":
+      return renderLevelSteps(control, lookup);
     case "group":
       return renderGroup(control, lookup, renderControl);
     case "strip":
@@ -217,6 +220,8 @@ export function patchControl(node, control) {
     if (canvas instanceof HTMLCanvasElement) paintCanvas(canvas, control);
   } else if (control.type === "eqGraph") {
     patchEqGraph(node, control);
+  } else if (control.type === "levelSteps") {
+    patchLevelSteps(node, control);
   } else if (control.type === "strip") {
     patchStrip(node, control);
     for (const child of control.sends ?? []) {
@@ -632,6 +637,15 @@ function renderChoice(control, lookup) {
   row.dataset.ncRow = "";
   row.setAttribute("role", "tablist");
   row.setAttribute("aria-label", control.label);
+  // `caption`: the label shown before the tabs (Gate's Rate), as a field's label.
+  if (control.caption) {
+    const cap = document.createElement("span");
+    cap.className = "nc-label nc-choice-caption";
+    cap.setAttribute("aria-hidden", "true");
+    cap.textContent = control.caption;
+    row.dataset.ncCaption = "";
+    row.append(cap);
+  }
   for (const option of control.options) {
     const button = document.createElement("button");
     button.type = "button";
@@ -2435,7 +2449,8 @@ function nextFrame(doc, fn) {
   else setTimeout(fn, 16);
 }
 const maximizable = (control) =>
-  control.maximize === true || (control.maximize !== false && control.controls.some((c) => c.type === "eqGraph"));
+  control.maximize === true ||
+  (control.maximize !== false && control.controls.some((c) => c.type === "eqGraph" || c.type === "levelSteps"));
 const PHONE_MAX = "(max-width: 768px)"; // ui-guard: allow the kit's phone breakpoint, as the console's
 
 function maxIcon() {

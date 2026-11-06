@@ -354,6 +354,11 @@
   --nc-ui-strip-fold-width: var(--nc-ui-space-40);
   --nc-ui-eq-graph-height: 168px;
   --nc-ui-eq-graph-height-max: 248px;
+  --nc-ui-level-steps-height: 96px;
+  --nc-ui-level-steps-height-max: 192px;
+  --nc-ui-level-steps-curve: var(--nc-ui-color-accent);
+  --nc-ui-level-steps-bar: color-mix(in srgb, var(--nc-ui-color-accent) 14%, transparent);
+  --nc-ui-level-steps-free: var(--nc-ui-color-slate);
   --nc-ui-eq-node-size: var(--nc-ui-space-8);
   --nc-ui-eq-graph-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-eq-curve: var(--nc-ui-color-accent);
@@ -1872,6 +1877,123 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 /* The slim column (fx-fold-width-slim): the same parts, the on/off word a step smaller so OFF fits with room. */
 .nc-ui-fx[data-nc-fold-slim] .nc-ui-fx-fold-state { font-size: var(--nc-ui-scale-size); letter-spacing: 0; }
 .nc-ui-fx-visual { display: block; width: 100%; height: var(--nc-ui-display-height); }
+/* Level steps (level-steps.js, Gate's strip): a display like the EQ graph's, a column per step (beats a gap apart,
+   swing widening the first of each pair), the level a soft bar, the shape's curve in the accent over it, the playing
+   step ringed (the accent while locked to Play, quieter while it runs free). Under it the step numbers and the shape
+   tabs. A long press opens the shape picker over the step. */
+.nc-lsteps { position: relative; min-width: 0; margin-bottom: var(--nc-ui-control-gap); }
+.nc-lsteps-plot {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: var(--nc-ui-slot-gap);
+  height: var(--nc-ui-level-steps-height);
+  padding: calc(var(--nc-ui-slot-gap) * 2);
+  background: var(--nc-ui-eq-graph-bg);
+  border-radius: var(--nc-ui-slot-radius);
+  box-shadow: inset 0 0 0 var(--nc-ui-hairline) var(--nc-ui-divider);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: ns-resize;
+}
+.nc-lsteps-plot:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: var(--nc-ui-hairline); }
+.nc-ui-fx[data-nc-max] .nc-lsteps-plot { height: var(--nc-ui-level-steps-height-max); }
+.nc-lsteps-step { position: relative; flex: var(--nc-lsteps-grow, 1) 1 0; min-width: 0; border-radius: var(--nc-ui-slot-radius); }
+.nc-lsteps-step[data-beat="true"], .nc-lsteps-axis > span[data-beat="true"] { margin-inline-start: calc(var(--nc-ui-beat-gap) - var(--nc-ui-slot-gap)); }
+.nc-lsteps-step > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
+.nc-lsteps-level { fill: var(--nc-ui-level-steps-bar); }
+.nc-lsteps-env { fill: var(--nc-ui-level-steps-curve); }
+.nc-lsteps-top { fill: none; stroke: var(--nc-ui-level-steps-curve); stroke-width: var(--nc-ui-grid-stroke); vector-effect: non-scaling-stroke; }
+.nc-lsteps-floor { stroke: var(--nc-ui-divider); stroke-width: var(--nc-ui-grid-stroke); vector-effect: non-scaling-stroke; }
+.nc-lsteps-step[data-zero="true"] .nc-lsteps-floor { stroke: var(--nc-ui-text-sub); stroke-dasharray: 2 2; }
+/* 1/8T with 16 steps: 13-16 don't play. Dashed and empty, as a step grid's out-of-range steps. */
+.nc-lsteps-step[data-out="true"] { box-shadow: inset 0 0 0 var(--nc-ui-hairline) var(--nc-ui-divider); }
+.nc-lsteps-step[data-out="true"] .nc-lsteps-level, .nc-lsteps-step[data-out="true"] .nc-lsteps-env { fill: transparent; }
+.nc-lsteps-step[data-out="true"] .nc-lsteps-top { stroke: var(--nc-ui-divider); }
+.nc-lsteps-step[data-playhead="true"] { z-index: 1; outline: var(--nc-ui-playhead-width) solid var(--nc-ui-playhead); outline-offset: var(--nc-ui-playhead-offset); }
+.nc-lsteps-step[data-playhead="true"][data-locked="false"] { outline-color: var(--nc-ui-level-steps-free); outline-width: var(--nc-ui-hairline); }
+.nc-lsteps-step[data-focus="true"] { box-shadow: inset 0 calc(var(--nc-ui-playhead-width) * -1) 0 0 var(--nc-ui-focus-ring); }
+.nc-lsteps-plot:not(:focus-visible) .nc-lsteps-step[data-focus="true"] { box-shadow: none; }
+.nc-lsteps[data-on="false"] .nc-lsteps-env, .nc-lsteps[data-on="false"] .nc-lsteps-level { fill: var(--nc-ui-divider); }
+.nc-lsteps[data-on="false"] .nc-lsteps-top { stroke: var(--nc-ui-text-sub); }
+.nc-lsteps-step[data-dragging="true"]::after {
+  content: attr(data-level);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translate(-50%, calc(calc(var(--nc-ui-slot-gap) * 2) * -1));
+  padding: calc(var(--nc-ui-slot-gap) / 2) calc(var(--nc-ui-slot-gap) * 2);
+  border-radius: var(--nc-ui-slot-radius);
+  background: var(--nc-ui-accent);
+  color: var(--nc-ui-on-accent);
+  font-family: var(--nc-ui-font-readout);
+  font-size: var(--nc-ui-readout-size-small);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.nc-lsteps-axis {
+  display: flex;
+  gap: var(--nc-ui-slot-gap);
+  padding: var(--nc-ui-slot-gap) calc(var(--nc-ui-slot-gap) * 2) 0;
+  font-family: var(--nc-ui-font-readout);
+  font-size: var(--nc-ui-slot-font-size);
+  line-height: 1;
+  color: var(--nc-ui-text-sub);
+}
+.nc-lsteps-axis > span { flex: var(--nc-lsteps-grow, 1) 1 0; min-width: 0; }
+.nc-lsteps-shapes { display: flex; border-bottom: var(--nc-ui-hairline) solid var(--nc-ui-divider); margin-top: var(--nc-ui-control-gap); min-width: 0; }
+.nc-lsteps-shapes[hidden] { display: none; }
+.nc-lsteps-shape, .nc-lsteps-pick > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nc-ui-slot-gap);
+  border: 0;
+  background: transparent;
+  color: var(--nc-ui-text-sub);
+  font-family: var(--nc-ui-font-ui);
+  font-size: var(--nc-ui-label-size);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nc-lsteps-shape { position: relative; flex: 1 1 0; min-width: 0; padding: var(--nc-ui-slot-gap) 0 var(--nc-ui-control-gap); }
+.nc-lsteps-shape:hover, .nc-lsteps-pick > button:hover { color: var(--nc-ui-text); }
+.nc-lsteps-shape[aria-selected="true"] { color: var(--nc-ui-text); }
+.nc-lsteps-shape[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nc-ui-hairline) * -1);
+  height: var(--nc-ui-tab-mark);
+  background: var(--nc-ui-accent);
+}
+.nc-lsteps-shape:focus-visible, .nc-lsteps-pick > button:focus-visible { outline: var(--nc-ui-focus-width) solid var(--nc-ui-focus-ring); outline-offset: calc(var(--nc-ui-focus-width) * -1); }
+.nc-lsteps-ico { width: calc(var(--nc-ui-label-size) * 1.8); height: calc(var(--nc-ui-label-size) * 0.9); overflow: visible; }
+.nc-lsteps-ico path { fill: none; stroke: currentColor; stroke-width: var(--nc-ui-curve-stroke); vector-effect: non-scaling-stroke; }
+.nc-lsteps-pick {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: var(--nc-lsteps-pick-x, 0);
+  display: flex;
+  align-items: stretch;
+  gap: var(--nc-ui-slot-gap);
+  padding: calc(var(--nc-ui-slot-gap) * 2);
+  background: var(--nc-ui-surface-page);
+  border-radius: var(--nc-ui-slot-radius);
+  box-shadow: 0 0 0 var(--nc-ui-hairline) var(--nc-ui-divider);
+}
+.nc-lsteps-pick[hidden] { display: none; }
+.nc-lsteps-pick-head { align-self: center; padding: 0 calc(var(--nc-ui-slot-gap) * 2); font-family: var(--nc-ui-font-readout); font-size: var(--nc-ui-readout-size-small); color: var(--nc-ui-text-sub); white-space: nowrap; }
+.nc-lsteps-pick > button { padding: calc(var(--nc-ui-slot-gap) * 2); border-radius: var(--nc-ui-slot-radius); }
+.nc-lsteps-pick > button[aria-checked="true"] { color: var(--nc-ui-on-accent); background: var(--nc-ui-accent); }
+@media (pointer: coarse) {
+  .nc-lsteps-shape, .nc-lsteps-pick > button { min-height: var(--nc-ui-target-min); justify-content: center; }
+  .nc-lsteps-pick > button { min-width: var(--nc-ui-target-min); }
+}
 /* EQ graph (eq-graph.js): a display at the top of an EQ card. A plot a touch off the card's shade, a hairline frame,
    the spectrum and curve canvases filling it, and one dot per band (its own colour) over them, each a 44 px target. */
 .nc-eq { position: relative; min-width: 0; margin-bottom: var(--nc-ui-control-gap); }
@@ -2271,6 +2393,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   .nc-choice-row { overflow-x: auto; scrollbar-width: none; }
   .nc-choice-row::-webkit-scrollbar { display: none; }
 }
+.nc-choice-caption { flex: 0 0 auto; margin-inline-end: auto; }
+.nc-choice-row[data-nc-caption] { margin-bottom: var(--nc-ui-control-gap); }
 .nc-choice[aria-selected="true"] {
   color: var(--nc-ui-text);
   border-bottom-color: var(--nc-ui-accent);

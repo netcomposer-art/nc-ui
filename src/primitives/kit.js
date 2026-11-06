@@ -1193,6 +1193,123 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 /* The slim column (fx-fold-width-slim): the same parts, the on/off word a step smaller so OFF fits with room. */
 .nc-ui-fx[data-nc-fold-slim] .nc-ui-fx-fold-state { font-size: ${v("scale-size")}; letter-spacing: 0; }
 .nc-ui-fx-visual { display: block; width: 100%; height: ${v("display-height")}; }
+/* Level steps (level-steps.js, Gate's strip): a display like the EQ graph's, a column per step (beats a gap apart,
+   swing widening the first of each pair), the level a soft bar, the shape's curve in the accent over it, the playing
+   step ringed (the accent while locked to Play, quieter while it runs free). Under it the step numbers and the shape
+   tabs. A long press opens the shape picker over the step. */
+.nc-lsteps { position: relative; min-width: 0; margin-bottom: ${v("control-gap")}; }
+.nc-lsteps-plot {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: ${v("slot-gap")};
+  height: ${v("level-steps-height")};
+  padding: calc(${v("slot-gap")} * 2);
+  background: ${v("eq-graph-bg")};
+  border-radius: ${v("slot-radius")};
+  box-shadow: inset 0 0 0 ${v("hairline")} ${v("divider")};
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: ns-resize;
+}
+.nc-lsteps-plot:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: ${v("hairline")}; }
+.nc-ui-fx[data-nc-max] .nc-lsteps-plot { height: ${v("level-steps-height-max")}; }
+.nc-lsteps-step { position: relative; flex: var(--nc-lsteps-grow, 1) 1 0; min-width: 0; border-radius: ${v("slot-radius")}; }
+.nc-lsteps-step[data-beat="true"], .nc-lsteps-axis > span[data-beat="true"] { margin-inline-start: calc(${v("beat-gap")} - ${v("slot-gap")}); }
+.nc-lsteps-step > svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
+.nc-lsteps-level { fill: ${v("level-steps-bar")}; }
+.nc-lsteps-env { fill: ${v("level-steps-curve")}; }
+.nc-lsteps-top { fill: none; stroke: ${v("level-steps-curve")}; stroke-width: ${v("grid-stroke")}; vector-effect: non-scaling-stroke; }
+.nc-lsteps-floor { stroke: ${v("divider")}; stroke-width: ${v("grid-stroke")}; vector-effect: non-scaling-stroke; }
+.nc-lsteps-step[data-zero="true"] .nc-lsteps-floor { stroke: ${v("text-sub")}; stroke-dasharray: 2 2; }
+/* 1/8T with 16 steps: 13-16 don't play. Dashed and empty, as a step grid's out-of-range steps. */
+.nc-lsteps-step[data-out="true"] { box-shadow: inset 0 0 0 ${v("hairline")} ${v("divider")}; }
+.nc-lsteps-step[data-out="true"] .nc-lsteps-level, .nc-lsteps-step[data-out="true"] .nc-lsteps-env { fill: transparent; }
+.nc-lsteps-step[data-out="true"] .nc-lsteps-top { stroke: ${v("divider")}; }
+.nc-lsteps-step[data-playhead="true"] { z-index: 1; outline: ${v("playhead-width")} solid ${v("playhead")}; outline-offset: ${v("playhead-offset")}; }
+.nc-lsteps-step[data-playhead="true"][data-locked="false"] { outline-color: ${v("level-steps-free")}; outline-width: ${v("hairline")}; }
+.nc-lsteps-step[data-focus="true"] { box-shadow: inset 0 calc(${v("playhead-width")} * -1) 0 0 ${v("focus-ring")}; }
+.nc-lsteps-plot:not(:focus-visible) .nc-lsteps-step[data-focus="true"] { box-shadow: none; }
+.nc-lsteps[data-on="false"] .nc-lsteps-env, .nc-lsteps[data-on="false"] .nc-lsteps-level { fill: ${v("divider")}; }
+.nc-lsteps[data-on="false"] .nc-lsteps-top { stroke: ${v("text-sub")}; }
+.nc-lsteps-step[data-dragging="true"]::after {
+  content: attr(data-level);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translate(-50%, calc(calc(${v("slot-gap")} * 2) * -1));
+  padding: calc(${v("slot-gap")} / 2) calc(${v("slot-gap")} * 2);
+  border-radius: ${v("slot-radius")};
+  background: ${v("accent")};
+  color: ${v("on-accent")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("readout-size-small")};
+  white-space: nowrap;
+  pointer-events: none;
+}
+.nc-lsteps-axis {
+  display: flex;
+  gap: ${v("slot-gap")};
+  padding: ${v("slot-gap")} calc(${v("slot-gap")} * 2) 0;
+  font-family: ${v("font-readout")};
+  font-size: ${v("slot-font-size")};
+  line-height: 1;
+  color: ${v("text-sub")};
+}
+.nc-lsteps-axis > span { flex: var(--nc-lsteps-grow, 1) 1 0; min-width: 0; }
+.nc-lsteps-shapes { display: flex; border-bottom: ${v("hairline")} solid ${v("divider")}; margin-top: ${v("control-gap")}; min-width: 0; }
+.nc-lsteps-shapes[hidden] { display: none; }
+.nc-lsteps-shape, .nc-lsteps-pick > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${v("slot-gap")};
+  border: 0;
+  background: transparent;
+  color: ${v("text-sub")};
+  font-family: ${v("font-ui")};
+  font-size: ${v("label-size")};
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nc-lsteps-shape { position: relative; flex: 1 1 0; min-width: 0; padding: ${v("slot-gap")} 0 ${v("control-gap")}; }
+.nc-lsteps-shape:hover, .nc-lsteps-pick > button:hover { color: ${v("text")}; }
+.nc-lsteps-shape[aria-selected="true"] { color: ${v("text")}; }
+.nc-lsteps-shape[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(${v("hairline")} * -1);
+  height: ${v("tab-mark")};
+  background: ${v("accent")};
+}
+.nc-lsteps-shape:focus-visible, .nc-lsteps-pick > button:focus-visible { outline: ${v("focus-width")} solid ${v("focus-ring")}; outline-offset: calc(${v("focus-width")} * -1); }
+.nc-lsteps-ico { width: calc(${v("label-size")} * 1.8); height: calc(${v("label-size")} * 0.9); overflow: visible; }
+.nc-lsteps-ico path { fill: none; stroke: currentColor; stroke-width: ${v("curve-stroke")}; vector-effect: non-scaling-stroke; }
+.nc-lsteps-pick {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: var(--nc-lsteps-pick-x, 0);
+  display: flex;
+  align-items: stretch;
+  gap: ${v("slot-gap")};
+  padding: calc(${v("slot-gap")} * 2);
+  background: ${v("surface-page")};
+  border-radius: ${v("slot-radius")};
+  box-shadow: 0 0 0 ${v("hairline")} ${v("divider")};
+}
+.nc-lsteps-pick[hidden] { display: none; }
+.nc-lsteps-pick-head { align-self: center; padding: 0 calc(${v("slot-gap")} * 2); font-family: ${v("font-readout")}; font-size: ${v("readout-size-small")}; color: ${v("text-sub")}; white-space: nowrap; }
+.nc-lsteps-pick > button { padding: calc(${v("slot-gap")} * 2); border-radius: ${v("slot-radius")}; }
+.nc-lsteps-pick > button[aria-checked="true"] { color: ${v("on-accent")}; background: ${v("accent")}; }
+@media (pointer: coarse) {
+  .nc-lsteps-shape, .nc-lsteps-pick > button { min-height: ${v("target-min")}; justify-content: center; }
+  .nc-lsteps-pick > button { min-width: ${v("target-min")}; }
+}
 /* EQ graph (eq-graph.js): a display at the top of an EQ card. A plot a touch off the card's shade, a hairline frame,
    the spectrum and curve canvases filling it, and one dot per band (its own colour) over them, each a 44 px target. */
 .nc-eq { position: relative; min-width: 0; margin-bottom: ${v("control-gap")}; }
@@ -1592,6 +1709,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   .nc-choice-row { overflow-x: auto; scrollbar-width: none; }
   .nc-choice-row::-webkit-scrollbar { display: none; }
 }
+.nc-choice-caption { flex: 0 0 auto; margin-inline-end: auto; }
+.nc-choice-row[data-nc-caption] { margin-bottom: ${v("control-gap")}; }
 .nc-choice[aria-selected="true"] {
   color: ${v("text")};
   border-bottom-color: ${v("accent")};

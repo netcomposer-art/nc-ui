@@ -9,6 +9,7 @@ All notable changes to nc-ui are documented here. The format follows [Keep a Cha
 
 ## Unreleased: ASTRID north star
 
+- The `levelSteps` control (Peter, 2026-11-06: Gate's step strip; merge OK "can the new 'level steps' control be merged into the design kit - yes"): steps drawn by tap or drag, a long press for one step's shape, shape tabs, a locked or free playhead. An FX card holding one gets the maximize button. New tokens (minor release): `level-steps-height` 96px, `level-steps-height-max` 192px, `level-steps-curve`, `level-steps-bar`, `level-steps-free`. `ChoiceControl.caption`: a visible label before the tabs. No existing module looks different. See docs/level-steps.md.
 - Accents, light and dark (Peter, 2026-11-06: every instrument accent gets a light and a dark value; light darkened at the same HSL hue and saturation until it clears 3:1 on the lightest light module #F3F3F3, dark lightened until it clears 4.5:1 on the dark title band #1A1918). Value change (minor release). New dark entries for `petra-blue`, `olive-green`, `nyx-amber` hold the old values; light changes:
   - PETRA `petra-blue` #5AC4F7 → **#0A94D6** in light (3.04:1 on module 01; was 1.80 on the page). Dark #5AC4F7 (8.92:1).
   - OLIVE `olive-green` #9CA536 → **#8A9230** in light (3.04:1). Dark #9CA536 (6.56:1). lint-ui `IDENTITY_COLOURS` allows both olives.
