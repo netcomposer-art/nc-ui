@@ -33,7 +33,10 @@ function hostTop(doc) {
 
 /**
  * Turn on hover help for a document. Safe to call more than once (the second call returns the first handle).
- * @returns {{ uninstall(): void, hide(): void }}
+ * `pin(el, text?, { ms })` shows the same bubble at `el` without a hover (a one-time hint, on touch too: Peter,
+ * 2026-11-05, CALLIOPE's pads hint "once, when the Generator is first loaded"). A pinned bubble ignores hovers and
+ * goes on any press, any key, a scroll, a blur, `hide()`, or after `ms` (0: no timeout). Returns whether it showed.
+ * @returns {{ uninstall(): void, hide(): void, pin(el: Element, text?: string, opts?: { ms?: number }): boolean }}
  */
 export function installHelpTips({ document: doc = globalThis.document, delay = HELP_DELAY } = {}) {
   if (!doc) return { uninstall() {}, hide() {} };
@@ -43,15 +46,22 @@ export function installHelpTips({ document: doc = globalThis.document, delay = H
   let bubble = null;
   let current = null;
   let timer;
+  let pinned = false;
+  let pinTimer;
 
   const hide = () => {
     clearTimeout(timer);
+    clearTimeout(pinTimer);
     current = null;
-    if (bubble) bubble.hidden = true;
+    pinned = false;
+    if (bubble) {
+      bubble.hidden = true;
+      delete bubble.dataset.pinned;
+    }
   };
-  const show = (el) => {
-    const text = el.getAttribute(HELP_ATTR);
-    if (!text) return;
+  const show = (el, words) => {
+    const text = words ?? el.getAttribute(HELP_ATTR);
+    if (!text) return false;
     if (!bubble) {
       bubble = doc.createElement("div");
       bubble.className = "nc-ui-help";
@@ -74,9 +84,10 @@ export function installHelpTips({ document: doc = globalThis.document, delay = H
     bubble.style.left = `${p.left}px`;
     bubble.dataset.side = p.side;
     bubble.style.visibility = "";
+    return true;
   };
   const over = (e) => {
-    if (e.pointerType === "touch") return;
+    if (pinned || e.pointerType === "touch") return;
     const el = e.target && e.target.closest ? e.target.closest(`[${HELP_ATTR}]`) : null;
     if (el === current) return;
     hide();
@@ -87,7 +98,7 @@ export function installHelpTips({ document: doc = globalThis.document, delay = H
     }, delay);
   };
   const key = (e) => {
-    if (e.key === "Escape") hide();
+    if (pinned || e.key === "Escape") hide();
   };
 
   doc.addEventListener("pointerover", over);
@@ -98,6 +109,14 @@ export function installHelpTips({ document: doc = globalThis.document, delay = H
 
   const handle = {
     hide,
+    pin(el, text, { ms = 0 } = {}) {
+      hide();
+      if (!el || !el.isConnected || !show(el, text)) return false;
+      pinned = true;
+      bubble.dataset.pinned = "";
+      if (ms > 0) pinTimer = setTimeout(hide, ms);
+      return true;
+    },
     uninstall() {
       hide();
       doc.removeEventListener("pointerover", over);

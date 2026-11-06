@@ -12,6 +12,12 @@ export declare function placeHelp(
 export interface HelpTips {
   /** Hide the bubble now. */
   hide(): void;
+  /**
+   * Show the bubble at `el` without a hover (a one-time hint; touch too): `text`, or else its data-nc-help words. It
+   * ignores hovers and goes on any press, any key, a scroll, a blur, hide(), or after `ms` (0 or none: no timeout).
+   * Returns whether it showed.
+   */
+  pin(el: Element, text?: string, opts?: { ms?: number }): boolean;
   /** Remove the listeners and the bubble. */
   uninstall(): void;
 }
