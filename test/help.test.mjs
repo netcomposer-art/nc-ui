@@ -59,3 +59,40 @@ test('the kit styles the bubble from toast tokens and never lets it take the poi
   assert.match(css, /\[data-nc-help\] \{ cursor: help; \}/);
   assert.match(css, /\.nc-field\[data-nc-slider\] > \.nc-label\[data-nc-help\] \{ position: relative; z-index: 1; \}/, 'slider labels sit above the hit band for a mouse');
 });
+
+test('pin: the same bubble without a hover, hovers ignored; gone on a press, any key or the timeout', () => {
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const { document, window, over } = page();
+    const help = installHelpTips({ document });
+    const b = document.getElementById('b');
+    assert.equal(help.pin(b, 'Click a pad.', { ms: 8000 }), true);
+    const bubble = document.querySelector('.nc-ui-help');
+    assert.equal(bubble.textContent, 'Click a pad.');
+    assert.equal(bubble.hidden, false);
+    assert.ok(bubble.hasAttribute('data-pinned'));
+    over(document.getElementById('a'));
+    mock.timers.tick(HELP_DELAY);
+    assert.equal(bubble.textContent, 'Click a pad.', 'a hover does not replace or hide it');
+    mock.timers.tick(8000 - HELP_DELAY);
+    assert.equal(bubble.hidden, true, 'gone after ms');
+    assert.ok(!bubble.hasAttribute('data-pinned'));
+
+    help.pin(b, 'Click a pad.');
+    document.dispatchEvent(new window.Event('keydown'));
+    assert.equal(bubble.hidden, true, 'any key');
+    help.pin(b, 'Click a pad.');
+    document.dispatchEvent(new window.Event('pointerdown'));
+    assert.equal(bubble.hidden, true, 'a press');
+    help.pin(document.getElementById('a'));
+    assert.equal(bubble.textContent, 'Where the filter starts cutting.', 'its own words by default');
+    help.hide();
+    over(document.getElementById('a'));
+    mock.timers.tick(HELP_DELAY);
+    assert.equal(bubble.hidden, false, 'hover help works again after');
+    assert.equal(help.pin(b), false, 'nothing to say: not shown');
+    help.uninstall();
+  } finally {
+    mock.timers.reset();
+  }
+});
