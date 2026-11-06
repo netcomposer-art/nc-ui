@@ -103,8 +103,10 @@ function live(wrap) {
 function rights(plot) {
   return [...plot.querySelectorAll(".nc-lsteps-step")].map((el) => el.getBoundingClientRect().right);
 }
+/** The step under a pointer and the level at its height, measured on the steps themselves (inside the plot's pad). */
 function point(plot, e) {
-  const box = plot.getBoundingClientRect();
+  const first = plot.querySelector(".nc-lsteps-step");
+  const box = (first ?? plot).getBoundingClientRect();
   const cols = rights(plot);
   return { i: stepAt(e.clientX, cols), level: levelAt(e.clientY - box.top, box.height) };
 }
