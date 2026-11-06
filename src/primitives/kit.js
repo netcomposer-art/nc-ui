@@ -1709,8 +1709,10 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   .nc-choice-row { overflow-x: auto; scrollbar-width: none; }
   .nc-choice-row::-webkit-scrollbar { display: none; }
 }
+/* A captioned row (Gate's Rate in a narrow FX card): the label, then the tabs packed close so short ones never cut. */
 .nc-choice-caption { flex: 0 0 auto; margin-inline-end: auto; }
-.nc-choice-row[data-nc-caption] { margin-bottom: ${v("control-gap")}; }
+.nc-choice-row[data-nc-caption] { gap: ${v("control-gap")}; margin-bottom: ${v("control-gap")}; }
+.nc-choice-row[data-nc-caption] > .nc-choice { flex: 0 0 auto; overflow: visible; }
 .nc-choice[aria-selected="true"] {
   color: ${v("text")};
   border-bottom-color: ${v("accent")};
