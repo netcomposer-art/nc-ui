@@ -64,6 +64,30 @@ html[data-nc-hosted] .nc-ui-confirm-layer {
   font-size: var(--nc-ui-body-size, 13px);
   color: var(--nc-ui-text-sub, #595959);
 }
+.nc-ui-confirm-body[data-tone="danger"] {
+  color: var(--nc-ui-danger, hsl(8 55% 44%));
+}
+/* The optional third action: a quiet text button in the accent, above the two buttons, as tall as they are. */
+button.nc-ui-confirm-extra {
+  align-self: flex-start;
+  min-height: var(--nc-ui-target-min, 44px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--nc-ui-accent, #003153);
+  font: inherit;
+  font-size: var(--nc-ui-readout-size, 12px);
+  letter-spacing: var(--nc-ui-label-tracking, .14em);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+button.nc-ui-confirm-extra:hover {
+  color: var(--nc-ui-text, #242424);
+}
+button.nc-ui-confirm-extra:focus {
+  outline: var(--nc-ui-focus-width-strong, 2px) solid var(--nc-ui-focus-ring, #003153);
+  outline-offset: var(--nc-ui-focus-width-strong, 2px);
+}
 .nc-ui-confirm-field {
   display: flex;
   flex-direction: column;
