@@ -85,3 +85,12 @@ test("Mix strip shades (Peter, 2026-11-04): text and secondary text keep AA on a
   }
   assert.ok(tokens);
 });
+
+test("CALLIOPE's pink (Peter, 2026-11-06): its pad edges and dots clear 3:1 on the light page and title band; dark keeps #FD7CBD", async () => {
+  const { semantic, themes } = await import('../dist/tokens.js');
+  const light = semantic['instrument-calliope'];
+  assert.ok(contrastRatio(light, semantic['surface-page']) >= 3, `page ${contrastRatio(light, semantic['surface-page'])}`);
+  assert.ok(contrastRatio(light, semantic['page-head-bg']) >= 3, `band ${contrastRatio(light, semantic['page-head-bg'])}`);
+  const d = themes.dark.semantic;
+  assert.ok(contrastRatio(d['instrument-calliope'], d['page-head-bg']) >= 4.5);
+});

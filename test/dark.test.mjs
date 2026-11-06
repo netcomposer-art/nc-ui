@@ -34,8 +34,10 @@ test('light values are untouched; dark resolves through the same refs', () => {
   assert.equal(dc.rhythm['velocity-max'], dk.accent);
   assert.equal(d['label-on-fill-dark'], '#242424', 'the label on a bright Surprise fill stays dark');
   assert.equal(d['label-on-fill-light'], '#FFFFFF');
-  for (const n of ['instrument-astrid', 'instrument-petra', 'instrument-olive', 'instrument-nyx', 'instrument-calliope'])
+  for (const n of ['instrument-astrid', 'instrument-petra', 'instrument-olive', 'instrument-nyx'])
     assert.equal(d[n], semantic[n], `${n} keeps its colour`);
+  assert.equal(d['instrument-calliope'], '#FD7CBD', 'CALLIOPE: #FD7CBD in dark, #FC409F in light (Peter, 2026-11-06)');
+  assert.equal(semantic['instrument-calliope'], '#FC409F');
 });
 
 test('a dark entry must name a light token', () => {
