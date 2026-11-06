@@ -64,13 +64,29 @@ function targetPx(root) {
   return value > 0 ? value : 44;
 }
 
-/** Grow each hit toward target-min on every pointer, stopping at the next control's midpoint. */
+/**
+ * Grow each hit toward target-min on every pointer, stopping at the next control's midpoint.
+ *
+ * Only controls within a target of each other can stop one another (a farther one's midpoint is past the target's
+ * edge), so each hit is compared with the hits in its own and the eight neighbouring cells of a target-sized grid,
+ * not with every hit on the page (NYX has hundreds).
+ */
 export function placeHits(root) {
   if (!(root instanceof HTMLElement)) return;
   const hits = [...root.querySelectorAll(".nc-hit")];
   const target = targetPx(root);
   const half = target / 2;
   const boxes = hits.map((hit) => hit.parentElement?.getBoundingClientRect() ?? null);
+  const cell = target;
+  const grid = new Map();
+  const key = (gx, gy) => `${gx},${gy}`;
+  boxes.forEach((box, j) => {
+    if (!box || box.width === 0) return;
+    const k = key(Math.floor((box.left + box.width / 2) / cell), Math.floor((box.top + box.height / 2) / cell));
+    const list = grid.get(k);
+    if (list) list.push(j);
+    else grid.set(k, [j]);
+  });
   for (let i = 0; i < hits.length; i++) {
     const hit = hits[i];
     const box = boxes[i];
@@ -85,19 +101,24 @@ export function placeHits(root) {
     let right = cx + half;
     let top = cy - half;
     let bottom = cy + half;
-    for (let j = 0; j < hits.length; j++) {
-      if (i === j) continue;
-      const other = boxes[j];
-      if (!other || other.width === 0) continue;
-      const ox = other.left + other.width / 2;
-      const oy = other.top + other.height / 2;
-      if (Math.abs(oy - cy) < half * 2) {
-        if (ox > cx) right = Math.min(right, (cx + ox) / 2);
-        else if (ox < cx) left = Math.max(left, (cx + ox) / 2);
-      }
-      if (Math.abs(ox - cx) < half * 2) {
-        if (oy > cy) bottom = Math.min(bottom, (cy + oy) / 2);
-        else if (oy < cy) top = Math.max(top, (cy + oy) / 2);
+    const gx = Math.floor(cx / cell);
+    const gy = Math.floor(cy / cell);
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        for (const j of grid.get(key(gx + dx, gy + dy)) ?? []) {
+          if (i === j) continue;
+          const other = boxes[j];
+          const ox = other.left + other.width / 2;
+          const oy = other.top + other.height / 2;
+          if (Math.abs(oy - cy) < half * 2) {
+            if (ox > cx) right = Math.min(right, (cx + ox) / 2);
+            else if (ox < cx) left = Math.max(left, (cx + ox) / 2);
+          }
+          if (Math.abs(ox - cx) < half * 2) {
+            if (oy > cy) bottom = Math.min(bottom, (cy + oy) / 2);
+            else if (oy < cy) top = Math.max(top, (cy + oy) / 2);
+          }
+        }
       }
     }
     left = Math.min(left, box.left);
@@ -110,6 +131,30 @@ export function placeHits(root) {
     hit.style.height = `${Math.max(0, bottom - top)}px`;
     hit.style.transform = "none";
   }
+}
+
+/** Roots with a placeHits waiting for the next frame. */
+const hitsQueued = new WeakSet();
+
+/**
+ * placeHits once per animation frame per root. A module repaints (paintAll) on every update, and an instrument
+ * updates its modules many times a frame while it loads and on every step while it plays; each placeHits reads every
+ * control's box (a forced layout). In the next frame the layout is done anyway. Without requestAnimationFrame (tests),
+ * at once.
+ */
+export function queueHits(root) {
+  if (!(root instanceof HTMLElement)) return;
+  const view = root.ownerDocument?.defaultView;
+  if (typeof view?.requestAnimationFrame !== "function") {
+    placeHits(root);
+    return;
+  }
+  if (hitsQueued.has(root)) return;
+  hitsQueued.add(root);
+  view.requestAnimationFrame(() => {
+    hitsQueued.delete(root);
+    if (root.isConnected) placeHits(root);
+  });
 }
 
 function sparkleSvg() {
@@ -2716,5 +2761,5 @@ export function paintAll(root, controls) {
   }
   for (const graph of root.querySelectorAll(".nc-eq")) if (graph instanceof HTMLElement) paintEqGraph(graph);
   for (const card of root.querySelectorAll('.nc-ui-fx[data-nc-max="over"]')) if (card instanceof HTMLElement) placeOver(card);
-  placeHits(root);
+  queueHits(root);
 }
