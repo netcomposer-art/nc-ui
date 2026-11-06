@@ -49,6 +49,9 @@
   --color-nc-fader-cap: var(--nc-ui-fader-cap);
   --color-nc-fader-cap-line: var(--nc-ui-fader-cap-line);
   --color-nc-fader-track: var(--nc-ui-fader-track);
+  --color-nc-level-steps-curve: var(--nc-ui-level-steps-curve);
+  --color-nc-level-steps-bar: var(--nc-ui-level-steps-bar);
+  --color-nc-level-steps-free: var(--nc-ui-level-steps-free);
   --color-nc-eq-graph-bg: var(--nc-ui-eq-graph-bg);
   --color-nc-eq-curve: var(--nc-ui-eq-curve);
   --color-nc-eq-fill: var(--nc-ui-eq-fill);
@@ -123,6 +126,8 @@
   --spacing-nc-fx-fold-width-slim: var(--nc-ui-fx-fold-width-slim);
   --spacing-nc-eq-graph-height: var(--nc-ui-eq-graph-height);
   --spacing-nc-eq-graph-height-max: var(--nc-ui-eq-graph-height-max);
+  --spacing-nc-level-steps-height: var(--nc-ui-level-steps-height);
+  --spacing-nc-level-steps-height-max: var(--nc-ui-level-steps-height-max);
   --spacing-nc-strip-fold-width: var(--nc-ui-strip-fold-width);
   --spacing-nc-head-margin-compact: var(--nc-ui-head-margin-compact);
   --spacing-nc-tab-pad-y: var(--nc-ui-tab-pad-y);

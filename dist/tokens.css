@@ -352,6 +352,11 @@
   --nc-ui-strip-fold-width: var(--nc-ui-space-40);
   --nc-ui-eq-graph-height: 168px;
   --nc-ui-eq-graph-height-max: 248px;
+  --nc-ui-level-steps-height: 96px;
+  --nc-ui-level-steps-height-max: 192px;
+  --nc-ui-level-steps-curve: var(--nc-ui-color-accent);
+  --nc-ui-level-steps-bar: color-mix(in srgb, var(--nc-ui-color-accent) 14%, transparent);
+  --nc-ui-level-steps-free: var(--nc-ui-color-slate);
   --nc-ui-eq-node-size: var(--nc-ui-space-8);
   --nc-ui-eq-graph-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-eq-curve: var(--nc-ui-color-accent);

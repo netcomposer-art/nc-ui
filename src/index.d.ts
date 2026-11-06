@@ -196,6 +196,8 @@ export interface ChoiceControl {
   type: "choice";
   id: string;
   label: string;
+  /** A visible label before the tabs (otherwise `label` is only their accessible name). */
+  caption?: string;
   value: string;
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
@@ -461,6 +463,41 @@ export interface EqGraphBand {
  * band's own curve faintly, a draggable node per band, and an optional live spectrum behind. nc-fx's eqGraph() builds
  * one from a chain.
  */
+/** One step of a level-steps strip: its level (0..1) and its shape (a `shapes` value). */
+export interface LevelStep { level: number; shape: number }
+/**
+ * Level steps (Gate's strip): a step per column, its level a soft bar, its shape's curve over it; tap or drag to draw
+ * levels, long-press (right-click, Enter) a step for its own shape; the shapes as tabs under it set every step. The
+ * kit draws; the host owns the state.
+ */
+export interface LevelStepsControl {
+  type: "levelSteps";
+  id: string;
+  label?: string;
+  steps: LevelStep[];
+  /** Steps that play each pass; the rest show dashed and empty (Gate's 1/8T with 16 steps: 12). Default: all. */
+  played?: number;
+  /** The first step of each pair's share of the pair (0.5..0.75: swing). Default 0.5. */
+  swing?: number;
+  /** false while the effect is off: the strip goes quiet. */
+  on?: boolean;
+  /** The shapes (value, name, and a 20 x 10 SVG path for its icon). */
+  shapes?: { value: number; label: string; icon?: string }[];
+  /** The tabs' accessible name. Default "Shape of every step". */
+  shapesLabel?: string;
+  /** n + 1 gains (0..1) across step i, for its curve. Omitted: a flat line at its level. */
+  curve?(i: number, n: number): ArrayLike<number>;
+  /** Every move of a drawing finger or mouse (all levels, 0..1, whole percents); done on release. */
+  onLevels(levels: number[], done: boolean): void;
+  /** A long press (right-click, Enter) on step i, then a shape picked. */
+  onShape?(i: number, shape: number): void;
+  /** A shape tab: every step. */
+  onShapeAll?(shape: number): void;
+  /** Read about 30 times a second while on the page: the playing step (and whether it is locked to Play), or null. */
+  playhead?(): { step: number; locked: boolean } | null;
+  /** Hover words (data-nc-help) for the strip. */
+  help?: string;
+}
 export interface EqGraphControl {
   type: "eqGraph";
   id: string;
@@ -720,6 +757,7 @@ export type Control =
   | CanvasControl
   | FxControl
   | EqGraphControl
+  | LevelStepsControl
   | GroupControl
   | StripControl
   | StripAddControl;
@@ -911,5 +949,18 @@ export function eqSpectrumState(graph: Element): { running: boolean; open: boole
 export function overPanelBox(at: DOMRectReadOnly, module: DOMRectReadOnly, row: DOMRectReadOnly, gap: number, viewW: number): { left: number; top: number; width: number };
 /** The graph on its own (outside a kit module): render with a lookup that returns the current control, patch, repaint. */
 export function renderEqGraph(control: EqGraphControl, lookup: (node: Element) => unknown): HTMLElement;
+/** Level steps (Gate's strip). */
+export function renderLevelSteps(control: LevelStepsControl, lookup: (node: Element) => unknown): HTMLElement;
+export function patchLevelSteps(wrap: Element, control: LevelStepsControl): void;
+/** How long a press holds before it opens the shape picker (ms), and how far it may wander (px) and still count. */
+export const LONG_PRESS_MS: number;
+export const PRESS_SLOP: number;
+/** A level (0..1, whole percents) from y in a plot of height h. */
+export function levelAt(y: number, h: number): number;
+/** The step an x falls in, given the steps' right edges. */
+export function stepAt(x: number, rights: number[]): number;
+/** Levels with steps a..b drawn on a line from la to lb. */
+export function drawLine(levels: number[], a: number, la: number, b: number, lb: number): number[];
+export function levelStepsState(wrap: Element): { focus: number; dragging: boolean; picking: boolean } | null;
 export function patchEqGraph(graph: Element, control: EqGraphControl): void;
 export function paintEqGraph(graph: Element): void;

@@ -39,6 +39,7 @@ export {
   renderEqGraph,
   spectrumColumns,
 } from "./primitives/eq-graph.js";
+export { LONG_PRESS_MS, PRESS_SLOP, drawLine, levelAt, levelStepsState, patchLevelSteps, renderLevelSteps, stepAt } from "./primitives/level-steps.js";
 export {
   FX_LEVEL_CLIP_DB,
   FX_LEVEL_FLOOR_DB,
