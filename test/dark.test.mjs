@@ -34,8 +34,17 @@ test('light values are untouched; dark resolves through the same refs', () => {
   assert.equal(dc.rhythm['velocity-max'], dk.accent);
   assert.equal(d['label-on-fill-dark'], '#242424', 'the label on a bright Surprise fill stays dark');
   assert.equal(d['label-on-fill-light'], '#FFFFFF');
-  for (const n of ['instrument-astrid', 'instrument-petra', 'instrument-olive', 'instrument-nyx'])
-    assert.equal(d[n], semantic[n], `${n} keeps its colour`);
+  assert.equal(d['instrument-astrid'], semantic['instrument-astrid'], 'ASTRID: one value');
+  // Peter, 2026-11-06: light and dark per accent.
+  for (const [n, light, dark] of [
+    ['instrument-petra', '#0A94D6', '#5AC4F7'],
+    ['instrument-olive', '#8A9230', '#9CA536'],
+    ['instrument-lucy', '#9B30FF', '#B566FF'],
+    ['instrument-nyx', '#BF8001', '#FEAA02'],
+  ]) {
+    assert.equal(semantic[n], light, `${n} light`);
+    assert.equal(d[n], dark, `${n} dark`);
+  }
   assert.equal(d['instrument-calliope'], '#FD7CBD', 'CALLIOPE: #FD7CBD in dark, #FC409F in light (Peter, 2026-11-06)');
   assert.equal(semantic['instrument-calliope'], '#FC409F');
 });
@@ -82,6 +91,7 @@ const PAIRS = [
   ['instrument-olive', 'page-head-bg', 4.5, 'OLIVE title'],
   ['instrument-lucy', 'page-head-bg', 4.5, 'LUCY title (lighter purple in dark)'],
   ['instrument-nyx', 'page-head-bg', 4.5, 'NYX title'],
+  ['instrument-astrid', 'surface-page', 3, 'ASTRID marks on the page'],
   ['instrument-calliope', 'page-head-bg', 4.5, 'CALLIOPE title'],
   ['instrument-calliope', 'surface-page', 3, 'CALLIOPE active pad edge, tab and chip dot'],
   ['strip-hacks-text', 'module-bg-stack-1', 3, 'Hacks label (3:1 by request, as in light)'],
