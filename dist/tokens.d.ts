@@ -17,7 +17,7 @@ export declare const base: {
     readonly "olive-green": "#9CA536";
     readonly "hacks-grey": "#8C8C8C";
     readonly "lucy-purple": "#9B30FF";
-    readonly "calliope-pink": "#FF2E97";
+    readonly "calliope-pink": "#FD7CBD";
     readonly "nyx-amber": "#FEAA02";
     readonly "paper-bright": "#FCFCFC";
     readonly "accent-pad": "#1A6193";
@@ -442,7 +442,7 @@ export declare const semantic: {
   readonly "instrument-olive": "#9CA536";
   readonly "instrument-lucy": "#9B30FF";
   readonly "instrument-nyx": "#FEAA02";
-  readonly "instrument-calliope": "#FF2E97";
+  readonly "instrument-calliope": "#FD7CBD";
   readonly "page-title-size": "15px";
   readonly "page-title-tracking": ".28em";
   readonly "page-sub-size": "14px";
@@ -1139,7 +1139,7 @@ export declare const themes: {
       readonly "olive-green": "#9CA536";
       readonly "hacks-grey": "#8C8C8C";
       readonly "lucy-purple": "#9B30FF";
-      readonly "calliope-pink": "#FF2E97";
+      readonly "calliope-pink": "#FD7CBD";
       readonly "nyx-amber": "#FEAA02";
       readonly "paper-bright": "#FCFCFC";
       readonly "accent-pad": "#1A6193";
@@ -1405,7 +1405,7 @@ export declare const themes: {
       readonly "instrument-olive": "#9CA536";
       readonly "instrument-lucy": "#9B30FF";
       readonly "instrument-nyx": "#FEAA02";
-      readonly "instrument-calliope": "#FF2E97";
+      readonly "instrument-calliope": "#FD7CBD";
       readonly "page-title-size": "15px";
       readonly "page-title-tracking": ".28em";
       readonly "page-sub-size": "14px";
@@ -1505,7 +1505,7 @@ export declare const themes: {
       readonly "olive-green": "#9CA536";
       readonly "hacks-grey": "#8C8C8C";
       readonly "lucy-purple": "#B566FF";
-      readonly "calliope-pink": "#FF2E97";
+      readonly "calliope-pink": "#FD7CBD";
       readonly "nyx-amber": "#FEAA02";
       readonly "paper-bright": "#1A1918";
       readonly "accent-pad": "#4B91C3";
@@ -1771,7 +1771,7 @@ export declare const themes: {
       readonly "instrument-olive": "#9CA536";
       readonly "instrument-lucy": "#B566FF";
       readonly "instrument-nyx": "#FEAA02";
-      readonly "instrument-calliope": "#FF2E97";
+      readonly "instrument-calliope": "#FD7CBD";
       readonly "page-title-size": "15px";
       readonly "page-title-tracking": ".28em";
       readonly "page-sub-size": "14px";
