@@ -1813,6 +1813,9 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   min-width: 0;
 }
 .nc-ui-fx-hd > .nc-ui-fx-name { margin: 0 auto 0 0; }
+/* A filter curve above the row it draws (Peter, 2026-11-07: "In Sampler, the filter slider belongs UNDER the
+   graphic"): its 20 Hz and 20 kHz sit on the canvas's bottom edge, so the next row keeps a gap's distance. */
+.nc-ui-fx > .nc-field:has(> .nc-canvas[data-nc-paint="filter"]) + .nc-field { margin-top: var(--nc-ui-module-gap); }
 /* Fold (onFold): a −/+ after the switch. Folded, the card keeps its header row only; in a console row from 769 px it
    is a narrow column instead (below). It folds and unfolds at once: no motion. */
 .nc-ui-fx-hd > [data-nc-fx-hide] { flex: none; }
