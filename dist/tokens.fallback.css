@@ -20,6 +20,7 @@
   --nc-ui-color-hacks-grey: #8C8C8C;
   --nc-ui-color-lucy-purple: #9B30FF;
   --nc-ui-color-calliope-pink: #FC409F;
+  --nc-ui-color-aria-magma: #FF2A3D;
   --nc-ui-color-nyx-amber: #BF8001;
   --nc-ui-color-paper-bright: #FCFCFC;
   --nc-ui-color-accent-pad: #1A6193;
@@ -435,6 +436,7 @@
   --nc-ui-instrument-lucy: var(--nc-ui-color-lucy-purple);
   --nc-ui-instrument-nyx: var(--nc-ui-color-nyx-amber);
   --nc-ui-instrument-calliope: var(--nc-ui-color-calliope-pink);
+  --nc-ui-instrument-aria: var(--nc-ui-color-aria-magma);
   --nc-ui-page-title-size: var(--nc-ui-font-size-xl);
   --nc-ui-page-title-tracking: var(--nc-ui-tracking-8);
   --nc-ui-page-sub-size: var(--nc-ui-font-size-lg);

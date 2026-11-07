@@ -94,6 +94,8 @@ const PAIRS = [
   ['instrument-astrid', 'surface-page', 3, 'ASTRID marks on the page'],
   ['instrument-calliope', 'page-head-bg', 4.5, 'CALLIOPE title'],
   ['instrument-calliope', 'surface-page', 3, 'CALLIOPE active pad edge, tab and chip dot'],
+  ['instrument-aria', 'page-head-bg', 4.5, 'ARIA title'],
+  ['instrument-aria', 'surface-page', 3, 'ARIA live marks, tab and chip dot'],
   ['strip-hacks-text', 'module-bg-stack-1', 3, 'Hacks label (3:1 by request, as in light)'],
   ['fader-cap', 'strip-bg', 3, 'fader cap'],
   ['fader-cap-master', 'strip-bg', 3, 'master fader cap'],

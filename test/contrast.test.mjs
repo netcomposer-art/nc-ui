@@ -95,11 +95,22 @@ test("CALLIOPE's pink (Peter, 2026-11-06): its pad edges and dots clear 3:1 on t
   assert.ok(contrastRatio(d['instrument-calliope'], d['page-head-bg']) >= 4.5);
 });
 
+test("ARIA's Magma (Peter, 2026-11-06: \"do Magma\"): one value, 3:1 on the lightest light module and 4.5:1 on the dark title band", async () => {
+  const { semantic, themes } = await import('../dist/tokens.js');
+  const d = themes.dark.semantic;
+  assert.equal(semantic['instrument-aria'], '#FF2A3D');
+  assert.equal(d['instrument-aria'], '#FF2A3D');
+  assert.ok(contrastRatio(semantic['instrument-aria'], '#F3F3F3') >= 3, `light ${contrastRatio(semantic['instrument-aria'], '#F3F3F3')}`);
+  assert.ok(contrastRatio(semantic['instrument-aria'], semantic['surface-page']) >= 3);
+  assert.ok(contrastRatio(d['instrument-aria'], d['page-head-bg']) >= 4.5, `dark ${contrastRatio(d['instrument-aria'], d['page-head-bg'])}`);
+  assert.ok(contrastRatio(d['instrument-aria'], d['surface-page']) >= 4.5);
+});
+
 test("accents (Peter, 2026-11-06): each light value clears 3:1 on the lightest light module, each dark value 4.5:1 on the dark title band", async () => {
   const { semantic, themes } = await import('../dist/tokens.js');
   const d = themes.dark.semantic;
   assert.equal(semantic['module-bg-adjacent-1'], '#F3F3F3');
-  for (const n of ['astrid', 'petra', 'olive', 'lucy', 'nyx']) {
+  for (const n of ['astrid', 'petra', 'olive', 'lucy', 'nyx', 'aria']) {
     const t = `instrument-${n}`;
     assert.ok(contrastRatio(semantic[t], semantic['module-bg-adjacent-1']) >= 3, `${n} light ${contrastRatio(semantic[t], '#F3F3F3')}`);
     assert.ok(contrastRatio(d[t], d['page-head-bg']) >= 4.5, `${n} dark`);
