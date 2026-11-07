@@ -229,6 +229,13 @@ export interface StepCell {
   accent: boolean;
   dim?: boolean;
   velocity?: number;
+  /**
+   * A short tag (one or two characters) in the step's lower corner, on the grid and the phone pads: NYX marks a step
+   * that plays in one bar only of a longer pattern with that bar's number ("2"). `markLabel` is what a screen reader
+   * says after the step ("bar 2 of 2").
+   */
+  mark?: string;
+  markLabel?: string;
 }
 export interface StepRow {
   id: string;

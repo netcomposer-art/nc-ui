@@ -510,6 +510,8 @@ export declare const component: {
     readonly "velocity-max": "#003153";
     readonly "accent-mark": "#F5F5F5";
     readonly "accent-mark-size": "3px";
+    readonly "step-mark-size": "9px";
+    readonly "step-mark-inset": "2px";
     readonly "bar-accent": "#242424";
     readonly "lane-1": "#242424";
     readonly "lane-2": "#003153";
@@ -571,6 +573,8 @@ export declare const componentVars: {
     readonly "velocity-max": "var(--nc-rhythm-velocity-max)";
     readonly "accent-mark": "var(--nc-rhythm-accent-mark)";
     readonly "accent-mark-size": "var(--nc-rhythm-accent-mark-size)";
+    readonly "step-mark-size": "var(--nc-rhythm-step-mark-size)";
+    readonly "step-mark-inset": "var(--nc-rhythm-step-mark-inset)";
     readonly "bar-accent": "var(--nc-rhythm-bar-accent)";
     readonly "lane-1": "var(--nc-rhythm-lane-1)";
     readonly "lane-2": "var(--nc-rhythm-lane-2)";
@@ -632,6 +636,8 @@ export declare const componentRefs: {
     readonly "velocity-max": "color.accent";
     readonly "accent-mark": "semantic.on-accent";
     readonly "accent-mark-size": "space.3";
+    readonly "step-mark-size": "semantic.slot-font-size";
+    readonly "step-mark-inset": "space.2";
     readonly "bar-accent": "semantic.text";
     readonly "lane-1": "color.ink";
     readonly "lane-2": "color.accent";
@@ -1492,6 +1498,8 @@ export declare const themes: {
         readonly "velocity-max": "#003153";
         readonly "accent-mark": "#F5F5F5";
         readonly "accent-mark-size": "3px";
+        readonly "step-mark-size": "9px";
+        readonly "step-mark-inset": "2px";
         readonly "bar-accent": "#242424";
         readonly "lane-1": "#242424";
         readonly "lane-2": "#003153";
@@ -1865,6 +1873,8 @@ export declare const themes: {
         readonly "velocity-max": "#77B5E2";
         readonly "accent-mark": "#1E1D1C";
         readonly "accent-mark-size": "3px";
+        readonly "step-mark-size": "9px";
+        readonly "step-mark-inset": "2px";
         readonly "bar-accent": "#E8E7E6";
         readonly "lane-1": "#E8E7E6";
         readonly "lane-2": "#77B5E2";
