@@ -902,6 +902,25 @@ ${MODULATED_SELECTOR} { transition: none; }
   outline-offset: ${v("playhead-offset")};
 }
 .nc-step[data-bar="true"] { border-bottom-color: ${v("rhythm.bar-accent")}; }
+/* A step's mark (StepCell.mark, data-nc-mark): a short tag in the lower right corner, e.g. NYX's bar number on a step
+   that plays in one bar only. In the step's own ink: text-sub on an empty step, the accent mark's paper on a filled
+   one (tested on every fill of the velocity ramp); above the accent bar when the step is accented. */
+:is(.nc-step, .nc-pad)[data-nc-mark]::after {
+  content: attr(data-nc-mark);
+  position: absolute;
+  right: ${v("rhythm.step-mark-inset")};
+  bottom: ${v("rhythm.step-mark-inset")};
+  font-family: ${v("font-readout")};
+  font-size: ${v("rhythm.step-mark-size")};
+  font-weight: ${v("control-weight")};
+  line-height: 1;
+  color: ${v("text-sub")};
+  pointer-events: none;
+}
+:is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-mark]::after { color: ${v("rhythm.accent-mark")}; }
+:is(.nc-step, .nc-pad)[aria-pressed="true"][data-accent="true"][data-nc-mark]::after {
+  bottom: calc(${v("rhythm.step-mark-inset")} + ${v("rhythm.accent-mark-size")});
+}
 /* Chance below 100%: a dashed outline at the same width (style only, no opacity, since shade means velocity). The fill
    stops at the padding box, so the dashes are the step's own colour with the row showing between them. */
 .nc-step[data-dim="true"] { border-style: dashed; background-clip: padding-box; }

@@ -492,6 +492,8 @@
   --nc-rhythm-velocity-max: var(--nc-ui-color-accent);
   --nc-rhythm-accent-mark: var(--nc-ui-on-accent);
   --nc-rhythm-accent-mark-size: var(--nc-ui-space-3);
+  --nc-rhythm-step-mark-size: var(--nc-ui-slot-font-size);
+  --nc-rhythm-step-mark-inset: var(--nc-ui-space-2);
   --nc-rhythm-bar-accent: var(--nc-ui-text);
   --nc-rhythm-lane-1: var(--nc-ui-color-ink);
   --nc-rhythm-lane-2: var(--nc-ui-color-accent);

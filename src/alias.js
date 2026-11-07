@@ -260,6 +260,8 @@ const rhythmKinds = {
   "velocity-max": "color",
   "accent-mark": "color",
   "accent-mark-size": "length",
+  "step-mark-size": "length",
+  "step-mark-inset": "length",
   "bar-accent": "color",
   "lane-1": "color",
   "lane-2": "color",
