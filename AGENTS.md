@@ -27,7 +27,7 @@ CI runs `npm ci`, `npm run lint`, `npm test`, then `git diff --exit-code` (gener
   a token in `tokens/tokens.json` and use it through `v("name")` / `var(--nc-ui-name)`.
 - **Colour rule (Peter):** accent colours come only from the instrument title colours, light / dark
   (Peter, 2026-11-06): ASTRID #EB512E / #EB512E, PETRA #0A94D6 / #5AC4F7, OLIVE #8A9230 / #9CA536,
-  LUCY #9B30FF / #B566FF, NYX #BF8001 / #FEAA02, CALLIOPE #FC409F / #FD7CBD, ARIA (Situation) #FF2A3D / #FF2A3D (Peter, 2026-11-06: "do Magma"). Any other accent: stop and ask Peter. No green.
+  LUCY #9B30FF / #B566FF, NYX #BF8001 / #FEAA02, CALLIOPE #FC409F / #FD7CBD, ARIA (Situation) #FF2A3D / #FF2A3D (Peter, 2026-11-06: "do Magma"), Looper #3F4448 / #A9AFB4 (Peter, 2026-11-10: dark gray). Any other accent: stop and ask Peter. No green.
 - **Every colour has a dark value**, and contrast pairs are tested (`test/contrast.test.mjs`, `test/dark.test.mjs`).
 - **Never edit generated files** (`dist/`, `src/tokens.ts`): edit the source and run `npm run build`.
 - **Peter's UI rules:** ultra-minimal; hide rather than delete; no slider animation; rows stay on one line down to
