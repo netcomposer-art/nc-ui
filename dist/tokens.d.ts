@@ -19,6 +19,7 @@ export declare const base: {
     readonly "lucy-purple": "#9B30FF";
     readonly "calliope-pink": "#FC409F";
     readonly "aria-magma": "#FF2A3D";
+    readonly "looper-gray": "#3F4448";
     readonly "nyx-amber": "#BF8001";
     readonly "paper-bright": "#FCFCFC";
     readonly "accent-pad": "#1A6193";
@@ -449,6 +450,7 @@ export declare const semantic: {
   readonly "instrument-lucy": "#9B30FF";
   readonly "instrument-nyx": "#BF8001";
   readonly "instrument-calliope": "#FC409F";
+  readonly "instrument-looper": "#3F4448";
   readonly "instrument-aria": "#FF2A3D";
   readonly "page-title-size": "15px";
   readonly "page-title-tracking": ".28em";
@@ -890,6 +892,7 @@ export declare const vars: {
   readonly "instrument-lucy": "var(--nc-ui-instrument-lucy)";
   readonly "instrument-nyx": "var(--nc-ui-instrument-nyx)";
   readonly "instrument-calliope": "var(--nc-ui-instrument-calliope)";
+  readonly "instrument-looper": "var(--nc-ui-instrument-looper)";
   readonly "instrument-aria": "var(--nc-ui-instrument-aria)";
   readonly "page-title-size": "var(--nc-ui-page-title-size)";
   readonly "page-title-tracking": "var(--nc-ui-page-title-tracking)";
@@ -1122,6 +1125,7 @@ export declare const refs: {
   readonly "instrument-lucy": "color.lucy-purple";
   readonly "instrument-nyx": "color.nyx-amber";
   readonly "instrument-calliope": "color.calliope-pink";
+  readonly "instrument-looper": "color.looper-gray";
   readonly "instrument-aria": "color.aria-magma";
   readonly "page-title-size": "font-size.xl";
   readonly "page-title-tracking": "tracking.8";
@@ -1166,6 +1170,7 @@ export declare const themes: {
       readonly "lucy-purple": "#9B30FF";
       readonly "calliope-pink": "#FC409F";
       readonly "aria-magma": "#FF2A3D";
+      readonly "looper-gray": "#3F4448";
       readonly "nyx-amber": "#BF8001";
       readonly "paper-bright": "#FCFCFC";
       readonly "accent-pad": "#1A6193";
@@ -1437,6 +1442,7 @@ export declare const themes: {
       readonly "instrument-lucy": "#9B30FF";
       readonly "instrument-nyx": "#BF8001";
       readonly "instrument-calliope": "#FC409F";
+      readonly "instrument-looper": "#3F4448";
       readonly "instrument-aria": "#FF2A3D";
       readonly "page-title-size": "15px";
       readonly "page-title-tracking": ".28em";
@@ -1541,6 +1547,7 @@ export declare const themes: {
       readonly "lucy-purple": "#B566FF";
       readonly "calliope-pink": "#FD7CBD";
       readonly "aria-magma": "#FF2A3D";
+      readonly "looper-gray": "#A9AFB4";
       readonly "nyx-amber": "#FEAA02";
       readonly "paper-bright": "#1A1918";
       readonly "accent-pad": "#4B91C3";
@@ -1812,6 +1819,7 @@ export declare const themes: {
       readonly "instrument-lucy": "#B566FF";
       readonly "instrument-nyx": "#FEAA02";
       readonly "instrument-calliope": "#FD7CBD";
+      readonly "instrument-looper": "#A9AFB4";
       readonly "instrument-aria": "#FF2A3D";
       readonly "page-title-size": "15px";
       readonly "page-title-tracking": ".28em";
