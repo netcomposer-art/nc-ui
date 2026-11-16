@@ -2573,6 +2573,27 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
     height: auto;
   }
 }
+/* A pad's menu (padGrid; Peter, 2026-11-16: "too much space between items. It needs to be condensed"): rows at the
+   strip menu's density on a mouse, no gaps; the full touch target on a coarse pointer. pads.js placePadMenu keeps it
+   on screen (up from the pad near the bottom); too tall for either side, it scrolls. */
+.nc-padgrid-pad-menu.nc-slot-menu {
+  gap: 0;
+  padding: var(--nc-ui-control-gap) 0;
+  border-radius: var(--nc-ui-slot-radius);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.nc-padgrid-pad-menu > .nc-menu-btn {
+  min-height: 0;
+  padding: var(--nc-ui-control-gap) calc(var(--nc-ui-control-gap) * 3);
+  white-space: nowrap;
+  line-height: 1.25;
+}
+.nc-padgrid-pad-menu > .nc-menu-btn:hover { background: var(--nc-ui-surface-raised); }
+.nc-padgrid-pad-menu > .nc-menu-btn:focus-visible { outline-offset: calc(var(--nc-ui-focus-width) * -1); }
+@media (pointer: coarse) {
+  .nc-padgrid-pad-menu > .nc-menu-btn { min-height: var(--nc-ui-target-min); padding-block: 0; }
+}
 .nc-slot-scrim {
   position: fixed;
   inset: 0;

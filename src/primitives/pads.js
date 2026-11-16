@@ -217,10 +217,57 @@ function openMenu(wrap, pad, index, lookup) {
   wrap.append(scrim, menu);
   const box = wrap.getBoundingClientRect();
   const at = pad.getBoundingClientRect();
-  menu.style.left = `${at.left - box.left}px`;
-  menu.style.top = `${at.bottom - box.top}px`;
-  menu.querySelector("button")?.focus();
+  const place = placePadMenu(at, { w: menu.offsetWidth, h: menu.offsetHeight }, visibleBand(wrap.ownerDocument));
+  menu.style.left = `${place.left - box.left}px`;
+  menu.style.top = `${place.top - box.top}px`;
+  if (place.maxHeight !== null) menu.style.maxHeight = `${place.maxHeight}px`;
+  menu.dataset.ncUp = String(place.up);
+  // The menu is placed on screen already: focusing it never scrolls the page (or the Studio around a frame).
+  menu.querySelector("button")?.focus({ preventScroll: true });
   return true;
+}
+
+/**
+ * The part of the page you can see, in client coordinates: the window, or inside the Studio (a frame as tall as its
+ * page) the band the Studio writes as --nc-host-top / --nc-host-height.
+ */
+export function visibleBand(doc = globalThis.document) {
+  const win = doc?.defaultView;
+  const root = doc?.documentElement;
+  const width = root?.clientWidth || win?.innerWidth || 0;
+  const height = win?.innerHeight || root?.clientHeight || 0;
+  const css = win?.getComputedStyle?.(root);
+  const top = parseFloat(css?.getPropertyValue("--nc-host-top") ?? "");
+  const tall = parseFloat(css?.getPropertyValue("--nc-host-height") ?? "");
+  if (Number.isFinite(top) && Number.isFinite(tall) && tall > 0) return { top, bottom: top + tall, left: 0, right: width };
+  return { top: 0, bottom: height, left: 0, right: width };
+}
+
+/**
+ * Where a pad's menu (`size` w × h) goes for a pad at `pad`, inside `band` (Peter, 2026-11-16: "if the pad is close to
+ * the bottom of the screen it displays up from the pad"): under the pad when it fits, else up from it; with room on
+ * neither side, the roomier side with a height cap (it scrolls). Never past the right or left edge.
+ */
+export function placePadMenu(pad, size, band, gap = 2, margin = 4) {
+  const top = band.top + margin;
+  const bottom = band.bottom - margin;
+  const below = bottom - (pad.bottom + gap);
+  const above = pad.top - gap - top;
+  let up = false;
+  let y = pad.bottom + gap;
+  let maxHeight = null;
+  if (size.h > below) {
+    if (size.h <= above) {
+      up = true;
+      y = pad.top - gap - size.h;
+    } else if (above > below) {
+      up = true;
+      maxHeight = Math.max(0, above);
+      y = pad.top - gap - maxHeight;
+    } else maxHeight = Math.max(0, below);
+  }
+  const x = Math.max(band.left + margin, Math.min(pad.left, band.right - margin - size.w));
+  return { left: Math.round(x), top: Math.round(y), up, maxHeight };
 }
 
 /**
