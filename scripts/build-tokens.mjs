@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadSkins, skinColors, withColors, skinSelectors } from './skins.mjs';
+import { loadSkins, skinColors, withColors, skinSelectors, velocityRemap } from './skins.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const arg = (name) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
@@ -231,6 +231,20 @@ export function renderSkinCss(c) {
       `${DARK_MEDIA} {`, `  ${sel.system} {`, body(d, '    '), '  }', '}',
       `${sel.dark} {`, body(d, '  '), '}', '');
   }
+  // The step and pad velocity fills: every kit version writes the default ramp's hex on the cell (data-nc-velocity),
+  // so each skin re-maps it here, in the live sheet, and no app has to be rebuilt. :where() keeps this under the
+  // kit's state rules (a silent row's grey fill wins). A browser without relative colours shows the default fill.
+  const rampOf = (k) => { const r = [...k.component.values()].filter((t) => t.domain === 'rhythm'); const g = (n) => r.find((t) => t.name === n).value; return { min: g('velocity-min'), max: g('velocity-max') }; };
+  const cell = ':is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity]';
+  lines.push('/* Skins: the step and pad velocity fills on each skin\'s ramp (re-mapped from the default ramp the kit writes). */');
+  for (const { skin, light, dark } of skins) {
+    const sel = skinSelectors(skin.id);
+    const l = velocityRemap(rampOf(c), rampOf(light));
+    const d = velocityRemap(rampOf(c.dark ?? c), rampOf(dark));
+    const rule = (s2, v, ind) => `${ind}:where(${s2}) ${cell} { background: ${v}; border-color: ${v}; }`;
+    lines.push(rule(sel.light, l, ''), `${DARK_MEDIA} {`, rule(sel.system, d, '  '), '}', rule(sel.dark, d, ''));
+  }
+  lines.push('');
   return lines.join('\n');
 }
 

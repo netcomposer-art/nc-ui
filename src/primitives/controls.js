@@ -1,7 +1,7 @@
 import { TAPER_STEPS, isTapered, taperFromUnit, taperKeyValue, taperPosition, taperToUnit, taperValue } from "./taper.js";
 import { readCssPx } from "../alias.js";
-import { surpriseColor, surpriseFillStyle, velocityFillStyle, velocityRamp } from "../color.js";
-import { currentSkin, currentTheme, onThemeChange } from "../theme.js";
+import { VELOCITY_RAMPS, surpriseColor, surpriseFillStyle, velocityFillStyle } from "../color.js";
+import { currentTheme, onThemeChange } from "../theme.js";
 import { paintCanvas } from "./canvas.js";
 import { overPanelBox, paintEqGraph, patchEqGraph, renderEqGraph } from "./eq-graph.js";
 import { patchLevelSteps, renderLevelSteps } from "./level-steps.js";
@@ -1398,19 +1398,17 @@ function lengthHandle(wrap, steps, row, lookup) {
   return handle;
 }
 
-// The velocity (and theme and skin) each step or pad last painted, so velocityFill runs and the style is written only
-// when it changes (patchSteps runs on every playhead step). The fill is a hex per theme and skin (velocityRamp): a
-// document's cells carry data-nc-velocity, and the first painted cell starts one watch that repaints them all when
-// the theme or the skin changes.
+// The velocity (and theme) each step or pad last painted, so velocityFill runs and the style is written only when it
+// changes (patchSteps runs on every playhead step). The fill is a hex per theme (VELOCITY_RAMPS): a document's cells
+// carry data-nc-velocity, and the first painted cell starts one theme watch that repaints them all on a change.
 const paintedVelocity = new WeakMap();
 const docTheme = new WeakMap();
-const lookOf = (doc) => ({ theme: currentTheme(doc), skin: currentSkin(doc) });
 function themeOf(doc) {
-  if (!doc) return { theme: "light", skin: undefined };
+  if (!doc) return "light";
   if (!docTheme.has(doc)) {
-    docTheme.set(doc, lookOf(doc));
-    onThemeChange(() => {
-      docTheme.set(doc, lookOf(doc));
+    docTheme.set(doc, currentTheme(doc));
+    onThemeChange((theme) => {
+      docTheme.set(doc, theme);
       for (const el of doc.querySelectorAll("[data-nc-velocity]"))
         paintVelocity(el, Number(el.getAttribute("data-nc-velocity")));
     }, doc);
@@ -1420,8 +1418,8 @@ function themeOf(doc) {
 /** Fill a cell at its velocity (runtime velocity-fill); a cell with no velocity keeps the plain on fill. */
 function paintVelocity(el, velocity) {
   const next = typeof velocity === "number" && Number.isFinite(velocity) ? velocity : null;
-  const look = next === null ? null : themeOf(el.ownerDocument);
-  const key = next === null ? null : `${look.theme} ${look.skin} ${next}`;
+  const theme = next === null ? null : themeOf(el.ownerDocument);
+  const key = next === null ? null : `${theme} ${next}`;
   if (paintedVelocity.has(el) && paintedVelocity.get(el) === key) return;
   paintedVelocity.set(el, key);
   if (next === null) {
@@ -1430,7 +1428,7 @@ function paintVelocity(el, velocity) {
     return;
   }
   el.setAttribute("data-nc-velocity", String(next));
-  for (const [name, value] of Object.entries(velocityFillStyle(next, velocityRamp(look.theme, look.skin))))
+  for (const [name, value] of Object.entries(velocityFillStyle(next, VELOCITY_RAMPS[theme] ?? VELOCITY_RAMPS.light)))
     el.style.setProperty(name, value);
 }
 
