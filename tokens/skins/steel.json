@@ -1,0 +1,8 @@
+{
+  "id": "steel",
+  "name": "Steel",
+  "about": "Cool charcoal with a steel-blue accent.",
+  "approved": "Peter, 2026-11-19",
+  "light": { "tint": { "hue": 250, "chroma": 0.010 }, "accent": "#2F5878" },
+  "dark": { "tint": { "hue": 250, "chroma": 0.016 }, "accent": "#8FB4D6" }
+}

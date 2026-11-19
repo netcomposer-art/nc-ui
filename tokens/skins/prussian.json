@@ -1,0 +1,7 @@
+{
+  "$description": "The default skin: true greys and Prussian blue. It changes nothing; it is listed so pickers can show it.",
+  "id": "prussian",
+  "name": "Prussian",
+  "about": "True greys and Prussian blue.",
+  "default": true
+}

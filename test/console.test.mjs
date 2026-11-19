@@ -179,8 +179,11 @@ test("console CSS: tokens only; strips scroll on phones with the master pinned; 
   assert.match(rule(".nc-meter-rms") + rule(".nc-meter-peak"), /meter-fill|meter-peak/);
   assert.match(css, /@media \(max-width: 1023px\) \{\s*\.nc-module-body\[data-nc-layout="console"\] \{[^}]*"strips meters master" "fx fx fx"/);
   assert.match(css, /\[data-nc-area="strips"\] \{[^}]*overflow-x: auto/);
-  // Identity colours belong to each instrument's own title only (Peter): never on a strip.
-  assert.doesNotMatch(css, /nc-strip[^{]*identity|instrument-(astrid|petra|olive)\)[^;]*;[^}]*\}[^{]*nc-strip/);
+  // Identity colours belong to each instrument's own title only (Peter): never on a strip, except as the soft wash of
+  // filled panels, an option the player turns on (Peter, 2026-11-19), and only under :root[data-nc-fill].
+  const unfilled = css.replace(/^:root\[data-nc-fill\][^{]*\{[^}]*\}\n/gm, "").replace(/^@media \(prefers-color-scheme: dark\) \{\n  :root\[data-nc-fill\][^{]*\{[^}]*\}\n\}\n/gm, "");
+  assert.doesNotMatch(unfilled, /nc-strip[^{]*identity|instrument-(astrid|petra|olive)\)[^;]*;[^}]*\}[^{]*nc-strip/);
+  for (const m of css.matchAll(/^[^{}\n]*\{[^}]*--nc-strip-identity[^}]*\}/gm)) assert.match(m[0], /^(@media[^{]*\{\s*)?\s*:root\[data-nc-fill\]/, m[0]);
   // The host may colour a channel's cap (the Studio: each instrument's colour, muted); unset it stays ink.
   assert.match(css, /\.nc-strip \.nc-fader-cap \{ background: var\(--nc-strip-cap, var\(--nc-ui-fader-cap/);
   assert.match(css, /@media \(max-width: 768px\) \{[^@]*\.nc-strip\[data-nc-master\] \{ width: var\(--nc-ui-strip-width\); \}/);
