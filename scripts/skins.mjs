@@ -31,6 +31,33 @@ export function hexToOklch(hex) {
   return { L, C: Math.hypot(A, B), H: ((Math.atan2(B, A) * 180) / Math.PI + 360) % 360 };
 }
 
+/** #rrggbb to OKLab [L, a, b]. */
+export function hexToOklab(hex) {
+  const { L, C, H } = hexToOklch(hex);
+  const h = (H * Math.PI) / 180;
+  return [L, C * Math.cos(h), C * Math.sin(h)];
+}
+
+/**
+ * The velocity fill in a skin, from the default fill the kit writes (any kit version: a hex on the default ramp per
+ * theme, --nc-ui-velocity-fill). A fill on that ramp is min + t (max - min) in OKLab, so t follows from its lightness
+ * and the skin's fill is the same t on the skin's ramp: each channel is A + B * l. Returns the CSS colour, a relative
+ * oklab() over the cell's own fill.
+ */
+export function velocityRemap(from, to) {
+  const [m0, M0] = [hexToOklab(from.min), hexToOklab(from.max)];
+  const [m1, M1] = [hexToOklab(to.min), hexToOklab(to.max)];
+  const span = M0[0] - m0[0];
+  if (Math.abs(span) < 1e-6) throw new Error('skins: the default velocity ramp has no lightness span');
+  const n = (x) => +x.toFixed(5);
+  const ch = (k) => {
+    const B = (M1[k] - m1[k]) / span;
+    const A = m1[k] - B * m0[0];
+    return `calc(${n(A)} + ${n(B)} * l)`;
+  };
+  return `oklab(from var(--nc-ui-velocity-fill) ${ch(0)} ${ch(1)} ${ch(2)})`;
+}
+
 /** OKLCH { L, C, H } to #RRGGBB (clipped to sRGB). */
 export function oklchToHex({ L, C, H }) {
   const h = (H * Math.PI) / 180;

@@ -28,7 +28,7 @@ test('a skin never touches an instrument colour', async () => {
     for (const n of fixed) assert.ok(!(n in (skinThemes[s.id][m].color ?? {})), `${s.id} ${m} moves ${n}`);
   }
   // The CSS blocks name base colours only, never an instrument's.
-  const blocks = css.slice(css.indexOf('/* Skins (tokens/skins'));
+  const blocks = css.slice(css.indexOf('/* Skins (tokens/skins'), css.indexOf('/* Skins: the step and pad velocity fills'));
   const props = [...blocks.matchAll(/^\s+(--[\w-]+):/gm)].map((m) => m[1]);
   assert.ok(props.length > 100);
   for (const p of props) {
@@ -59,6 +59,23 @@ test('the velocity ramp follows the skin, and its mark stays readable on every f
       assert.ok(!isGreenHex(f.fill), `${s.id} ${m} ${f.fill} green`);
       // The mark keeps AA on every fill, as on the default ramp.
       assert.ok(contrastRatio(f.ink, f.fill) >= 4.5, `${s.id} ${m} v${v.toFixed(2)} ${f.ink} on ${f.fill}`);
+    }
+  }
+});
+
+test('the velocity fill re-map lands each default fill on the skin ramp (any kit writes the default hex)', async () => {
+  const { velocityFill, velocityRamp } = await import('../src/color.js');
+  const { hexToOklab } = await import('../scripts/skins.mjs');
+  for (const s of own) for (const m of ['light', 'dark']) {
+    const sel = m === 'light' ? `:root[data-nc-skin="${s.id}"]:not([data-nc-theme="dark"])` : `:root[data-nc-skin="${s.id}"][data-nc-theme="dark"]`;
+    const rule = css.split('\n').find((line) => line.startsWith(`:where(${sel}) `));
+    assert.ok(rule, `${s.id} ${m} rule`);
+    const calcs = [...rule.matchAll(/calc\(([-\d.e]+) \+ ([-\d.e]+) \* l\)/g)].slice(0, 3).map((x) => [Number(x[1]), Number(x[2])]);
+    for (const v of [0.05, 0.3, 0.6, 1]) {
+      const from = velocityFill(v, velocityRamp(m)).fill;
+      const want = hexToOklab(velocityFill(v, velocityRamp(m, s.id)).fill);
+      const l = hexToOklab(from)[0];
+      calcs.forEach(([A, B], k) => assert.ok(Math.abs(A + B * l - want[k]) < 0.01, `${s.id} ${m} v${v} ch${k}`));
     }
   }
 });

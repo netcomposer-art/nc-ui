@@ -1185,4 +1185,26 @@
   --nc-ui-color-map-off: #657173;
 }
 
+/* Skins: the step and pad velocity fills on each skin's ramp (re-mapped from the default ramp the kit writes). */
+:where(:root[data-nc-skin="graphite"]:not([data-nc-theme="dark"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(-0.00325 + 1.00306 * l) calc(0 + 0 * l) calc(0 + 0 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(-0.00325 + 1.00306 * l) calc(0 + 0 * l) calc(0 + 0 * l)); }
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-nc-skin="graphite"]:not([data-nc-theme="light"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(-0.72761 + 2.156 * l) calc(0 + 0 * l) calc(0 + 0 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(-0.72761 + 2.156 * l) calc(0 + 0 * l) calc(0 + 0 * l)); }
+}
+:where(:root[data-nc-skin="graphite"][data-nc-theme="dark"]) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(-0.72761 + 2.156 * l) calc(0 + 0 * l) calc(0 + 0 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(-0.72761 + 2.156 * l) calc(0 + 0 * l) calc(0 + 0 * l)); }
+:where(:root[data-nc-skin="oxide"]:not([data-nc-theme="dark"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.15939 + 0.70451 * l) calc(0.04802 + -0.0005 * l) calc(0.04913 + -0.00139 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.15939 + 0.70451 * l) calc(0.04802 + -0.0005 * l) calc(0.04913 + -0.00139 * l)); }
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-nc-skin="oxide"]:not([data-nc-theme="light"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.14678 + 0.76695 * l) calc(0.00275 + 0.05272 * l) calc(0.0175 + 0.05457 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.14678 + 0.76695 * l) calc(0.00275 + 0.05272 * l) calc(0.0175 + 0.05457 * l)); }
+}
+:where(:root[data-nc-skin="oxide"][data-nc-theme="dark"]) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.14678 + 0.76695 * l) calc(0.00275 + 0.05272 * l) calc(0.0175 + 0.05457 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.14678 + 0.76695 * l) calc(0.00275 + 0.05272 * l) calc(0.0175 + 0.05457 * l)); }
+:where(:root[data-nc-skin="steel"]:not([data-nc-theme="dark"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.32456 + 0.39736 * l) calc(-0.03137 + 0.00149 * l) calc(-0.06403 + 0.00325 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.32456 + 0.39736 * l) calc(-0.03137 + 0.00149 * l) calc(-0.06403 + 0.00325 * l)); }
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-nc-skin="steel"]:not([data-nc-theme="light"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(-0.04085 + 1.06359 * l) calc(-0.0043 + -0.0281 * l) calc(-0.01819 + -0.05347 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(-0.04085 + 1.06359 * l) calc(-0.0043 + -0.0281 * l) calc(-0.01819 + -0.05347 * l)); }
+}
+:where(:root[data-nc-skin="steel"][data-nc-theme="dark"]) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(-0.04085 + 1.06359 * l) calc(-0.0043 + -0.0281 * l) calc(-0.01819 + -0.05347 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(-0.04085 + 1.06359 * l) calc(-0.0043 + -0.0281 * l) calc(-0.01819 + -0.05347 * l)); }
+:where(:root[data-nc-skin="verdigris"]:not([data-nc-theme="dark"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.18471 + 0.65589 * l) calc(-0.05436 + 0.00412 * l) calc(-0.03119 + -0.00213 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.18471 + 0.65589 * l) calc(-0.05436 + 0.00412 * l) calc(-0.03119 + -0.00213 * l)); }
+@media (prefers-color-scheme: dark) {
+  :where(:root[data-nc-skin="verdigris"]:not([data-nc-theme="light"])) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.19832 + 0.68601 * l) calc(-0.02139 + -0.06501 * l) calc(-0.01173 + -0.03863 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.19832 + 0.68601 * l) calc(-0.02139 + -0.06501 * l) calc(-0.01173 + -0.03863 * l)); }
+}
+:where(:root[data-nc-skin="verdigris"][data-nc-theme="dark"]) :is(.nc-step, .nc-pad)[aria-pressed="true"][data-nc-velocity] { background: oklab(from var(--nc-ui-velocity-fill) calc(0.19832 + 0.68601 * l) calc(-0.02139 + -0.06501 * l) calc(-0.01173 + -0.03863 * l)); border-color: oklab(from var(--nc-ui-velocity-fill) calc(0.19832 + 0.68601 * l) calc(-0.02139 + -0.06501 * l) calc(-0.01173 + -0.03863 * l)); }
+
 }
