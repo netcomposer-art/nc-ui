@@ -418,6 +418,12 @@ export declare const semantic: {
   readonly "move-label-width": "64px";
   readonly "on-danger": "#F5F5F5";
   readonly "dialog-scrim": "rgba(36,36,36,0.35)";
+  readonly "fill-rack": "#E2E2E2";
+  readonly "fill-panel": "#FCFCFC";
+  readonly "fill-cell": "#E4E4E4";
+  readonly "fill-radius": "6px";
+  readonly "fill-cell-radius": "3px";
+  readonly "fill-gutter": "4px";
   readonly "dialog-width": "320px";
   readonly "dialog-pad": "16px";
   readonly "dialog-gap": "12px";
@@ -860,6 +866,12 @@ export declare const vars: {
   readonly "move-label-width": "var(--nc-ui-move-label-width)";
   readonly "on-danger": "var(--nc-ui-on-danger)";
   readonly "dialog-scrim": "var(--nc-ui-dialog-scrim)";
+  readonly "fill-rack": "var(--nc-ui-fill-rack)";
+  readonly "fill-panel": "var(--nc-ui-fill-panel)";
+  readonly "fill-cell": "var(--nc-ui-fill-cell)";
+  readonly "fill-radius": "var(--nc-ui-fill-radius)";
+  readonly "fill-cell-radius": "var(--nc-ui-fill-cell-radius)";
+  readonly "fill-gutter": "var(--nc-ui-fill-gutter)";
   readonly "dialog-width": "var(--nc-ui-dialog-width)";
   readonly "dialog-pad": "var(--nc-ui-dialog-pad)";
   readonly "dialog-gap": "var(--nc-ui-dialog-gap)";
@@ -1093,6 +1105,12 @@ export declare const refs: {
   readonly "move-label-width": "space.64";
   readonly "on-danger": "color.paper";
   readonly "dialog-scrim": null;
+  readonly "fill-rack": null;
+  readonly "fill-panel": "color.paper-bright";
+  readonly "fill-cell": null;
+  readonly "fill-radius": null;
+  readonly "fill-cell-radius": "space.3";
+  readonly "fill-gutter": "space.4";
   readonly "dialog-width": null;
   readonly "dialog-pad": "space.16";
   readonly "dialog-gap": "space.12";
@@ -1410,6 +1428,12 @@ export declare const themes: {
       readonly "move-label-width": "64px";
       readonly "on-danger": "#F5F5F5";
       readonly "dialog-scrim": "rgba(36,36,36,0.35)";
+      readonly "fill-rack": "#E2E2E2";
+      readonly "fill-panel": "#FCFCFC";
+      readonly "fill-cell": "#E4E4E4";
+      readonly "fill-radius": "6px";
+      readonly "fill-cell-radius": "3px";
+      readonly "fill-gutter": "4px";
       readonly "dialog-width": "320px";
       readonly "dialog-pad": "16px";
       readonly "dialog-gap": "12px";
@@ -1787,6 +1811,12 @@ export declare const themes: {
       readonly "move-label-width": "64px";
       readonly "on-danger": "#1E1D1C";
       readonly "dialog-scrim": "rgba(0,0,0,0.55)";
+      readonly "fill-rack": "#141312";
+      readonly "fill-panel": "#2C2B2A";
+      readonly "fill-cell": "#383736";
+      readonly "fill-radius": "6px";
+      readonly "fill-cell-radius": "3px";
+      readonly "fill-gutter": "4px";
       readonly "dialog-width": "320px";
       readonly "dialog-pad": "16px";
       readonly "dialog-gap": "12px";
@@ -1908,6 +1938,90 @@ export declare const themes: {
     };
   };
 };
+export declare const skins: readonly [{
+  readonly "id": "prussian";
+  readonly "name": "Prussian";
+  readonly "about": "True greys and Prussian blue.";
+  readonly "default": true;
+  readonly "swatch": {
+    readonly "light": {
+      readonly "paper": "#F5F5F5";
+      readonly "surf": "#EAEAEA";
+      readonly "accent": "#003153";
+    };
+    readonly "dark": {
+      readonly "paper": "#1E1D1C";
+      readonly "surf": "#4C4B4A";
+      readonly "accent": "#77B5E2";
+    };
+  };
+}, {
+  readonly "id": "graphite";
+  readonly "name": "Graphite";
+  readonly "about": "Pure mono: only the instruments carry colour.";
+  readonly "swatch": {
+    readonly "light": {
+      readonly "paper": "#F5F5F5";
+      readonly "surf": "#EAEAEA";
+      readonly "accent": "#2E2E2E";
+    };
+    readonly "dark": {
+      readonly "paper": "#1D1D1D";
+      readonly "surf": "#4B4B4B";
+      readonly "accent": "#D9D9D9";
+    };
+  };
+}, {
+  readonly "id": "oxide";
+  readonly "name": "Oxide";
+  readonly "about": "Warm stone grey with a tape-oxide brown accent.";
+  readonly "swatch": {
+    readonly "light": {
+      readonly "paper": "#F7F5F3";
+      readonly "surf": "#ECE9E7";
+      readonly "accent": "#5E3420";
+    };
+    readonly "dark": {
+      readonly "paper": "#211C18";
+      readonly "surf": "#504A45";
+      readonly "accent": "#C9997A";
+    };
+  };
+}, {
+  readonly "id": "steel";
+  readonly "name": "Steel";
+  readonly "about": "Cool charcoal with a steel-blue accent.";
+  readonly "swatch": {
+    readonly "light": {
+      readonly "paper": "#F3F5F8";
+      readonly "surf": "#E8EAED";
+      readonly "accent": "#2F5878";
+    };
+    readonly "dark": {
+      readonly "paper": "#181E24";
+      readonly "surf": "#454C54";
+      readonly "accent": "#8FB4D6";
+    };
+  };
+}, {
+  readonly "id": "verdigris";
+  readonly "name": "Verdigris";
+  readonly "about": "Cool blue-grey like weathered copper, with a deep teal accent.";
+  readonly "swatch": {
+    readonly "light": {
+      readonly "paper": "#F2F6F7";
+      readonly "surf": "#E6EBEC";
+      readonly "accent": "#0C4C56";
+    };
+    readonly "dark": {
+      readonly "paper": "#161F21";
+      readonly "surf": "#434E4F";
+      readonly "accent": "#60B0BE";
+    };
+  };
+}];
+export type SkinDiff = { color?: Record<string, string>; semantic?: Record<string, string>; component?: Record<string, Record<string, string>>; runtime?: Record<string, string> };
+export declare const skinThemes: Record<string, { light: SkinDiff; dark: SkinDiff }>;
 export type SemanticToken = keyof typeof semantic;
 export type RuntimeToken = keyof typeof runtime;
 export type BaseGroup = keyof typeof base;
@@ -1916,5 +2030,5 @@ export type ComponentToken<D extends ComponentDomain> = keyof (typeof component)
 export type ThemeName = keyof typeof themes;
 export declare function cssVar(name: SemanticToken | RuntimeToken): string;
 export declare function componentVar<D extends ComponentDomain>(domain: D, name: ComponentToken<D> & string): string;
-declare const _default: { prefix: typeof prefix; base: typeof base; semantic: typeof semantic; component: typeof component; componentVars: typeof componentVars; componentRefs: typeof componentRefs; domains: typeof domains; runtime: typeof runtime; vars: typeof vars; refs: typeof refs; constants: typeof constants; themes: typeof themes; cssVar: typeof cssVar; componentVar: typeof componentVar };
+declare const _default: { prefix: typeof prefix; base: typeof base; semantic: typeof semantic; component: typeof component; componentVars: typeof componentVars; componentRefs: typeof componentRefs; domains: typeof domains; runtime: typeof runtime; vars: typeof vars; refs: typeof refs; constants: typeof constants; themes: typeof themes; skins: typeof skins; skinThemes: typeof skinThemes; cssVar: typeof cssVar; componentVar: typeof componentVar };
 export default _default;

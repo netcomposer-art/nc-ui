@@ -1,0 +1,8 @@
+{
+  "id": "graphite",
+  "name": "Graphite",
+  "about": "Pure mono: only the instruments carry colour.",
+  "approved": "Peter, 2026-11-19",
+  "light": { "tint": { "hue": 0, "chroma": 0 }, "accent": "#2E2E2E" },
+  "dark": { "tint": { "hue": 0, "chroma": 0 }, "accent": "#D9D9D9" }
+}

@@ -1,0 +1,8 @@
+{
+  "id": "verdigris",
+  "name": "Verdigris",
+  "about": "Cool blue-grey like weathered copper, with a deep teal accent.",
+  "approved": "Peter, 2026-11-19 (hue moved from 195 to 210 to stay out of the no-green band: was #0D4E4A / #62B3AA)",
+  "light": { "tint": { "hue": 210, "chroma": 0.012 }, "accent": "#0C4C56" },
+  "dark": { "tint": { "hue": 210, "chroma": 0.014 }, "accent": "#60B0BE" }
+}

@@ -1,0 +1,8 @@
+{
+  "id": "oxide",
+  "name": "Oxide",
+  "about": "Warm stone grey with a tape-oxide brown accent.",
+  "approved": "Peter, 2026-11-19",
+  "light": { "tint": { "hue": 60, "chroma": 0.009 }, "accent": "#5E3420" },
+  "dark": { "tint": { "hue": 60, "chroma": 0.011 }, "accent": "#C9997A" }
+}
