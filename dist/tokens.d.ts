@@ -20,6 +20,7 @@ export declare const base: {
     readonly "calliope-pink": "#FC409F";
     readonly "aria-magma": "#FF2A3D";
     readonly "looper-gray": "#3F4448";
+    readonly "triki-charcoal": "#2E2E2E";
     readonly "nyx-amber": "#BF8001";
     readonly "paper-bright": "#FCFCFC";
     readonly "accent-pad": "#1A6193";
@@ -243,6 +244,7 @@ export declare const semantic: {
   readonly "surface-page": "#F5F5F5";
   readonly "text": "#242424";
   readonly "text-sub": "#595959";
+  readonly "brand-ink": "#2E2E2E";
   readonly "divider": "#DDDDDD";
   readonly "surface-raised": "#EAEAEA";
   readonly "accent": "#003153";
@@ -691,6 +693,7 @@ export declare const vars: {
   readonly "surface-page": "var(--nc-ui-surface-page)";
   readonly "text": "var(--nc-ui-text)";
   readonly "text-sub": "var(--nc-ui-text-sub)";
+  readonly "brand-ink": "var(--nc-ui-brand-ink)";
   readonly "divider": "var(--nc-ui-divider)";
   readonly "surface-raised": "var(--nc-ui-surface-raised)";
   readonly "accent": "var(--nc-ui-accent)";
@@ -930,6 +933,7 @@ export declare const refs: {
   readonly "surface-page": "color.paper";
   readonly "text": "color.ink";
   readonly "text-sub": "color.sub-0";
+  readonly "brand-ink": "color.triki-charcoal";
   readonly "divider": "color.div-0";
   readonly "surface-raised": "color.surf";
   readonly "accent": "color.accent";
@@ -1189,6 +1193,7 @@ export declare const themes: {
       readonly "calliope-pink": "#FC409F";
       readonly "aria-magma": "#FF2A3D";
       readonly "looper-gray": "#3F4448";
+      readonly "triki-charcoal": "#2E2E2E";
       readonly "nyx-amber": "#BF8001";
       readonly "paper-bright": "#FCFCFC";
       readonly "accent-pad": "#1A6193";
@@ -1253,6 +1258,7 @@ export declare const themes: {
       readonly "surface-page": "#F5F5F5";
       readonly "text": "#242424";
       readonly "text-sub": "#595959";
+      readonly "brand-ink": "#2E2E2E";
       readonly "divider": "#DDDDDD";
       readonly "surface-raised": "#EAEAEA";
       readonly "accent": "#003153";
@@ -1572,6 +1578,7 @@ export declare const themes: {
       readonly "calliope-pink": "#FD7CBD";
       readonly "aria-magma": "#FF2A3D";
       readonly "looper-gray": "#A9AFB4";
+      readonly "triki-charcoal": "#BFBEBD";
       readonly "nyx-amber": "#FEAA02";
       readonly "paper-bright": "#1A1918";
       readonly "accent-pad": "#4B91C3";
@@ -1636,6 +1643,7 @@ export declare const themes: {
       readonly "surface-page": "#1E1D1C";
       readonly "text": "#E8E7E6";
       readonly "text-sub": "#AFAEAD";
+      readonly "brand-ink": "#BFBEBD";
       readonly "divider": "#4F4E4D";
       readonly "surface-raised": "#4C4B4A";
       readonly "accent": "#77B5E2";

@@ -22,6 +22,7 @@
   --nc-ui-color-calliope-pink: #FC409F;
   --nc-ui-color-aria-magma: #FF2A3D;
   --nc-ui-color-looper-gray: #3F4448;
+  --nc-ui-color-triki-charcoal: #2E2E2E;
   --nc-ui-color-nyx-amber: #BF8001;
   --nc-ui-color-paper-bright: #FCFCFC;
   --nc-ui-color-accent-pad: #1A6193;
@@ -230,6 +231,7 @@
   --nc-ui-surface-page: var(--nc-ui-color-paper);
   --nc-ui-text: var(--nc-ui-color-ink);
   --nc-ui-text-sub: var(--nc-ui-color-sub-0);
+  --nc-ui-brand-ink: var(--nc-ui-color-triki-charcoal);
   --nc-ui-divider: var(--nc-ui-color-div-0);
   --nc-ui-surface-raised: var(--nc-ui-color-surf);
   --nc-ui-accent: var(--nc-ui-color-accent);
@@ -541,6 +543,7 @@
   --nc-ui-color-lucy-purple: #B566FF;
   --nc-ui-color-calliope-pink: #FD7CBD;
   --nc-ui-color-looper-gray: #A9AFB4;
+  --nc-ui-color-triki-charcoal: #BFBEBD;
   --nc-ui-color-nyx-amber: #FEAA02;
   --nc-ui-color-paper-bright: #1A1918;
   --nc-ui-color-accent-pad: #4B91C3;
@@ -633,6 +636,7 @@
     --nc-ui-color-lucy-purple: #B566FF;
     --nc-ui-color-calliope-pink: #FD7CBD;
     --nc-ui-color-looper-gray: #A9AFB4;
+    --nc-ui-color-triki-charcoal: #BFBEBD;
     --nc-ui-color-nyx-amber: #FEAA02;
     --nc-ui-color-paper-bright: #1A1918;
     --nc-ui-color-accent-pad: #4B91C3;
