@@ -74,6 +74,7 @@ const PAIRS = [
   // The Studio's FX cards sit on modules 02-04 and inherit the console's stack-1 sub text.
   ...[2, 3, 4].map((n) => ['module-sub-stack-1', `module-bg-adjacent-${n}`, 4.5, 'secondary text on a console FX card']),
   ['text-sub', 'surface-page', 4.5, 'secondary text'],
+  ['brand-ink', 'surface-page', 7, 'the TRIKI wordmark (Peter, 2026-11-23)'],
   ...[1, 2, 3, 4].map((n) => ['text-sub', `module-bg-adjacent-${n}`, 4.5, 'secondary text on a module']),
   ['text-sub', 'accent-tint', 4.5, 'secondary text on the selected row'],
   ...[1, 2, 3, 4].map((n) => [`module-sub-stack-${n}`, `module-bg-stack-${n}`, 4.5, 'secondary text in the stack']),
