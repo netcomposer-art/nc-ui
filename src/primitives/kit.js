@@ -26,6 +26,14 @@ function landscapeStack(pre) {
   ${st} > .nc-module[data-nc-lead]:not([data-nc-slim]) { grid-column: span 2; grid-row: span 2; }`;
 }
 
+/**
+ * The ▾ of a select, in `color` (a token): one conic wedge from the tip (bottom centre) to the two top corners of a
+ * select-mark square, so it draws as one clean triangle (26.565° = atan(1/2), half the width over the height).
+ */
+function selectMark(color) {
+  return `  background-image: conic-gradient(from -26.565deg at 50% 100%, ${v(color)} 53.13deg, transparent 0);`;
+}
+
 /** Class sheet for the kit. Lengths and colours come from the alias module. */
 export function kitCss() {
   const stack = (n) => `
@@ -571,6 +579,24 @@ ${MODULATED_SELECTOR} { transition: none; }
 }
 .nc-select:hover:not(:disabled) { border-bottom-color: ${v("text-sub")}; }
 .nc-select:focus-visible { outline: none; border-bottom-color: ${v("accent")}; }
+/* The ▾ (Peter, 2026-11-23: "1/8" and "50%" didn't look like dropdowns; LUPA's ▾ for every instrument). A small solid
+   triangle at the select's end, inside its end padding, so the words keep their room: quiet (text-sub), the text
+   colour on hover and focus, the divider grey when the select is off. Drawn as a background (a <select> has no
+   ::after), so it is the same on every platform and font. .nc-dd puts the same ▾ on an app's own select. */
+:is(.nc-select, .nc-dd) {
+${selectMark("text-sub")}
+  background-size: ${v("select-mark")} ${v("select-mark")};
+  background-position: right 0 center;
+  background-repeat: no-repeat;
+  background-origin: border-box;
+}
+.nc-dd { appearance: none; }
+:is(.nc-select, .nc-dd):is(:hover, :focus):not(:disabled) {
+${selectMark("text")}
+}
+:is(.nc-select, .nc-dd):disabled {
+${selectMark("divider")}
+}
 /* Slots on one line, Morph under them as a slider row (label and value, then the slider). */
 .nc-slot-row { flex-direction: column; align-items: stretch; gap: ${v("module-gap")}; }
 .nc-slot-line { display: flex; flex-wrap: nowrap; align-items: center; gap: ${v("slot-gap")}; min-width: 0; }

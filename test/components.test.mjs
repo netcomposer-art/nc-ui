@@ -64,6 +64,19 @@ test("switch CSS: ASTRID text on/off, no track, 44 px pad on touch only, tokens 
   assert.match(css, /prefers-reduced-motion[\s\S]*\.nc-ui-switch, \.nc-select/);
 });
 
+test("select ▾: a select-mark triangle at the end, quiet, darker on hover and focus, divider grey when off", () => {
+  const mark = rule(":is(.nc-select, .nc-dd)");
+  assert.match(mark, /conic-gradient\(from -26\.565deg at 50% 100%, var\(--nc-ui-text-sub\) 53\.13deg, transparent 0\)/);
+  assert.match(mark, /background-size: var\(--nc-ui-select-mark\) var\(--nc-ui-select-mark\)/);
+  assert.match(mark, /background-position: right 0 center/);
+  assert.match(mark, /background-repeat: no-repeat/);
+  assert.match(rule(":is(.nc-select, .nc-dd):is(:hover, :focus):not(:disabled)"), /var\(--nc-ui-text\) 53/);
+  assert.match(rule(":is(.nc-select, .nc-dd):disabled"), /var\(--nc-ui-divider\) 53/);
+  assert.match(rule(".nc-dd"), /appearance: none/);
+  // The ▾ sits in the end padding: the select keeps its room for it.
+  assert.match(rule(".nc-select"), /padding: var\(--nc-ui-control-gap\) var\(--nc-ui-select-pad-end\)/);
+});
+
 test("segmented control is ASTRID's underline tabs: hairline row, accent tab-mark, no fill", () => {
   assert.match(rule(".nc-seg"), /border-bottom: var\(--nc-ui-hairline\) solid var\(--nc-ui-divider\)/);
   assert.doesNotMatch(rule(".nc-seg"), /border-radius|border: /);
