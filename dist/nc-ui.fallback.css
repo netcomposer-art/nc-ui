@@ -437,6 +437,7 @@
   --nc-ui-tab-pad-y: var(--nc-ui-space-6);
   --nc-ui-tab-mark: var(--nc-ui-border-thick);
   --nc-ui-select-pad-end: var(--nc-ui-space-18);
+  --nc-ui-select-mark: var(--nc-ui-space-5);
   --nc-ui-page-head-layer: 20;
   --nc-ui-page-head-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-instrument-astrid: var(--nc-ui-color-astrid-orange);
@@ -1774,6 +1775,24 @@ button, input, select { font: inherit; color: inherit; }
 }
 .nc-select:hover:not(:disabled) { border-bottom-color: var(--nc-ui-text-sub); }
 .nc-select:focus-visible { outline: none; border-bottom-color: var(--nc-ui-accent); }
+/* The ▾ (Peter, 2026-11-23: "1/8" and "50%" didn't look like dropdowns; LUPA's ▾ for every instrument). A small solid
+   triangle at the select's end, inside its end padding, so the words keep their room: quiet (text-sub), the text
+   colour on hover and focus, the divider grey when the select is off. Drawn as a background (a <select> has no
+   ::after), so it is the same on every platform and font. .nc-dd puts the same ▾ on an app's own select. */
+:is(.nc-select, .nc-dd) {
+  background-image: conic-gradient(from -26.565deg at 50% 100%, var(--nc-ui-text-sub) 53.13deg, transparent 0);
+  background-size: var(--nc-ui-select-mark) var(--nc-ui-select-mark);
+  background-position: right 0 center;
+  background-repeat: no-repeat;
+  background-origin: border-box;
+}
+.nc-dd { appearance: none; }
+:is(.nc-select, .nc-dd):is(:hover, :focus):not(:disabled) {
+  background-image: conic-gradient(from -26.565deg at 50% 100%, var(--nc-ui-text) 53.13deg, transparent 0);
+}
+:is(.nc-select, .nc-dd):disabled {
+  background-image: conic-gradient(from -26.565deg at 50% 100%, var(--nc-ui-divider) 53.13deg, transparent 0);
+}
 /* Slots on one line, Morph under them as a slider row (label and value, then the slider). */
 .nc-slot-row { flex-direction: column; align-items: stretch; gap: var(--nc-ui-module-gap); }
 .nc-slot-line { display: flex; flex-wrap: nowrap; align-items: center; gap: var(--nc-ui-slot-gap); min-width: 0; }
