@@ -27,11 +27,11 @@ function landscapeStack(pre) {
 }
 
 /**
- * The ▾ of a select, in `color` (a token): one conic wedge from the tip (bottom centre) to the two top corners of a
- * select-mark square, so it draws as one clean triangle (26.565° = atan(1/2), half the width over the height).
+ * The ▾ of a select, in `color` (a token): ASTRID's ▾ (Peter, 2026-11-24), one conic wedge from the tip (bottom centre)
+ * to the two top corners of a select-mark × select-mark-h box (twice as wide as tall, so the wedge is 90°).
  */
 function selectMark(color) {
-  return `  background-image: conic-gradient(from -26.565deg at 50% 100%, ${v(color)} 53.13deg, transparent 0);`;
+  return `  background-image: conic-gradient(from -45deg at 50% 100%, ${v(color)} 90deg, transparent 0);`;
 }
 
 /** Class sheet for the kit. Lengths and colours come from the alias module. */
@@ -579,14 +579,15 @@ ${MODULATED_SELECTOR} { transition: none; }
 }
 .nc-select:hover:not(:disabled) { border-bottom-color: ${v("text-sub")}; }
 .nc-select:focus-visible { outline: none; border-bottom-color: ${v("accent")}; }
-/* The ▾ (Peter, 2026-11-23: "1/8" and "50%" didn't look like dropdowns; LUPA's ▾ for every instrument). A small solid
+/* The ▾ (Peter, 2026-11-23: "1/8" and "50%" didn't look like dropdowns; 2026-11-24: ASTRID's ▾, 8×4 px, 3 px in, on
+   every instrument). A small solid
    triangle at the select's end, inside its end padding, so the words keep their room: quiet (text-sub), the text
    colour on hover and focus, the divider grey when the select is off. Drawn as a background (a <select> has no
    ::after), so it is the same on every platform and font. .nc-dd puts the same ▾ on an app's own select. */
 :is(.nc-select, .nc-dd) {
 ${selectMark("text-sub")}
-  background-size: ${v("select-mark")} ${v("select-mark")};
-  background-position: right 0 center;
+  background-size: ${v("select-mark")} ${v("select-mark-h")};
+  background-position: right ${v("select-mark-inset")} top 55%;
   background-repeat: no-repeat;
   background-origin: border-box;
 }
@@ -1162,7 +1163,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-ui-fx:has(> .nc-ui-fx-hd > [data-nc-fx-hide]) { position: relative; }
 .nc-ui-fx-hd > [data-nc-fx-hide] { position: absolute; top: ${v("control-gap")}; left: ${v("control-gap")}; z-index: 1; }
 /* The horizontal-fold toggle (foldToggle): a small solid triangle, about the ×'s size, in text-sub (ink on hover).
-   ◀ while open, flipped to ▶ while folded; the flip takes motion-press, and reduced motion makes it instant. −/+
+   ▶ while open, flipped to ◀ while folded (Peter, 2026-11-24, reversing 2026-10-31); the flip takes motion-press,
+   and reduced motion makes it instant. −/+
    (.nc-hide) stays the vertical hide: the triangle means fold sideways. */
 .nc-fold-toggle {
   position: relative;
@@ -1185,7 +1187,7 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   width: calc(${v("control-gap")} * 1.5);
   height: calc(${v("control-gap")} * 2);
   background: currentColor;
-  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
   transition: transform ${v("motion-press")} ${v("motion-press-easing")};
 }
 .nc-fold-toggle[aria-expanded="false"] .nc-fold-tri,
@@ -2489,7 +2491,7 @@ ${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `.nc-strip[data-nc-shade="${n}"] { --nc-st
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: ${v("text-sub")}; }
 /* Minimize (onFold): the fold triangle in the top-left corner, above the name; the name row and its × as before, so a
    minimize click can't land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the
-   ▶ in the corner, the name row kept but unseen, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
+   ◀ in the corner, the name row kept but unseen, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
    fader cap's colour (one button, the FX fold's look) beside a thin meter. At once: no motion. */
 /* The triangle sits in the strip's top-left corner, above the name; folded, centred over the column. */
 .nc-strip > [data-nc-strip-hide] { position: absolute; top: ${v("control-gap")}; left: ${v("control-gap")}; z-index: 1; }

@@ -436,7 +436,9 @@
   --nc-ui-tab-pad-y: var(--nc-ui-space-6);
   --nc-ui-tab-mark: var(--nc-ui-border-thick);
   --nc-ui-select-pad-end: var(--nc-ui-space-18);
-  --nc-ui-select-mark: var(--nc-ui-space-5);
+  --nc-ui-select-mark: var(--nc-ui-space-8);
+  --nc-ui-select-mark-h: var(--nc-ui-space-4);
+  --nc-ui-select-mark-inset: var(--nc-ui-space-3);
   --nc-ui-page-head-layer: 20;
   --nc-ui-page-head-bg: var(--nc-ui-color-paper-bright);
   --nc-ui-instrument-astrid: var(--nc-ui-color-astrid-orange);
@@ -1774,23 +1776,24 @@ button, input, select { font: inherit; color: inherit; }
 }
 .nc-select:hover:not(:disabled) { border-bottom-color: var(--nc-ui-text-sub); }
 .nc-select:focus-visible { outline: none; border-bottom-color: var(--nc-ui-accent); }
-/* The ▾ (Peter, 2026-11-23: "1/8" and "50%" didn't look like dropdowns; LUPA's ▾ for every instrument). A small solid
+/* The ▾ (Peter, 2026-11-23: "1/8" and "50%" didn't look like dropdowns; 2026-11-24: ASTRID's ▾, 8×4 px, 3 px in, on
+   every instrument). A small solid
    triangle at the select's end, inside its end padding, so the words keep their room: quiet (text-sub), the text
    colour on hover and focus, the divider grey when the select is off. Drawn as a background (a <select> has no
    ::after), so it is the same on every platform and font. .nc-dd puts the same ▾ on an app's own select. */
 :is(.nc-select, .nc-dd) {
-  background-image: conic-gradient(from -26.565deg at 50% 100%, var(--nc-ui-text-sub) 53.13deg, transparent 0);
-  background-size: var(--nc-ui-select-mark) var(--nc-ui-select-mark);
-  background-position: right 0 center;
+  background-image: conic-gradient(from -45deg at 50% 100%, var(--nc-ui-text-sub) 90deg, transparent 0);
+  background-size: var(--nc-ui-select-mark) var(--nc-ui-select-mark-h);
+  background-position: right var(--nc-ui-select-mark-inset) top 55%;
   background-repeat: no-repeat;
   background-origin: border-box;
 }
 .nc-dd { appearance: none; }
 :is(.nc-select, .nc-dd):is(:hover, :focus):not(:disabled) {
-  background-image: conic-gradient(from -26.565deg at 50% 100%, var(--nc-ui-text) 53.13deg, transparent 0);
+  background-image: conic-gradient(from -45deg at 50% 100%, var(--nc-ui-text) 90deg, transparent 0);
 }
 :is(.nc-select, .nc-dd):disabled {
-  background-image: conic-gradient(from -26.565deg at 50% 100%, var(--nc-ui-divider) 53.13deg, transparent 0);
+  background-image: conic-gradient(from -45deg at 50% 100%, var(--nc-ui-divider) 90deg, transparent 0);
 }
 /* Slots on one line, Morph under them as a slider row (label and value, then the slider). */
 .nc-slot-row { flex-direction: column; align-items: stretch; gap: var(--nc-ui-module-gap); }
@@ -2357,7 +2360,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-ui-fx:has(> .nc-ui-fx-hd > [data-nc-fx-hide]) { position: relative; }
 .nc-ui-fx-hd > [data-nc-fx-hide] { position: absolute; top: var(--nc-ui-control-gap); left: var(--nc-ui-control-gap); z-index: 1; }
 /* The horizontal-fold toggle (foldToggle): a small solid triangle, about the ×'s size, in text-sub (ink on hover).
-   ◀ while open, flipped to ▶ while folded; the flip takes motion-press, and reduced motion makes it instant. −/+
+   ▶ while open, flipped to ◀ while folded (Peter, 2026-11-24, reversing 2026-10-31); the flip takes motion-press,
+   and reduced motion makes it instant. −/+
    (.nc-hide) stays the vertical hide: the triangle means fold sideways. */
 .nc-fold-toggle {
   position: relative;
@@ -2380,7 +2384,7 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   width: calc(var(--nc-ui-control-gap) * 1.5);
   height: calc(var(--nc-ui-control-gap) * 2);
   background: currentColor;
-  clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
   transition: transform var(--nc-ui-motion-press) var(--nc-ui-motion-press-easing);
 }
 .nc-fold-toggle[aria-expanded="false"] .nc-fold-tri,
@@ -3691,7 +3695,7 @@ html[data-nc-hosted] .nc-step-editor[data-placement="sheet"] { bottom: var(--nc-
 .nc-strip[data-silent="true"] .nc-strip-name, .nc-strip[data-silent="true"] .nc-strip-db { color: var(--nc-ui-text-sub); }
 /* Minimize (onFold): the fold triangle in the top-left corner, above the name; the name row and its × as before, so a
    minimize click can't land on remove. Folded, the strip is a narrow column on the same rows (meters still line up): the
-   ▶ in the corner, the name row kept but unseen, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
+   ◀ in the corner, the name row kept but unseen, M and S stacked over the Inserts and M/S rows, then the name read bottom to top under a small mark in the
    fader cap's colour (one button, the FX fold's look) beside a thin meter. At once: no motion. */
 /* The triangle sits in the strip's top-left corner, above the name; folded, centred over the column. */
 .nc-strip > [data-nc-strip-hide] { position: absolute; top: var(--nc-ui-control-gap); left: var(--nc-ui-control-gap); z-index: 1; }

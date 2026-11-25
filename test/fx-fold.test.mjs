@@ -210,7 +210,7 @@ test("fold triangle: ◀ open, flipped to ▶ folded; text-sub, ink on hover; mo
   setFoldToggle(button, false, "Synth 2");
   assert.equal(button.getAttribute("aria-label"), "Minimize Synth 2");
   const tri = css.slice(css.indexOf("\n.nc-fold-tri {"), css.indexOf("}", css.indexOf("\n.nc-fold-tri {")));
-  assert.match(tri, /clip-path: polygon\(100% 0, 0 50%, 100% 100%\)/, "points left");
+  assert.match(tri, /clip-path: polygon\(0 0, 100% 50%, 0 100%\)/, "points right while open");
   assert.match(tri, /transition: transform var\(--nc-ui-motion-press\) var\(--nc-ui-motion-press-easing\)/);
   assert.match(css, /\.nc-fold-toggle\[aria-expanded="false"\] \.nc-fold-tri,\s*\.nc-ui-fx-fold > \.nc-fold-tri \{ transform: scaleX\(-1\); \}/);
   assert.match(css, /\.nc-fold-toggle \{[^}]*color: var\(--nc-ui-text-sub\);/);
