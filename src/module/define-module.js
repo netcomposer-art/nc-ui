@@ -52,18 +52,18 @@ function flatten(def) {
   const out = [];
   const add = (control) => {
     out.push(control);
-    // A group's controls are the module's too (found by id, patched in place); a group may hold a group.
+    // A group's controls are the module's too (found by id, patched in place); a group may hold a group, and an fx
+    // card or a strip inside a group has its dials found as at the top (2026-11-25: LUCY's Hacks cards sit in a
+    // group; their dials and EQ graph were drawn but never found, so nothing they did reached the sound or the graph).
     if (control.type === "group") for (const child of control.controls) add(child);
-  };
-  for (const control of lists) {
-    add(control);
     if (control.type === "fx") out.push(...control.controls, ...(control.more ?? []));
     if (control.type === "strip") {
       out.push(...(control.sends ?? []).map((send) => ({ ...send, type: "knob", compact: true })));
       if (control.pan) out.push(panKnob(control));
       if (control.trim) out.push(trimKnob(control));
     }
-  }
+  };
+  for (const control of lists) add(control);
   return out;
 }
 

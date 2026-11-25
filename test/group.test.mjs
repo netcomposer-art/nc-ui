@@ -198,3 +198,41 @@ test('group collapse: "phone" CSS: flat (display: contents, no header) off phone
   assert.ok(css.includes(`html[data-nc-landscape] ${g}[data-nc-open="false"] > .nc-group-body { display: none; }`));
   assert.equal(index.LANDSCAPE_PHONE, "(orientation: landscape) and (max-height: 500px) and (max-width: 1023px)");
 });
+
+test("group: an fx card inside a group has its dials (and its EQ graph) found, so their changes reach the host", () => {
+  // 2026-11-25: LUCY's Hacks put the EQ and Compressor cards in a group; their dials moved on screen but nothing
+  // reached the sound, and the EQ graph's nodes did nothing (the kit never found those controls by id).
+  store.clear();
+  const got = [];
+  const m = defineModule({
+    id: "hacks",
+    title: "Hacks",
+    controls: [
+      {
+        type: "group",
+        id: "cards",
+        title: "EQ & Compressor",
+        open: true,
+        controls: [
+          {
+            type: "fx",
+            id: "fx-eq",
+            title: "EQ",
+            on: true,
+            onToggle() {},
+            controls: [
+              { type: "slider", id: "eq-low", label: "Low", min: -18, max: 18, step: 1, value: 0, valueText: "0 dB", onChange: (v) => got.push(["low", v]) },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+  document.body.append(m.el);
+  const input = m.el.querySelector('input[data-nc-id="eq-low"]');
+  assert.ok(input, "drawn");
+  input.value = "6";
+  input.dispatchEvent(new window.Event("input", { bubbles: true }));
+  assert.deepEqual(got, [["low", 6]]);
+  m.el.remove();
+});
