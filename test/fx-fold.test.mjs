@@ -200,7 +200,7 @@ test("strip fold: never on the master; CSS is a narrow column of tokens with the
   assert.match(reduced, /\.nc-strip \{|\.nc-strip,|, \.nc-strip \{/);
 });
 
-test("fold triangle: ◀ open, flipped to ▶ folded; text-sub, ink on hover; motion token, reduced motion instant", () => {
+test("fold triangle: ▶ open, flipped to ◀ folded; text-sub, ink on hover; motion token, reduced motion instant", () => {
   const button = foldToggle();
   assert.equal(button.tagName, "BUTTON");
   assert.equal(button.getAttribute("type"), "button");
