@@ -1624,8 +1624,8 @@ function renderStrip(control, lookup) {
   name.className = "nc-strip-name";
   name.dataset.ncStripName = "";
   const foldable = !control.master && typeof control.onFold === "function";
-  // Minimize (onFold): the kit's horizontal-fold triangle in the strip's top-left corner, above the name (◀ open,
-  // ▶ minimized). The name row and its × are unchanged, so a minimize click can never land on remove.
+  // Minimize (onFold): the kit's horizontal-fold triangle in the strip's top-left corner, above the name (▶ open,
+  // ◀ minimized). The name row and its × are unchanged, so a minimize click can never land on remove.
   let hide = null;
   if (foldable) {
     strip.dataset.ncFoldable = "";
@@ -2388,8 +2388,8 @@ function fxHide(card, lookup) {
 }
 
 /**
- * The horizontal-fold toggle (Peter, 2026-10-31): a small solid triangle, ◀ while open ("collapse this way"), flipped
- * to ▶ while folded ("expand"). −/+ stays the vertical hide; the triangle means fold sideways. A real button; the
+ * The horizontal-fold toggle (Peter, 2026-10-31; flipped 2026-11-24): a small solid triangle, ▶ while open, flipped
+ * to ◀ while folded. −/+ stays the vertical hide; the triangle means fold sideways. A real button; the
  * host's state sets it with setFoldToggle.
  */
 export function foldToggle() {
@@ -2423,7 +2423,7 @@ function fxFold(card, lookup) {
   const name = document.createElement("span");
   name.className = "nc-ui-fx-fold-name";
   name.dataset.ncFxFoldName = "";
-  // The same triangle, pointing right ("expand"), at the top of the column; the whole column is the button.
+  // The same triangle, pointing left (folded), at the top of the column; the whole column is the button.
   const tri = document.createElement("span");
   tri.className = "nc-fold-tri";
   tri.setAttribute("aria-hidden", "true");

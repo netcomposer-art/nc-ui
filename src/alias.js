@@ -170,6 +170,8 @@ const semanticKinds = {
   "tab-mark": "length",
   "select-pad-end": "length",
   "select-mark": "length",
+  "select-mark-h": "length",
+  "select-mark-inset": "length",
   "page-head-layer": "other",
   "page-head-bg": "color",
   "instrument-astrid": "color",

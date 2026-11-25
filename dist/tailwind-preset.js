@@ -142,6 +142,8 @@ const theme = {
     "nc-tab-mark": "var(--nc-ui-tab-mark)",
     "nc-select-pad-end": "var(--nc-ui-select-pad-end)",
     "nc-select-mark": "var(--nc-ui-select-mark)",
+    "nc-select-mark-h": "var(--nc-ui-select-mark-h)",
+    "nc-select-mark-inset": "var(--nc-ui-select-mark-inset)",
     "nc-page-sub-gap": "var(--nc-ui-page-sub-gap)",
     "nc-page-action-gap": "var(--nc-ui-page-action-gap)",
     "nc-page-pad-x": "var(--nc-ui-page-pad-x)",

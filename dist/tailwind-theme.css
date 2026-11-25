@@ -137,6 +137,8 @@
   --spacing-nc-tab-mark: var(--nc-ui-tab-mark);
   --spacing-nc-select-pad-end: var(--nc-ui-select-pad-end);
   --spacing-nc-select-mark: var(--nc-ui-select-mark);
+  --spacing-nc-select-mark-h: var(--nc-ui-select-mark-h);
+  --spacing-nc-select-mark-inset: var(--nc-ui-select-mark-inset);
   --spacing-nc-page-sub-gap: var(--nc-ui-page-sub-gap);
   --spacing-nc-page-action-gap: var(--nc-ui-page-action-gap);
   --spacing-nc-page-pad-x: var(--nc-ui-page-pad-x);

@@ -66,12 +66,12 @@ test("switch CSS: ASTRID text on/off, no track, 44 px pad on touch only, tokens 
 
 test("select ▾: a select-mark triangle at the end, quiet, darker on hover and focus, divider grey when off", () => {
   const mark = rule(":is(.nc-select, .nc-dd)");
-  assert.match(mark, /conic-gradient\(from -26\.565deg at 50% 100%, var\(--nc-ui-text-sub\) 53\.13deg, transparent 0\)/);
-  assert.match(mark, /background-size: var\(--nc-ui-select-mark\) var\(--nc-ui-select-mark\)/);
-  assert.match(mark, /background-position: right 0 center/);
+  assert.match(mark, /conic-gradient\(from -45deg at 50% 100%, var\(--nc-ui-text-sub\) 90deg, transparent 0\)/);
+  assert.match(mark, /background-size: var\(--nc-ui-select-mark\) var\(--nc-ui-select-mark-h\)/);
+  assert.match(mark, /background-position: right var\(--nc-ui-select-mark-inset\) top 55%/);
   assert.match(mark, /background-repeat: no-repeat/);
-  assert.match(rule(":is(.nc-select, .nc-dd):is(:hover, :focus):not(:disabled)"), /var\(--nc-ui-text\) 53/);
-  assert.match(rule(":is(.nc-select, .nc-dd):disabled"), /var\(--nc-ui-divider\) 53/);
+  assert.match(rule(":is(.nc-select, .nc-dd):is(:hover, :focus):not(:disabled)"), /var\(--nc-ui-text\) 90/);
+  assert.match(rule(":is(.nc-select, .nc-dd):disabled"), /var\(--nc-ui-divider\) 90/);
   assert.match(rule(".nc-dd"), /appearance: none/);
   // The ▾ sits in the end padding: the select keeps its room for it.
   assert.match(rule(".nc-select"), /padding: var\(--nc-ui-control-gap\) var\(--nc-ui-select-pad-end\)/);
