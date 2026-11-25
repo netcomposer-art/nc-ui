@@ -1,7 +1,8 @@
 // nc-ui share: instrument links (specs/instrument-links.md; Peter, 2026-11-25: "unlisted for now, use netcomposer.art").
 //
 // One instrument's Preset (what its own Save writes, as the Studio's Preset providers hand it over) travels as a
-// share envelope: { v: 1, kind: "preset", format, fv?, data, name?, by?, from? }.
+// share envelope: { v: 1, kind: "preset", format, fv?, data, name?, by?, from?, category?, tags? }. `category` and
+// `tags` (2026-11-25) come with the preset library (presets.js): optional, additive, ignored by older readers.
 //   - Inline link:  https://netcomposer.art/synth/#p=<deflate + base64url of the envelope's JSON>
 //     The hash never reaches a server.
 //   - Short link:   https://netcomposer.art/synth/#s=<id>
@@ -29,6 +30,9 @@ export const SHARE_PAGES = Object.freeze({
 
 const NAME_MAX = 80;
 const BY_MAX = 40;
+const CATEGORY_MAX = 32;
+const TAGS_MAX = 8;
+const TAG_MAX = 24;
 const ID = /^[0-9a-z]{10}$/;
 
 /** The site's hosts: netcomposer.art now, triki.art later (Peter, 2026-11-25), so a move changes only SHARE_SITE. */
@@ -57,6 +61,13 @@ export function shareProblem(raw) {
   if (e.name !== undefined && (typeof e.name !== "string" || e.name.length > NAME_MAX)) return "The name is too long.";
   if (e.by !== undefined && (typeof e.by !== "string" || e.by.length > BY_MAX)) return "The author name is too long.";
   if (e.from !== undefined && !isOurLink(e.from)) return "Bad remix link.";
+  if (e.category !== undefined && (typeof e.category !== "string" || !e.category || e.category.length > CATEGORY_MAX))
+    return "Bad category.";
+  if (
+    e.tags !== undefined &&
+    (!Array.isArray(e.tags) || e.tags.length > TAGS_MAX || !e.tags.every((t) => typeof t === "string" && t.length > 0 && t.length <= TAG_MAX))
+  )
+    return "Bad tags.";
   return null;
 }
 
@@ -64,7 +75,7 @@ export function shareProblem(raw) {
  * An envelope from a Preset provider's answer. `name` and `by` are trimmed and left out when empty; `from` is the
  * link this one was opened from (a remix), when there was one. Throws with shareProblem's sentence.
  */
-export function makeEnvelope({ format, fv, data, name, by, from }) {
+export function makeEnvelope({ format, fv, data, name, by, from, category, tags }) {
   const e = { v: SHARE_V, kind: "preset", format, data };
   if (typeof fv === "number") e.fv = fv;
   const n = typeof name === "string" ? name.trim() : "";
@@ -72,6 +83,8 @@ export function makeEnvelope({ format, fv, data, name, by, from }) {
   const b = typeof by === "string" ? by.trim() : "";
   if (b) e.by = b;
   if (from) e.from = from;
+  if (typeof category === "string" && category.trim()) e.category = category.trim();
+  if (Array.isArray(tags) && tags.length) e.tags = tags;
   const problem = shareProblem(e);
   if (problem) throw new Error(problem);
   return e;
