@@ -71,6 +71,10 @@
       "types": "./src/primitives/presets.d.ts",
       "import": "./src/primitives/presets.js"
     },
+    "./preset-library": {
+      "types": "./src/primitives/preset-library.d.ts",
+      "import": "./src/primitives/preset-library.js"
+    },
     "./nc-ui.css": "./dist/nc-ui.css",
     "./nc-ui.fallback.css": "./dist/nc-ui.fallback.css",
     "./inject": "./dist/nc-ui-inject.min.js",
