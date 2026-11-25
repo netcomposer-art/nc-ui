@@ -468,7 +468,7 @@ export function createPresetLibrary(opts) {
       say(r);
       paint();
     });
-    el.replaceChildren(
+    const parts = [
       h("div", { class: "nc-pl-hd" }, h("span", { class: "nc-pl-h" }, "Library"), h("span", { class: "nc-pl-hint" }, `${all.length} ${noun}`)),
       h(
         "div",
@@ -491,7 +491,9 @@ export function createPresetLibrary(opts) {
             fileIn,
           ),
       h("div", { class: "nc-pl-msg", role: "status" }, state.msg),
-    );
+    ];
+    // replaceChildren would write a null as the text "null".
+    el.replaceChildren(...parts.filter((p) => p !== null && p !== undefined && p !== false));
     paintList();
     if (focusId) el.querySelector(`[data-nc-id="${focusId}"]`)?.focus();
   }

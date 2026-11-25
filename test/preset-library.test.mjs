@@ -43,6 +43,7 @@ const q = (lib, id) => lib.el.querySelector(`[data-nc-id="${id}"]`);
 test("rows of the category, the chips' counts, and search across all categories", async () => {
   const { lib } = await setup();
   assert.deepEqual(rows(lib), ["Velvet Section", "Amber Strings"]);
+  assert.ok(!/null/.test(lib.el.textContent), "no stray text");
   assert.equal(q(lib, "preset-source-all").textContent, "All2");
   assert.equal(q(lib, "preset-source-mine").textContent, "Mine0");
   const s = q(lib, "preset-search");
