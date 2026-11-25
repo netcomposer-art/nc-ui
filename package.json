@@ -67,6 +67,10 @@
       "types": "./src/primitives/share.d.ts",
       "import": "./src/primitives/share.js"
     },
+    "./presets": {
+      "types": "./src/primitives/presets.d.ts",
+      "import": "./src/primitives/presets.js"
+    },
     "./nc-ui.css": "./dist/nc-ui.css",
     "./nc-ui.fallback.css": "./dist/nc-ui.fallback.css",
     "./inject": "./dist/nc-ui-inject.min.js",

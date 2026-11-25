@@ -22,6 +22,10 @@ export interface ShareEnvelope {
   name?: string;
   by?: string;
   from?: string;
+  /** The instrument's category for it (preset library, 2026-11-25). */
+  category?: string;
+  /** At most 8 tags of at most 24 characters. */
+  tags?: string[];
 }
 
 export type ShareLink = { kind: "inline"; code: string } | { kind: "short"; id: string };
@@ -42,6 +46,8 @@ export function makeEnvelope(parts: {
   name?: string;
   by?: string;
   from?: string;
+  category?: string;
+  tags?: string[];
 }): ShareEnvelope;
 export function encodeInline(envelope: ShareEnvelope): Promise<string>;
 export function decodeInline(code: string): Promise<ShareEnvelope | null>;
