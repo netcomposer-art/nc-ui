@@ -31,12 +31,15 @@ const NAME_MAX = 80;
 const BY_MAX = 40;
 const ID = /^[0-9a-z]{10}$/;
 
-/** A link this site made (https://netcomposer.art/..., at most 4 KB). */
+/** The site's hosts: netcomposer.art now, triki.art later (Peter, 2026-11-25), so a move changes only SHARE_SITE. */
+export const SHARE_HOSTS = Object.freeze(["netcomposer.art", "triki.art"]);
+
+/** A link this site made (https://netcomposer.art/... or https://triki.art/..., at most 4 KB). */
 export function isOurLink(text) {
   if (typeof text !== "string" || text.length > 4096) return false;
   try {
     const u = new URL(text);
-    return u.protocol === "https:" && u.hostname === "netcomposer.art";
+    return u.protocol === "https:" && SHARE_HOSTS.includes(u.hostname);
   } catch {
     return false;
   }

@@ -51,6 +51,8 @@ test("makeEnvelope trims names, drops empty ones and refuses what can't travel",
   assert.throws(() => makeEnvelope({ format: "netcomposer.lucy", data: {} }), /can't be shared/);
   assert.throws(() => makeEnvelope({ format: "netcomposer.nyx", data: null }), /empty/);
   assert.throws(() => makeEnvelope({ format: "netcomposer.nyx", data: {}, from: "https://evil.example/" }), /remix/);
+  assert.equal(makeEnvelope({ format: "netcomposer.nyx", data: {}, from: "https://triki.art/nyx/#s=0123456789" }).from, "https://triki.art/nyx/#s=0123456789");
+  assert.throws(() => makeEnvelope({ format: "netcomposer.nyx", data: {}, from: "https://triki.art.evil.example/" }), /remix/);
 });
 
 test("an inline code round-trips and is URL-safe", async () => {

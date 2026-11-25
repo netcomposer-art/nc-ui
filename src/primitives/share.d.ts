@@ -1,6 +1,7 @@
 export const SHARE_V: 1;
 export const SHARE_API: string;
 export const SHARE_SITE: string;
+export const SHARE_HOSTS: readonly ["netcomposer.art", "triki.art"];
 export const INLINE_MAX: number;
 export const SHARE_MAX_BYTES: number;
 export const SHARE_PAGES: Readonly<Record<ShareFormat, string>>;
