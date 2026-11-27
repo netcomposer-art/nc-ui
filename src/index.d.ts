@@ -434,9 +434,15 @@ export interface FxControl {
   meter?: FxLevelSource;
   /** Hover words (data-nc-help) for the meter; say what it shows (it is aria-hidden). */
   meterHelp?: string;
+  /**
+   * A compressor's level gauge under the header (with `meter`): IN, GR and OUT as bars, the threshold as a tick on IN,
+   * peak holds and numbers (Peter, 2026-11-27). The meter's read() gives `gr`, the gain reduction in dB. GR and the
+   * tick take --nc-gauge-gr (set it to the instrument's colour). See docs/comp-gauge.md.
+   */
+  gauge?: { threshold?(): number | null; help?: string };
 }
 /** What an FX card's meter reads: the latest sample peaks (1 = full scale), { in, out? }, or a bare number (input only). */
-export type FxLevelReading = { in: number; out?: number } | number | null | undefined;
+export type FxLevelReading = { in: number; out?: number; gr?: number } | number | null | undefined;
 export interface FxLevelSource {
   /** Called when the meter comes on screen; false: nothing to meter. */
   open?(): unknown;
@@ -971,3 +977,13 @@ export function drawLine(levels: number[], a: number, la: number, b: number, lb:
 export function levelStepsState(wrap: Element): { focus: number; dragging: boolean; picking: boolean } | null;
 export function patchEqGraph(graph: Element, control: EqGraphControl): void;
 export function paintEqGraph(graph: Element): void;
+
+/** A compressor gauge's options: the card's meter, the threshold (dB) for the tick, whether the compressor is on. */
+export interface CompGaugeOptions { source: FxLevelSource | null; threshold?(): number | null; on?(): boolean }
+export function createCompGauge(doc?: Document): HTMLElement;
+export function bindCompGauge(el: HTMLElement, opts: CompGaugeOptions): { set(next: CompGaugeOptions): void; destroy(): void };
+export function gaugePosition(db: number): number;
+export function gaugeGrPosition(gr: number): number;
+export function gaugeText(db: number, gr?: boolean): string;
+export const GAUGE_FLOOR_DB: number;
+export const GAUGE_GR_DB: number;
