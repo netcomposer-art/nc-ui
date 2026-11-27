@@ -91,8 +91,8 @@ export const COMP_GAUGE_CSS = `
   --nc-gauge-gr-color: var(--nc-gauge-gr, var(--nc-ui-accent));
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr) max-content;
-  column-gap: var(--nc-ui-control-gap);
-  row-gap: calc(var(--nc-ui-control-gap) * 1.25);
+  column-gap: var(--nc-ui-control-gap, var(--nc-ui-space-6));
+  row-gap: calc(var(--nc-ui-control-gap, var(--nc-ui-space-6)) * 1.25);
   align-items: center;
   min-width: 0;
 }
@@ -112,7 +112,7 @@ export const COMP_GAUGE_CSS = `
   color: var(--nc-ui-text-sub);
 }
 .nc-comp-gauge-bar[data-nc-gauge="gr"] + .nc-comp-gauge-val { color: var(--nc-gauge-gr-color); }
-.nc-comp-gauge-bar { position: relative; height: calc(var(--nc-ui-control-gap) * 1.5); background: var(--nc-ui-divider); }
+.nc-comp-gauge-bar { position: relative; height: calc(var(--nc-ui-control-gap, var(--nc-ui-space-6)) * 1.5); background: var(--nc-ui-divider); }
 .nc-comp-gauge-fill {
   position: absolute;
   inset: 0;
@@ -122,7 +122,7 @@ export const COMP_GAUGE_CSS = `
   transition: none;
 }
 .nc-comp-gauge-bar[data-nc-gauge="gr"] > .nc-comp-gauge-fill { transform-origin: right; background: var(--nc-gauge-gr-color); }
-.nc-comp-gauge-hot { position: absolute; top: 0; bottom: 0; right: 0; width: calc(var(--nc-ui-hairline) * 4); background: var(--nc-ui-fx-level-hot, var(--nc-ui-instrument-astrid)); display: none; }
+.nc-comp-gauge-hot { position: absolute; top: 0; bottom: 0; right: 0; width: calc(var(--nc-ui-hairline) * 4); background: var(--nc-ui-fx-level-hot, var(--nc-ui-instrument-astrid, var(--nc-ui-accent))); display: none; }
 .nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-hot { display: block; }
 .nc-comp-gauge-peak {
   position: absolute;
@@ -133,7 +133,7 @@ export const COMP_GAUGE_CSS = `
   background: var(--nc-ui-text);
 }
 .nc-comp-gauge-bar[data-nc-gauge="gr"] > .nc-comp-gauge-peak { background: var(--nc-ui-text); }
-.nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-peak { background: var(--nc-ui-fx-level-hot, var(--nc-ui-instrument-astrid)); }
+.nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-peak { background: var(--nc-ui-fx-level-hot, var(--nc-ui-instrument-astrid, var(--nc-ui-accent))); }
 .nc-comp-gauge-peak[hidden], .nc-comp-gauge-th[hidden] { display: none; }
 .nc-comp-gauge-th {
   position: absolute;
@@ -142,7 +142,7 @@ export const COMP_GAUGE_CSS = `
   width: 0;
   border-left: calc(var(--nc-ui-hairline) * 1.5) solid var(--nc-gauge-gr-color);
 }
-.nc-comp-gauge-ticks { position: relative; height: calc(var(--nc-ui-readout-size-small) * 1.2); margin-top: calc(var(--nc-ui-control-gap) * -0.5); }
+.nc-comp-gauge-ticks { position: relative; height: calc(var(--nc-ui-readout-size-small) * 1.2); margin-top: calc(var(--nc-ui-control-gap, var(--nc-ui-space-6)) * -0.5); }
 .nc-comp-gauge-ticks > span {
   position: absolute;
   transform: translateX(-50%);
@@ -158,7 +158,7 @@ export const COMP_GAUGE_CSS = `
 .nc-comp-gauge-ticks > span:last-child { transform: translateX(-100%); }
 .nc-comp-gauge[data-nc-off="true"] .nc-comp-gauge-bar:not([data-nc-gauge="in"]) > .nc-comp-gauge-fill { background: var(--nc-ui-text-sub); }
 .nc-comp-gauge[data-nc-off="true"] .nc-comp-gauge-bar[data-nc-gauge="gr"] + .nc-comp-gauge-val { color: var(--nc-ui-text-sub); }
-.nc-ui-fx > .nc-comp-gauge { margin-bottom: var(--nc-ui-control-gap); }
+.nc-ui-fx > .nc-comp-gauge { margin-bottom: var(--nc-ui-control-gap, var(--nc-ui-space-6)); }
 `;
 
 function style(doc) {
