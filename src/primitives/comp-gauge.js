@@ -413,3 +413,25 @@ export function bindCompGauge(el, opts) {
     },
   };
 }
+
+const ATTACHED = new WeakMap();
+/**
+ * For an app whose kit has no `gauge` on its FX cards (an older vendored nc-ui, or ASTRID's own panel): put a gauge in
+ * this card, right after its header (`.nc-ui-fx-hd`, or `after` if given), and bind it; call again after every render
+ * (a rebuilt card gets a new one, the same card keeps its own). Returns the gauge element, or null with no card.
+ */
+export function attachCompGauge(card, opts) {
+  if (!card) return null;
+  let entry = ATTACHED.get(card);
+  if (!entry || !entry.el.isConnected || entry.el.parentElement !== card) {
+    entry?.binding.destroy();
+    const el = createCompGauge(card.ownerDocument);
+    if (opts?.help) el.dataset.ncHelp = opts.help;
+    const head = opts?.after ?? card.querySelector(":scope > .nc-ui-fx-hd");
+    if (head && head.parentElement === card) head.after(el);
+    else card.prepend(el);
+    entry = { el, binding: bindCompGauge(el, opts) };
+    ATTACHED.set(card, entry);
+  } else entry.binding.set(opts);
+  return entry.el;
+}

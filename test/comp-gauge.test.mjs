@@ -6,7 +6,7 @@ import { installDom } from "./helpers/dom.mjs";
 
 const { document } = installDom();
 const { renderControl, patchControl } = await import("../src/primitives/controls.js");
-const { gaugePosition, gaugeGrPosition, gaugeText, GAUGE_FLOOR_DB, GAUGE_GR_DB, COMP_GAUGE_CSS } = await import("../src/primitives/comp-gauge.js");
+const { attachCompGauge, gaugePosition, gaugeGrPosition, gaugeText, GAUGE_FLOOR_DB, GAUGE_GR_DB, COMP_GAUGE_CSS } = await import("../src/primitives/comp-gauge.js");
 
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -76,4 +76,28 @@ test("sheet (its own, put in the page once): ink bars, the hot colour, GR and th
   assert.match(css, /\[data-nc-gauge="gr"\] > \.nc-comp-gauge-fill \{ transform-origin: right; background: var\(--nc-gauge-gr-color\); \}/);
   assert.match(css, /border-left: calc\(var\(--nc-ui-hairline\) \* 1\.5\) solid var\(--nc-gauge-gr-color\)/);
   assert.doesNotMatch(css, /border-radius|#[0-9a-f]{3,8}\b|rgba?\(|\d+px/i, "tokens only, no radius");
+});
+
+test("attachCompGauge: after the header of a card from an older kit, once per card, again in a rebuilt one", (t) => {
+  const make = () => {
+    const card = document.createElement("div");
+    card.className = "nc-ui-fx";
+    const hd = document.createElement("div");
+    hd.className = "nc-ui-fx-hd";
+    card.append(hd, document.createElement("label"));
+    document.body.append(card);
+    return card;
+  };
+  const a = make();
+  t.after(() => a.remove());
+  const src = { open: () => true, close() {}, read: () => ({ in: 0, out: 0, gr: 0 }) };
+  const g = attachCompGauge(a, { source: src, threshold: () => -20, help: "words" });
+  assert.equal(a.children[1], g);
+  assert.equal(g.dataset.ncHelp, "words");
+  assert.equal(attachCompGauge(a, { source: src }), g, "the same card keeps its gauge");
+  assert.equal(a.querySelectorAll(".nc-comp-gauge").length, 1);
+  const b = make();
+  t.after(() => b.remove());
+  assert.notEqual(attachCompGauge(b, { source: src }), g);
+  assert.equal(attachCompGauge(null, { source: src }), null);
 });
