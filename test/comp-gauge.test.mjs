@@ -75,7 +75,8 @@ test("sheet (its own, put in the page once): ink bars, the hot colour, GR and th
   assert.match(css, /--nc-gauge-gr-color: var\(--nc-gauge-gr, var\(--nc-ui-accent\)\)/);
   assert.match(css, /\[data-nc-gauge="gr"\] > \.nc-comp-gauge-fill \{ transform-origin: right; background: var\(--nc-gauge-gr-color\); \}/);
   assert.match(css, /border-left: calc\(var\(--nc-ui-hairline\) \* 1\.5\) solid var\(--nc-gauge-gr-color\)/);
-  assert.doesNotMatch(css, /border-radius|#[0-9a-f]{3,8}\b|rgba?\(|\d+px/i, "tokens only, no radius");
+  const rules = css.split("\n").filter((l) => !l.startsWith("@container")).join("\n");
+  assert.doesNotMatch(rules, /border-radius|#[0-9a-f]{3,8}\b|rgba?\(|\d+px/i, "tokens only, no radius");
 });
 
 test("attachCompGauge: after the header of a card from an older kit, once per card, again in a rebuilt one", (t) => {

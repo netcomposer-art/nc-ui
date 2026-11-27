@@ -104,7 +104,7 @@ export const COMP_GAUGE_CSS = `
   color: var(--nc-ui-text-sub);
 }
 .nc-comp-gauge-val {
-  min-width: 7ch;
+  min-width: 6ch;
   text-align: right;
   font-family: var(--nc-ui-font-readout);
   font-size: var(--nc-ui-readout-size-small);
@@ -151,6 +151,9 @@ export const COMP_GAUGE_CSS = `
   color: var(--nc-ui-text-sub);
   white-space: nowrap;
 }
+/* A narrow column (NYX's Hacks): only the ends of the scale. */
+.nc-comp-gauge { container-type: inline-size; }
+@container (max-width: 240px) { .nc-comp-gauge-ticks > span:not(:first-child):not(:last-child) { display: none; } }
 .nc-comp-gauge-ticks > span:first-child { transform: none; }
 .nc-comp-gauge-ticks > span:last-child { transform: translateX(-100%); }
 .nc-comp-gauge[data-nc-off="true"] .nc-comp-gauge-bar:not([data-nc-gauge="in"]) > .nc-comp-gauge-fill { background: var(--nc-ui-text-sub); }
