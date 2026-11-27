@@ -417,7 +417,8 @@ export function bindCompGauge(el, opts) {
 const ATTACHED = new WeakMap();
 /**
  * For an app whose kit has no `gauge` on its FX cards (an older vendored nc-ui, or ASTRID's own panel): put a gauge in
- * this card, right after its header (`.nc-ui-fx-hd`, or `after` if given), and bind it; call again after every render
+ * this card, right after its header (`.nc-ui-fx-hd`, or `after` if given), and bind it (`color`: GR's colour, e.g. the
+ * instrument's token, or the page's --nc-gauge-gr); call again after every render
  * (a rebuilt card gets a new one, the same card keeps its own). Returns the gauge element, or null with no card.
  */
 export function attachCompGauge(card, opts) {
@@ -433,5 +434,6 @@ export function attachCompGauge(card, opts) {
     entry = { el, binding: bindCompGauge(el, opts) };
     ATTACHED.set(card, entry);
   } else entry.binding.set(opts);
+  if (opts?.color) entry.el.style.setProperty("--nc-gauge-gr", opts.color);
   return entry.el;
 }

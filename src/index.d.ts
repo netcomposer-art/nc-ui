@@ -983,7 +983,7 @@ export interface CompGaugeOptions { source: FxLevelSource | null; threshold?(): 
 export function createCompGauge(doc?: Document): HTMLElement;
 export function bindCompGauge(el: HTMLElement, opts: CompGaugeOptions): { set(next: CompGaugeOptions): void; destroy(): void };
 /** Put a gauge in an FX card right after its header and bind it (again after every render); for kits without `gauge`. */
-export function attachCompGauge(card: Element | null, opts: CompGaugeOptions & { help?: string; after?: Element }): HTMLElement | null;
+export function attachCompGauge(card: Element | null, opts: CompGaugeOptions & { help?: string; after?: Element; color?: string }): HTMLElement | null;
 export const COMP_GAUGE_CSS: string;
 export function gaugePosition(db: number): number;
 export function gaugeGrPosition(gr: number): number;
