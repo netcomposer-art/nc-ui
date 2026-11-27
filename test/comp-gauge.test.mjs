@@ -6,8 +6,8 @@ import { installDom } from "./helpers/dom.mjs";
 
 const { document } = installDom();
 const { renderControl, patchControl } = await import("../src/primitives/controls.js");
-const { gaugePosition, gaugeGrPosition, gaugeText, GAUGE_FLOOR_DB, GAUGE_GR_DB } = await import("../src/primitives/comp-gauge.js");
-const { kitCss } = await import("../src/primitives/kit.js");
+const { gaugePosition, gaugeGrPosition, gaugeText, GAUGE_FLOOR_DB, GAUGE_GR_DB, COMP_GAUGE_CSS } = await import("../src/primitives/comp-gauge.js");
+
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const amp = (db) => 10 ** (db / 20);
@@ -69,11 +69,11 @@ test("a card with gauge: three rows under the header, a threshold tick, numbers,
   assert.equal(plain.querySelector(".nc-comp-gauge"), null);
 });
 
-test("sheet: ink bars, the hot colour, GR and the tick in --nc-gauge-gr (nc-ui's accent without one), no radius", () => {
-  const css = kitCss();
+test("sheet (its own, put in the page once): ink bars, the hot colour, GR and the tick in --nc-gauge-gr (nc-ui's accent without one), no radius", () => {
+  const css = COMP_GAUGE_CSS;
+  assert.ok(document.head.querySelector("style[data-nc-comp-gauge]"), "put in the page once");
   assert.match(css, /--nc-gauge-gr-color: var\(--nc-gauge-gr, var\(--nc-ui-accent\)\)/);
   assert.match(css, /\[data-nc-gauge="gr"\] > \.nc-comp-gauge-fill \{ transform-origin: right; background: var\(--nc-gauge-gr-color\); \}/);
   assert.match(css, /border-left: calc\(var\(--nc-ui-hairline\) \* 1\.5\) solid var\(--nc-gauge-gr-color\)/);
-  const block = css.slice(css.indexOf(".nc-comp-gauge {"), css.indexOf(".nc-strip-db {"));
-  assert.doesNotMatch(block, /border-radius/);
+  assert.doesNotMatch(css, /border-radius|#[0-9a-f]{3,8}\b|rgba?\(|\d+px/i, "tokens only, no radius");
 });
