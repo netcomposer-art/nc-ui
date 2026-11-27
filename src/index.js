@@ -48,6 +48,7 @@ export {
   fxLevelPosition,
   fxLevelState,
 } from "./primitives/fx-level.js";
+export { attachCompGauge, bindCompGauge, createCompGauge, COMP_GAUGE_CSS, gaugeGrPosition, gaugePosition, gaugeText, GAUGE_FLOOR_DB, GAUGE_GR_DB } from "./primitives/comp-gauge.js";
 export { GROUP_OPEN_KEY, readGroups, writeGroup } from "./primitives/group.js";
 export {
   TAPERS,

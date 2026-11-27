@@ -7,6 +7,7 @@ import { overPanelBox, paintEqGraph, patchEqGraph, renderEqGraph } from "./eq-gr
 import { patchLevelSteps, renderLevelSteps } from "./level-steps.js";
 import { createFader, faderHandle } from "./fader.js";
 import { bindFxLevel, createFxLevel } from "./fx-level.js";
+import { bindCompGauge, createCompGauge } from "./comp-gauge.js";
 import { bindPadGesture } from "./gesture.js";
 import { createMeter, meterHandle } from "./meter.js";
 import { patchGroup, renderGroup } from "./group.js";
@@ -2346,6 +2347,13 @@ function renderFx(control, lookup) {
   // console row it is a narrow column; elsewhere (and on phones) the card keeps only its header row.
   if (foldable) card.prepend(fxFold(card, lookup));
   if (metered) bindCardLevel(card, control);
+  // A compressor's gauge (comp-gauge.js): IN, GR, OUT under the header, from the same meter.
+  if (metered && control.gauge) {
+    const gauge = createCompGauge(card.ownerDocument);
+    setHelpWords(gauge, control.gauge.help);
+    card.append(gauge);
+    bindCardGauge(card, control, lookup);
+  }
   for (const child of control.controls) card.append(renderControl(child, lookup));
   if (control.more?.length) {
     const more = document.createElement("details");
@@ -2669,8 +2677,28 @@ function bindCardLevel(card, control) {
   else LEVELS.set(card, bindFxLevel(els, control.meter));
 }
 
+/** The card's gauge, bound to the live control (its meter, threshold and switch are read every frame). */
+const GAUGES = new WeakMap();
+function bindCardGauge(card, control, lookup) {
+  const el = card.querySelector(":scope > .nc-comp-gauge");
+  if (!el) return;
+  const live = () => {
+    const c = lookup ? lookup(card) : null;
+    return c?.type === "fx" ? c : control;
+  };
+  const opts = {
+    source: control.meter ?? null,
+    threshold: () => live().gauge?.threshold?.() ?? null,
+    on: () => live().on !== false,
+  };
+  const binding = GAUGES.get(card);
+  if (binding) binding.set(opts);
+  else GAUGES.set(card, bindCompGauge(el, opts));
+}
+
 function patchFx(node, control) {
   if (control.meter || LEVELS.has(node)) bindCardLevel(node, control);
+  if (GAUGES.has(node)) bindCardGauge(node, control, null);
   const name = node.querySelector(".nc-ui-fx-name");
   if (name) name.textContent = control.title;
   const toggle = node.querySelector("[data-nc-fx-switch]");
