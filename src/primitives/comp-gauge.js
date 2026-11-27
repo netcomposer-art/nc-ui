@@ -25,7 +25,7 @@ const IDLE_MS = 250;
 const SILENT_MS = 1200;
 const FALL_FALLBACK = 0.2;
 const HOLD_FALLBACK = 1.5;
-const TICKS = [-48, -36, -24, -12, 0];
+const TICKS = [-48, -24, -12, 0];
 const MINUS = "−";
 
 /** dBFS (or −Infinity) of a sample peak. */
@@ -45,7 +45,7 @@ export function gaugeText(db, gr = false) {
   if (gr) return `${db > 0.05 ? MINUS : ""}${Math.abs(db).toFixed(1)} dB`;
   if (!(db > GAUGE_FLOOR_DB)) return "—";
   const r = Math.round(db * 10) / 10;
-  return `${r < 0 ? MINUS : ""}${Math.abs(r).toFixed(1)}`;
+  return `${r < 0 ? MINUS : r > 0 ? "+" : ""}${Math.abs(r).toFixed(1)}`;
 }
 
 function span(doc, cls, text) {
@@ -66,6 +66,7 @@ export function createCompGauge(doc = globalThis.document) {
     const bar = span(doc, "nc-comp-gauge-bar");
     bar.dataset.ncGauge = which;
     bar.append(span(doc, "nc-comp-gauge-fill"), span(doc, "nc-comp-gauge-peak"));
+    if (which !== "gr") bar.append(span(doc, "nc-comp-gauge-hot"));
     if (which === "in") bar.append(span(doc, "nc-comp-gauge-th"));
     el.append(bar, span(doc, "nc-comp-gauge-val", which === "gr" ? gaugeText(0, true) : gaugeText(-Infinity)));
   }
@@ -121,7 +122,8 @@ export const COMP_GAUGE_CSS = `
   transition: none;
 }
 .nc-comp-gauge-bar[data-nc-gauge="gr"] > .nc-comp-gauge-fill { transform-origin: right; background: var(--nc-gauge-gr-color); }
-.nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-fill { background: linear-gradient(to right, var(--nc-ui-text) calc(100% - var(--nc-ui-hairline) * 3), var(--nc-ui-fx-level-hot) 0); }
+.nc-comp-gauge-hot { position: absolute; top: 0; bottom: 0; right: 0; width: calc(var(--nc-ui-hairline) * 4); background: var(--nc-ui-fx-level-hot, var(--nc-ui-instrument-astrid)); display: none; }
+.nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-hot { display: block; }
 .nc-comp-gauge-peak {
   position: absolute;
   top: 0;
@@ -131,7 +133,7 @@ export const COMP_GAUGE_CSS = `
   background: var(--nc-ui-text);
 }
 .nc-comp-gauge-bar[data-nc-gauge="gr"] > .nc-comp-gauge-peak { background: var(--nc-ui-text); }
-.nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-peak { background: var(--nc-ui-fx-level-hot); }
+.nc-comp-gauge-bar[data-hot="true"] > .nc-comp-gauge-peak { background: var(--nc-ui-fx-level-hot, var(--nc-ui-instrument-astrid)); }
 .nc-comp-gauge-peak[hidden], .nc-comp-gauge-th[hidden] { display: none; }
 .nc-comp-gauge-th {
   position: absolute;
