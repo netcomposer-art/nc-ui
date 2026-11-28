@@ -160,6 +160,8 @@ const semanticKinds = {
   "eq-band-1": "color",
   "eq-band-2": "color",
   "eq-band-3": "color",
+  "eq-band-4": "color",
+  "eq-band-5": "color",
   "eq-panel-layer": "other",
   "strip-fold-width": "length",
   "head-margin-compact": "length",

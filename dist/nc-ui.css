@@ -371,6 +371,8 @@
   --nc-ui-eq-band-1: var(--nc-ui-color-olive-green);
   --nc-ui-eq-band-2: var(--nc-ui-color-astrid-orange);
   --nc-ui-eq-band-3: var(--nc-ui-color-petra-blue);
+  --nc-ui-eq-band-4: var(--nc-ui-color-lucy-purple);
+  --nc-ui-eq-band-5: var(--nc-ui-color-nyx-amber);
   --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
   --nc-ui-fx-fold-width-slim: 60px;
@@ -2585,6 +2587,8 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-eq-node[data-tone="1"] { --nc-eq-tone: var(--nc-ui-eq-band-1); }
 .nc-eq-node[data-tone="2"] { --nc-eq-tone: var(--nc-ui-eq-band-2); }
 .nc-eq-node[data-tone="3"] { --nc-eq-tone: var(--nc-ui-eq-band-3); }
+.nc-eq-node[data-tone="4"] { --nc-eq-tone: var(--nc-ui-eq-band-4); }
+.nc-eq-node[data-tone="5"] { --nc-eq-tone: var(--nc-ui-eq-band-5); }
 /* The hit area (target-min), and a soft halo in the band's colour while it is hovered, focused or dragged. */
 .nc-eq-node::before {
   content: "";
@@ -2610,14 +2614,18 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
 .nc-eq-node[data-drag="true"] { cursor: grabbing; }
 .nc-eq-node:focus-visible { box-shadow: 0 0 0 calc(var(--nc-ui-hairline) * 2) var(--nc-ui-eq-graph-bg), 0 0 0 calc(var(--nc-ui-hairline) * 2 + var(--nc-ui-focus-width)) var(--nc-ui-focus-ring); }
 .nc-eq[data-on="false"] .nc-eq-node { --nc-eq-tone: var(--nc-ui-text-sub); }
-/* Not maximized: a display. The dots are markers; a click on the plot maximizes the card. */
+/* Not maximized on a touch screen: a display. The dots are markers; a tap on the plot maximizes the card. With a mouse
+   (Peter, 2026-11-28) the dots drag in the card too. */
 .nc-eq[data-locked] .nc-eq-plot { cursor: zoom-in; }
 .nc-eq[data-locked] .nc-eq-node { pointer-events: none; cursor: inherit; }
-/* The readout beside the band in use: "MID −18 dB · 938 Hz · Q 0.3". */
+/* The readout beside the band in use (Peter, 2026-11-28, like FabFilter): the band's name with its dot, then its
+   frequency, gain and Q, one per line. */
 .nc-eq-tip {
   position: absolute;
   z-index: 2;
-  padding: var(--nc-ui-hairline) var(--nc-ui-control-gap);
+  display: flex;
+  flex-direction: column;
+  padding: var(--nc-ui-control-gap) calc(var(--nc-ui-control-gap) * 1.5);
   border-radius: var(--nc-ui-slot-radius);
   background: var(--nc-ui-eq-graph-bg);
   box-shadow: inset 0 0 0 var(--nc-ui-hairline) var(--nc-ui-divider);
@@ -2631,6 +2639,13 @@ button.nc-pads-label[aria-pressed="true"] { color: var(--nc-ui-accent); }
   pointer-events: none;
 }
 .nc-eq-tip[hidden] { display: none; }
+.nc-eq-tip-name { display: inline-flex; align-items: center; gap: var(--nc-ui-control-gap); font-weight: 600; }
+.nc-eq-tip-name::before { content: ""; width: var(--nc-ui-control-gap); height: var(--nc-ui-control-gap); border-radius: 50%; background: var(--nc-eq-tone, var(--nc-ui-eq-curve)); }
+.nc-eq-tip[data-tone="1"] { --nc-eq-tone: var(--nc-ui-eq-band-1); }
+.nc-eq-tip[data-tone="2"] { --nc-eq-tone: var(--nc-ui-eq-band-2); }
+.nc-eq-tip[data-tone="3"] { --nc-eq-tone: var(--nc-ui-eq-band-3); }
+.nc-eq-tip[data-tone="4"] { --nc-eq-tone: var(--nc-ui-eq-band-4); }
+.nc-eq-tip[data-tone="5"] { --nc-eq-tone: var(--nc-ui-eq-band-5); }
 /* Maximize (controls.js setMax): four corner ticks, out to maximize and in to restore, after the switch. */
 .nc-fx-max, .nc-fx-close {
   position: relative;

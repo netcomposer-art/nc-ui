@@ -370,6 +370,8 @@
   --nc-ui-eq-band-1: var(--nc-ui-color-olive-green);
   --nc-ui-eq-band-2: var(--nc-ui-color-astrid-orange);
   --nc-ui-eq-band-3: var(--nc-ui-color-petra-blue);
+  --nc-ui-eq-band-4: var(--nc-ui-color-lucy-purple);
+  --nc-ui-eq-band-5: var(--nc-ui-color-nyx-amber);
   --nc-ui-eq-panel-layer: 10;
   --nc-ui-fx-fold-width: 120px;
   --nc-ui-fx-fold-width-slim: 60px;

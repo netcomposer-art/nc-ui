@@ -60,6 +60,8 @@
   --color-nc-eq-band-1: var(--nc-ui-eq-band-1);
   --color-nc-eq-band-2: var(--nc-ui-eq-band-2);
   --color-nc-eq-band-3: var(--nc-ui-eq-band-3);
+  --color-nc-eq-band-4: var(--nc-ui-eq-band-4);
+  --color-nc-eq-band-5: var(--nc-ui-eq-band-5);
   --color-nc-page-head-bg: var(--nc-ui-page-head-bg);
   --color-nc-instrument-astrid: var(--nc-ui-instrument-astrid);
   --color-nc-instrument-petra: var(--nc-ui-instrument-petra);

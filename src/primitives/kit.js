@@ -1388,6 +1388,8 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-eq-node[data-tone="1"] { --nc-eq-tone: ${v("eq-band-1")}; }
 .nc-eq-node[data-tone="2"] { --nc-eq-tone: ${v("eq-band-2")}; }
 .nc-eq-node[data-tone="3"] { --nc-eq-tone: ${v("eq-band-3")}; }
+.nc-eq-node[data-tone="4"] { --nc-eq-tone: ${v("eq-band-4")}; }
+.nc-eq-node[data-tone="5"] { --nc-eq-tone: ${v("eq-band-5")}; }
 /* The hit area (target-min), and a soft halo in the band's colour while it is hovered, focused or dragged. */
 .nc-eq-node::before {
   content: "";
@@ -1413,14 +1415,18 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
 .nc-eq-node[data-drag="true"] { cursor: grabbing; }
 .nc-eq-node:focus-visible { box-shadow: 0 0 0 calc(${v("hairline")} * 2) ${v("eq-graph-bg")}, 0 0 0 calc(${v("hairline")} * 2 + ${v("focus-width")}) ${v("focus-ring")}; }
 .nc-eq[data-on="false"] .nc-eq-node { --nc-eq-tone: ${v("text-sub")}; }
-/* Not maximized: a display. The dots are markers; a click on the plot maximizes the card. */
+/* Not maximized on a touch screen: a display. The dots are markers; a tap on the plot maximizes the card. With a mouse
+   (Peter, 2026-11-28) the dots drag in the card too. */
 .nc-eq[data-locked] .nc-eq-plot { cursor: zoom-in; }
 .nc-eq[data-locked] .nc-eq-node { pointer-events: none; cursor: inherit; }
-/* The readout beside the band in use: "MID −18 dB · 938 Hz · Q 0.3". */
+/* The readout beside the band in use (Peter, 2026-11-28, like FabFilter): the band's name with its dot, then its
+   frequency, gain and Q, one per line. */
 .nc-eq-tip {
   position: absolute;
   z-index: 2;
-  padding: ${v("hairline")} ${v("control-gap")};
+  display: flex;
+  flex-direction: column;
+  padding: ${v("control-gap")} calc(${v("control-gap")} * 1.5);
   border-radius: ${v("slot-radius")};
   background: ${v("eq-graph-bg")};
   box-shadow: inset 0 0 0 ${v("hairline")} ${v("divider")};
@@ -1434,6 +1440,13 @@ button.nc-pads-label[aria-pressed="true"] { color: ${v("accent")}; }
   pointer-events: none;
 }
 .nc-eq-tip[hidden] { display: none; }
+.nc-eq-tip-name { display: inline-flex; align-items: center; gap: ${v("control-gap")}; font-weight: 600; }
+.nc-eq-tip-name::before { content: ""; width: ${v("control-gap")}; height: ${v("control-gap")}; border-radius: 50%; background: var(--nc-eq-tone, ${v("eq-curve")}); }
+.nc-eq-tip[data-tone="1"] { --nc-eq-tone: ${v("eq-band-1")}; }
+.nc-eq-tip[data-tone="2"] { --nc-eq-tone: ${v("eq-band-2")}; }
+.nc-eq-tip[data-tone="3"] { --nc-eq-tone: ${v("eq-band-3")}; }
+.nc-eq-tip[data-tone="4"] { --nc-eq-tone: ${v("eq-band-4")}; }
+.nc-eq-tip[data-tone="5"] { --nc-eq-tone: ${v("eq-band-5")}; }
 /* Maximize (controls.js setMax): four corner ticks, out to maximize and in to restore, after the switch. */
 .nc-fx-max, .nc-fx-close {
   position: relative;
