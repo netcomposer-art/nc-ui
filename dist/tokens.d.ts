@@ -385,6 +385,8 @@ export declare const semantic: {
   readonly "eq-band-1": "#8A9230";
   readonly "eq-band-2": "#EB512E";
   readonly "eq-band-3": "#0A94D6";
+  readonly "eq-band-4": "#9B30FF";
+  readonly "eq-band-5": "#BF8001";
   readonly "eq-panel-layer": "10";
   readonly "fx-fold-width": "120px";
   readonly "fx-fold-width-slim": "60px";
@@ -837,6 +839,8 @@ export declare const vars: {
   readonly "eq-band-1": "var(--nc-ui-eq-band-1)";
   readonly "eq-band-2": "var(--nc-ui-eq-band-2)";
   readonly "eq-band-3": "var(--nc-ui-eq-band-3)";
+  readonly "eq-band-4": "var(--nc-ui-eq-band-4)";
+  readonly "eq-band-5": "var(--nc-ui-eq-band-5)";
   readonly "eq-panel-layer": "var(--nc-ui-eq-panel-layer)";
   readonly "fx-fold-width": "var(--nc-ui-fx-fold-width)";
   readonly "fx-fold-width-slim": "var(--nc-ui-fx-fold-width-slim)";
@@ -1080,6 +1084,8 @@ export declare const refs: {
   readonly "eq-band-1": "color.olive-green";
   readonly "eq-band-2": "color.astrid-orange";
   readonly "eq-band-3": "color.petra-blue";
+  readonly "eq-band-4": "color.lucy-purple";
+  readonly "eq-band-5": "color.nyx-amber";
   readonly "eq-panel-layer": null;
   readonly "fx-fold-width": null;
   readonly "fx-fold-width-slim": null;
@@ -1408,6 +1414,8 @@ export declare const themes: {
       readonly "eq-band-1": "#8A9230";
       readonly "eq-band-2": "#EB512E";
       readonly "eq-band-3": "#0A94D6";
+      readonly "eq-band-4": "#9B30FF";
+      readonly "eq-band-5": "#BF8001";
       readonly "eq-panel-layer": "10";
       readonly "fx-fold-width": "120px";
       readonly "fx-fold-width-slim": "60px";
@@ -1796,6 +1804,8 @@ export declare const themes: {
       readonly "eq-band-1": "#9CA536";
       readonly "eq-band-2": "#EB512E";
       readonly "eq-band-3": "#5AC4F7";
+      readonly "eq-band-4": "#B566FF";
+      readonly "eq-band-5": "#FEAA02";
       readonly "eq-panel-layer": "10";
       readonly "fx-fold-width": "120px";
       readonly "fx-fold-width-slim": "60px";

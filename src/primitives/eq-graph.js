@@ -301,10 +301,17 @@ function placeTip(wrap) {
     tip.hidden = true;
     return;
   }
-  const parts = [band.label, dbText(band.db)];
-  if (band.kind === "peak") parts.push(hzText(band.hz), `Q ${band.q.toFixed(1)}`);
-  else parts.push(`${band.kind === "lowshelf" ? "below" : "above"} ${hzText(band.hz)}`);
-  tip.textContent = parts.join(" · ");
+  const lines = [hzText(band.hz), dbText(band.db)];
+  if (band.kind === "peak") lines.push(`Q ${band.q.toFixed(1)}`);
+  else lines.push(band.kind === "lowshelf" ? "shelf below" : "shelf above");
+  const name = tip.ownerDocument.createElement("span");
+  name.className = "nc-eq-tip-name";
+  name.textContent = band.label;
+  tip.replaceChildren(name, ...lines.map((t) => {
+    const line = tip.ownerDocument.createElement("span");
+    line.textContent = t;
+    return line;
+  }));
   tip.dataset.tone = String(toneOf(st.control, band));
   tip.hidden = false;
   const { w, h, pad } = st.box;
@@ -319,9 +326,13 @@ function placeTip(wrap) {
   tip.style.top = `${Math.round(top)}px`;
 }
 
+/** A band's colour (eq-band-1..5): by its id (low, mid, high keep their colours; lowmid, highmid since 2026-11-28),
+ * else by its place. */
+const TONE = { low: 1, mid: 2, high: 3, lowmid: 4, highmid: 5 };
 function toneOf(control, band) {
-  const i = control.bands.indexOf(band);
-  return (i % 3) + 1;
+  if (band && TONE[band.id]) return TONE[band.id];
+  const i = Math.max(0, control.bands.indexOf(band));
+  return (i % 5) + 1;
 }
 
 /** Patch to a new control: names and values on the nodes, the curve (re-computed only when a value moved), the loop. */
@@ -335,10 +346,10 @@ export function patchEqGraph(wrap, control) {
   wrap.dataset.on = control.on === false ? "false" : "true";
   syncLock(wrap);
   const range = control.range ?? 18;
-  control.bands.forEach((band, i) => {
+  control.bands.forEach((band) => {
     const node = nodeOf(wrap, band.id);
     if (!(node instanceof HTMLElement)) return;
-    node.dataset.tone = String((i % 3) + 1);
+    node.dataset.tone = String(toneOf(control, band));
     node.dataset.kind = band.kind;
     node.setAttribute("aria-label", `${band.label} band`);
     node.setAttribute("aria-valuemin", String(-range));
@@ -382,7 +393,7 @@ function colours(wrap) {
     zero: readLive(wrap, "divider"),
     label: readLive(wrap, "text-sub"),
     spectrum: readLive(wrap, "eq-spectrum"),
-    bands: [readLive(wrap, "eq-band-1"), readLive(wrap, "eq-band-2"), readLive(wrap, "eq-band-3")],
+    bands: [1, 2, 3, 4, 5].map((i) => readLive(wrap, `eq-band-${i}`)),
   };
 }
 
@@ -431,7 +442,7 @@ export function paintEqGraph(wrap) {
   // gets a faint fill of its own.
   bands.forEach((arr, i) => {
     if (!arr || !arr.some((v) => Math.abs(v) > 0.05)) return;
-    const col = on ? c.bands[i % 3] : c.quiet;
+    const col = on ? c.bands[toneOf(control, control.bands[i]) - 1] : c.quiet;
     const ys = Array.from(arr, (v) => eqY(v, h, range, pad));
     ctx.save();
     if (st.active && control.bands[i]?.id === st.active) {
@@ -556,18 +567,27 @@ function fillToZero(ctx, xs, ys, zeroY) {
 }
 
 /**
- * Inside a host that can be maximized, the graph is a display until the host is maximized (Peter, 2026-11-01: "when
- * not maxed don't offer the ability to adjust the freq nodes directly"): the dots are markers, not sliders, and a click
- * on the plot maximizes. The contract, so apps outside the kit can join: the host carries data-nc-maxable, gets
+ * Inside a host that can be maximized, on a touch screen, the graph is a display until the host is maximized (Peter,
+ * 2026-11-01: "when not maxed don't offer the ability to adjust the freq nodes directly"): the dots are markers, not
+ * sliders, and a tap on the plot maximizes. With a mouse the dots drag in the card too (Peter, 2026-11-28). The contract, so apps outside the kit can join: the host carries data-nc-maxable, gets
  * data-nc-max while maximized, and its maximize button carries data-nc-max-toggle. With no such host (a graph on its
  * own), the nodes stay editable.
  */
 function maxHost(wrap) {
   return wrap.closest("[data-nc-maxable]");
 }
+/** A mouse (Peter, 2026-11-28: "on desktop only ... make them editable"): the dots drag in the card too. */
+function finePointer(wrap) {
+  const win = wrap.ownerDocument?.defaultView;
+  try {
+    return !!win?.matchMedia?.("(hover: hover) and (pointer: fine)").matches;
+  } catch {
+    return false;
+  }
+}
 function eqLocked(wrap) {
   const host = maxHost(wrap);
-  return !!host && !host.hasAttribute("data-nc-max");
+  return !!host && !host.hasAttribute("data-nc-max") && !finePointer(wrap);
 }
 
 function syncLock(wrap) {

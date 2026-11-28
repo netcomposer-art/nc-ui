@@ -63,6 +63,8 @@ const theme = {
     "nc-eq-band-1": "var(--nc-ui-eq-band-1)",
     "nc-eq-band-2": "var(--nc-ui-eq-band-2)",
     "nc-eq-band-3": "var(--nc-ui-eq-band-3)",
+    "nc-eq-band-4": "var(--nc-ui-eq-band-4)",
+    "nc-eq-band-5": "var(--nc-ui-eq-band-5)",
     "nc-page-head-bg": "var(--nc-ui-page-head-bg)",
     "nc-instrument-astrid": "var(--nc-ui-instrument-astrid)",
     "nc-instrument-petra": "var(--nc-ui-instrument-petra)",
